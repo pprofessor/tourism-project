@@ -1,0 +1,15 @@
+@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  direction: rtl;
+  font-family: 'Vazirmatn', sans-serif;
+}
+
+/* برای اطمینان از اعمال فونت روی تمام عناصر */
+* {
+  font-family: inherit;
+}

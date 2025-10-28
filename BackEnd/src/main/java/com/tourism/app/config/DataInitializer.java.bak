@@ -1,0 +1,37 @@
+package com.tourism.app.config;
+
+import com.tourism.app.model.User;
+import com.tourism.app.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
+
+@Component
+public class DataInitializer implements CommandLineRunner {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @Override
+    public void run(String... args) throws Exception {
+        // ایجاد کاربر تستی اگر وجود ندارد
+        if (userRepository.findByMobile("09120000000").isEmpty()) {
+            User testUser = new User();
+            testUser.setMobile("09120000000");
+            testUser.setPassword(passwordEncoder.encode("123456"));
+            testUser.setUsername("testadmin");
+            testUser.setRole("ADMIN");
+            testUser.setUserType("VERIFIED");
+            testUser.setEmail("test@admin.com");
+            testUser.setFirstName("تست");
+            testUser.setLastName("ادمین");
+            testUser.setEmailVerified(true);
+            
+            userRepository.save(testUser);
+            System.out.println("کاربر تستی ایجاد شد: 09120000000 / 123456");
+        }
+    }
+}

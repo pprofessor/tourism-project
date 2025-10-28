@@ -1,0 +1,138 @@
+{
+  "properties": [
+    {
+      "name": "app.security.jwt.secret",
+      "type": "java.lang.String",
+      "description": "JWT secret key for token generation and validation."
+    },
+    {
+      "name": "app.security.jwt.expiration",
+      "type": "java.lang.Long",
+      "description": "JWT token expiration time in milliseconds."
+    },
+    {
+      "name": "app.security.jwt.refresh-expiration",
+      "type": "java.lang.Long",
+      "description": "JWT refresh token expiration time in milliseconds."
+    },
+    {
+      "name": "app.security.jwt.issuer",
+      "type": "java.lang.String",
+      "description": "JWT token issuer."
+    },
+    {
+      "name": "app.security.jwt.audience",
+      "type": "java.lang.String",
+      "description": "JWT token audience."
+    },
+    {
+      "name": "app.security.cors.allowed-origins",
+      "type": "java.lang.String",
+      "description": "Allowed CORS origins."
+    },
+    {
+      "name": "app.security.cors.allowed-methods",
+      "type": "java.lang.String",
+      "description": "Allowed HTTP methods for CORS."
+    },
+    {
+      "name": "app.security.cors.allowed-headers",
+      "type": "java.lang.String",
+      "description": "Allowed HTTP headers for CORS."
+    },
+    {
+      "name": "app.security.cors.allow-credentials",
+      "type": "java.lang.Boolean",
+      "description": "Whether credentials are allowed for CORS."
+    },
+    {
+      "name": "app.security.rate-limit.requests-per-minute",
+      "type": "java.lang.Integer",
+      "description": "Maximum number of requests per minute for rate limiting."
+    },
+    {
+      "name": "app.security.rate-limit.burst-capacity",
+      "type": "java.lang.Integer",
+      "description": "Burst capacity for rate limiting."
+    },
+    {
+      "name": "management.endpoint.health.access",
+      "type": "java.lang.String",
+      "description": "Access level for health endpoint."
+    },
+    {
+      "name": "management.endpoint.metrics.access",
+      "type": "java.lang.String",
+      "description": "Access level for metrics endpoint."
+    },
+    {
+      "name": "management.endpoint.info.access",
+      "type": "java.lang.String",
+      "description": "Access level for info endpoint."
+    },
+    {
+      "name": "management.endpoint.prometheus.access",
+      "type": "java.lang.String",
+      "description": "Access level for prometheus endpoint."
+    },
+    {
+      "name": "management.prometheus.metrics.export.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable Prometheus metrics export."
+    }
+  ],
+  "hints": [
+    {
+      "name": "management.endpoint.health.access",
+      "values": [
+        {
+          "value": "read-only",
+          "description": "Endpoint is readable but not writable."
+        },
+        {
+          "value": "none",
+          "description": "Endpoint is disabled."
+        }
+      ]
+    },
+    {
+      "name": "management.endpoint.metrics.access",
+      "values": [
+        {
+          "value": "read-only",
+          "description": "Endpoint is readable but not writable."
+        },
+        {
+          "value": "none",
+          "description": "Endpoint is disabled."
+        }
+      ]
+    },
+    {
+      "name": "management.endpoint.info.access",
+      "values": [
+        {
+          "value": "read-only",
+          "description": "Endpoint is readable but not writable."
+        },
+        {
+          "value": "none",
+          "description": "Endpoint is disabled."
+        }
+      ]
+    },
+    {
+      "name": "management.endpoint.prometheus.access",
+      "values": [
+        {
+          "value": "read-only",
+          "description": "Endpoint is readable but not writable."
+        },
+        {
+          "value": "none",
+          "description": "Endpoint is disabled."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="سامانه مدیریت تورهای گردشگری - رزرو آنلاین تورهای داخلی و خارجی" />
+    <meta name="keywords" content="تور, گردشگری, سفر, رزرو آنلاین, هتل, پرواز, ایران گردی, تور خارجی" />
+    <meta name="author" content="Tourism Management System" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="سامانه مدیریت تورهای گردشگری" />
+    <meta property="og:description" content="رزرو آنلاین تورهای داخلی و خارجی با بهترین قیمت‌ها" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fa_IR" />
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TouristAttraction",
+      "name": "سامانه مدیریت تورهای گردشگری",
+      "description": "رزرو آنلاین تورهای داخلی و خارجی",
+      "url": "https://yourdomain.com",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "IR"
+      }
+    }
+    </script>
+
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <title>سامانه تورهای گردشگری - رزرو آنلاین تور</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            direction: rtl;
+        }
+        
+        /* بهبود performance */
+        * {
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <noscript>برای استفاده از سامانه تورهای گردشگری، باید JavaScript را فعال کنید.</noscript>
+    <div id="root"></div>
+
+    <!-- Loading Optimization -->
+    <script>
+        // Preload critical resources
+        if ('connection' in navigator && navigator.connection.saveData === true) {
+            // Data saver mode - load less
+        }
+    </script>
+</body>
+</html>

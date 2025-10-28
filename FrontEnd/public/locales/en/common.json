@@ -1,0 +1,370 @@
+{
+  "header": {
+    "tours": "Tour Booking",
+    "hotels": "Hotel Booking",
+    "tickets": "Tickets",
+    "services": "Travel Services",
+    "login": "Login",
+    "profile": "Profile",
+    "logout": "Logout",
+    "myServices": "My Services",
+    "support": "Support",
+    "yourPoints": "Your Points"
+  },
+  "footer": {
+    "phone": "021-12345678",
+    "copyright": "© 2024 Turino. All rights reserved."
+  },
+  "common": {
+    "currency": "Toman",
+    "cancel": "Cancel",
+    "close": "Close",
+    "seeYouSoon": "Hope to see you soon"
+  },
+  "hotel": {
+    "bookNow": "Book Now",
+    "special": "Special"
+  },
+  "payment": {
+    "selectGateway": "Select Payment Gateway",
+    "selectGatewayPrompt": "Select your preferred payment gateway:",
+    "amount": "Amount to Pay",
+    "proceedToBank": "Proceed to Bank Gateway",
+    "security": "All payments comply with Shaparak standards",
+    "saman": "Saman Gateway",
+    "samanDesc": "Secure payment with Shetab cards",
+    "mellat": "Mellat Gateway",
+    "mellatDesc": "Support for all bank cards",
+    "parsian": "Parsian Gateway",
+    "parsianDesc": "High security and fast processing"
+  },
+  "paymentHistory": {
+    "title": "Payment History",
+    "noPayments": "No payments recorded",
+    "totalTransactions": "Total Transactions",
+    "transactions": "transactions"
+  },
+  "paymentStatus": {
+    "completed": "Completed",
+    "pending": "Pending",
+    "failed": "Failed",
+    "refunded": "Refunded"
+  },
+  "paymentMethod": {
+    "card": "Bank Card",
+    "wallet": "Wallet",
+    "bankTransfer": "Bank Transfer"
+  },
+  "services": {
+    "title": "My Services",
+    "noServices": "No services found",
+    "filter": {
+      "all": "All",
+      "hotels": "Hotels",
+      "tours": "Tours",
+      "tickets": "Tickets"
+    },
+    "type": {
+      "hotel": "Hotel Booking",
+      "tour": "Travel Tour",
+      "ticket": "Flight Ticket"
+    },
+    "status": {
+      "confirmed": "Confirmed",
+      "completed": "Completed",
+      "pending": "Pending",
+      "cancelled": "Cancelled"
+    },
+    "stats": {
+      "total": "Total Services",
+      "active": "Active",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "profileImage": {
+    "uploading": "Uploading...",
+    "uploadSuccess": "Profile picture uploaded successfully",
+    "uploadError": "Error uploading image",
+    "serverError": "Server connection error",
+    "changePhoto": "Change Profile Photo",
+    "previewAlt": "Preview",
+    "profileAlt": "Profile",
+    "status": "Status",
+    "previewActive": "Preview Active ✅",
+    "noPreview": "No Preview ❌"
+  },
+  "profileForm": {
+    "title": "Identity Information",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "nationalCode": "National Code",
+    "passportNumber": "Passport Number",
+    "address": "Address",
+    "firstNamePlaceholder": "Enter your first name",
+    "lastNamePlaceholder": "Enter your last name",
+    "nationalCodePlaceholder": "10-digit national code",
+    "passportPlaceholder": "Passport number",
+    "addressPlaceholder": "Enter your complete address",
+    "saveButton": "Save Information",
+    "saving": "Saving...",
+    "saveSuccess": "Information saved successfully",
+    "saveError": "Error saving information",
+    "sendingData": "Sending data:",
+    "checkingUserLevel": "Checking user level...",
+    "userLevelChecked": "User level checked - can be upgraded to VERIFIED",
+    "userLevelError": "Error checking user level:"
+  },
+  "login": {
+    "enterMobile": "Please enter your mobile number!",
+    "passwordLogin": "Login with Password",
+    "verifyMobile": "Verify Mobile Number",
+    "mobilePlaceholder": "Mobile Number (without zero)",
+    "passwordPlaceholder": "Password",
+    "verificationPlaceholder": "Verification Code",
+    "continue": "Continue",
+    "login": "Login",
+    "verify": "Verify",
+    "sendCode": "Login with Verification Code",
+    "back": "Back",
+    "mobileHint": {
+      "ir": "10 digits, without zero, starting with 9",
+      "iq": "10 digits, starting with zero",
+      "af": "9 digits, starting with zero",
+      "tr": "10 digits, starting with 5",
+      "default": "5 to 15 digits"
+    },
+    "checking": "Checking...",
+    "passwordPrompt": "For number <1>{{dialCode}} {{mobile}}</1>",
+    "enterYourPassword": "Enter your password",
+    "password": "Password",
+    "loggingIn": "Logging in...",
+    "codeSent": "Verification code sent to",
+    "codeSentSuccess": "has been sent",
+    "verificationCode": "Verification Code",
+    "mobileNumber": "Mobile Number",
+    "enterCodePrompt": "Please enter the verification code sent to {{dialCode}}{{mobile}}",
+    "enterCodePrompt1": "Please enter the verification code",
+    "enterCodePrompt2": "sent to the number"
+  },
+  "errors": {
+    "invalidIranMobile": "Iran mobile number must be 10 digits, without zero and start with 9",
+    "invalidInternationalMobile": "Mobile number must be between 5 to 15 digits",
+    "verificationCodeLength": "Verification code must be 6 digits",
+    "invalidVerificationCode": "Invalid verification code",
+    "verificationError": "Error verifying code",
+    "sendCodeError": "Error sending verification code",
+    "serverConnection": "Server connection error",
+    "enterPassword": "Please enter your password",
+    "invalidPassword": "Invalid password",
+    "loginError": "Login error"
+  },
+  "validation": {
+    "firstNameRequired": "First name is required",
+    "firstNameMinLength": "First name must be at least 2 characters",
+    "lastNameRequired": "Last name is required",
+    "lastNameMinLength": "Last name must be at least 2 characters",
+    "nationalCodeInvalid": "National code must be 10 digits",
+    "formErrors": "Please fix form errors"
+  },
+  "profile": {
+    "pageTitle": "User Profile",
+    "guestUser": "Guest User",
+    "mobileNumber": "Mobile Number",
+    "loading": "Loading profile...",
+    "tabs": {
+      "navigation": "Profile Tabs",
+      "profile": "👤 Profile Information",
+      "payments": "💳 Payment History",
+      "services": "🛎️ My Services"
+    },
+    "stats": {
+      "title": "Your Statistics",
+      "bookings": "Number of Bookings",
+      "referrals": "Referred Users",
+      "points": "Points"
+    },
+    "userLevel": {
+      "title": "User Level"
+    },
+    "userTypes": {
+      "GUEST": {
+        "label": "Guest User",
+        "description": "Please complete your identity information"
+      },
+      "VERIFIED": {
+        "label": "Verified User",
+        "description": "Your information has been successfully verified"
+      },
+      "AMBASSADOR": {
+        "label": "Ambassador",
+        "description": "You have been selected as an ambassador"
+      }
+    },
+    "errors": {
+      "loadData": "Error loading user data:",
+      "saveData": "Error saving data:",
+      "saveImage": "Error saving image:",
+      "invalidImageUrl": "Invalid image URL"
+    }
+  },
+  "home": {
+    "meta": {
+      "title": "Turino - Tour and Hotel Booking System",
+      "description": "Online booking for tours, hotels and tickets with the best price and quality"
+    },
+    "hero": {
+      "title": "A worry-free journey...",
+      "subtitle": "Plan your trip easily with Turino"
+    },
+    "search": {
+      "ariaLabel": "Travel services search",
+      "placeholder": "What are you looking for?",
+      "inputLabel": "Search term for travel services",
+      "buttonLabel": "Search",
+      "resultsFound": "{{count}} results found",
+    "noResults": "No results found",
+      "logging": "Searching for:",
+      "validation": {
+        "minLength": "Search term must be at least 2 characters"
+      }
+    },
+    "services": {
+      "title": "Our Special Services",
+      "detailsButton": "View Details",
+      "tours": {
+        "title": "Tour Booking",
+        "description": "Domestic and international tours with the best price and quality"
+      },
+      "hotels": {
+        "title": "Hotel Booking",
+        "description": "Luxury and budget hotels across Iran and worldwide"
+      },
+      "tickets": {
+        "title": "Tickets",
+        "description": "Flights, trains and buses with best price guarantee"
+      },
+      "travelServices": {
+        "title": "Travel Services",
+        "description": "Visa, insurance and professional travel guide"
+      }
+    }
+  },
+  "support": {
+    "meta": {
+      "title": "Turino Support",
+      "description": "Turino online support system - answering questions and solving problems"
+    },
+    "title": "Online Support",
+    "subtitle": "We're here to help you",
+    "tabs": {
+      "navigation": "Support Tabs",
+      "tickets": "🎫 My Tickets",
+      "faq": "❓ FAQ",
+      "contact": "📞 Contact Us"
+    },
+    "status": {
+      "online": "Support Online",
+      "offline": "Support Offline",
+      "responseTime": "Response in less than 2 hours"
+    },
+    "contact": {
+      "title": "Contact Us",
+      "channels": "Contact Channels",
+      "companyInfo": "Company Information",
+      "quickReport": "Quick Problem Report",
+      "quickReportTitle": "Quick Problem Report",
+      "quickReportPlaceholder": "Briefly describe your problem or question...",
+      "quickReportSubmit": "Send Report",
+      "charCount": "characters",
+      "companyAddress": "Address",
+      "companyAddressValue": "Tehran, Valiasr St, No. 1234",
+      "workingHours": "Working Hours",
+      "workingHoursValue": "24/7",
+      "responseTime": "Response Time",
+      "responseTimeValue": "Less than 2 hours",
+      "validation": {
+        "minLength": "Please enter a more complete message"
+      },
+      "quickReportSuccess": "Your message has been recorded. We will contact you soon.",
+      "supportStatus": {
+        "online": "🟢 Support Online",
+        "offline": "🔴 Support Offline",
+        "onlineMessage": "We are currently available",
+        "offlineMessage": "We will respond as soon as possible"
+      },
+      "channelsList": {
+        "phone": {
+          "label": "Phone Support",
+          "value": "+982112345678"
+        },
+        "email": {
+          "label": "Support Email",
+          "value": "support@turino.com"
+        },
+        "telegram": {
+          "label": "Telegram",
+          "value": "https://t.me/turino_support"
+        },
+        "whatsapp": {
+          "label": "WhatsApp",
+          "value": "https://wa.me/989123456789"
+        },
+        "instagram": {
+          "label": "Instagram",
+          "value": "https://instagram.com/turino.official"
+        }
+      }
+    },
+    "tickets": {
+      "title": "Support Tickets",
+      "yourTickets": "Your Tickets",
+      "noTicketSelected": "No Ticket Selected",
+      "noTicketSelectedMessage": "Select a ticket from the list to view conversations",
+      "newMessage": "New Message",
+      "sendReply": "Send Reply",
+      "replyPlaceholder": "Enter your reply...",
+      "messageSent": "Your reply has been sent",
+      "status": {
+        "open": "Open",
+        "in_progress": "In Progress",
+        "resolved": "Resolved",
+        "closed": "Closed"
+      },
+      "priority": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "urgent": "Urgent"
+      },
+      "category": {
+        "technical": "Technical",
+        "payment": "Payment",
+        "reservation": "Reservation",
+        "general": "General",
+        "suggestion": "Suggestion"
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "searchPlaceholder": "Search questions...",
+      "categories": "Categories",
+      "allCategories": "All Categories",
+      "reservation": "Reservation",
+      "payment": "Payment",
+      "account": "Account",
+      "technical": "Technical",
+      "general": "General",
+      "resultsCount": "questions found",
+      "noResults": "No questions found",
+      "noResultsMessage": "Please change your search term or category",
+      "helpful": "Was this answer helpful?",
+      "yes": "Yes",
+      "no": "No",
+      "needMoreHelp": "Didn't find your answer?",
+      "needMoreHelpMessage": "We're always ready to answer your questions",
+      "createTicket": "Create Support Ticket",
+      "callSupport": "Call Support"
+    }
+  }
+}

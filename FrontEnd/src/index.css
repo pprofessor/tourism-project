@@ -1,0 +1,50 @@
+@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Vazirmatn', system-ui, sans-serif;
+  }
+  
+  body {
+    direction: rtl;
+    font-family: inherit;
+    @apply bg-white text-gray-900 transition-colors duration-300;
+  }
+
+  .dark body {
+    @apply bg-gray-900 text-white;
+  }
+
+  /* Responsive container برای کل پروژه */
+  .responsive-container {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* برای اطمینان از اعمال فونت روی تمام عناصر */
+* {
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+/* بهبود performance و قابلیت دسترسی */
+html {
+  scroll-behavior: smooth;
+}
+
+/* focus styles برای accessibility */
+button:focus-visible,
+a:focus-visible {
+  @apply outline-2 outline-offset-2 outline-blue-500;
+}
+html.dark {
+  @apply bg-gray-900 text-white;
+}
+
+html.dark body {
+  @apply bg-gray-900 text-white;
+}
