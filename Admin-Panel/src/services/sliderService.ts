@@ -1,43 +1,58 @@
-// ADMIN-PANEL/src/services/sliderService.ts
-const API_BASE = 'http://localhost:8083/api/admin';
+const API_BASE = 'http://localhost:8080/api';
 
+/**
+ * رابط اسلاید برای مدیریت اسلایدشو
+ */
 export interface Slide {
   id: number;
-  image: string;
-  title: string;
-  description: string;
-  buttonText: string;
-  buttonLink: string;
-  isActive: boolean;
-  sortOrder: number;
-  altText: string;
-  seoTitle?: string;
-  seoDescription?: string;
+  image: string; // URL یا base64 تصویر
+  title: string; // عنوان اسلاید
+  description: string; // توضیحات اسلاید
+  buttonText: string; // متن دکمه
+  buttonLink: string; // لینک دکمه
+  altText: string; // متن جایگزین تصویر
+  seoTitle?: string; // عنوان سئو
+  seoDescription?: string; // توضیحات سئو
+  isActive: boolean; // وضعیت فعال/غیرفعال
+  displayOrder: number; // ترتیب نمایش
+  
+  // تنظیمات پیشرفته اسلایدشو
+  mediaSource?: 'UPLOAD' | 'MEDIA_LIBRARY'; // منبع تصویر
+  transitionType?: 'fade' | 'slide' | 'zoom' | 'flip'; // نوع انتقال
+  navigationType?: 'dots' | 'arrows' | 'dots_arrows' | 'custom'; // نوع ناوبری
+  customNavigation?: string; // ناوبری سفارشی
+  slideInterval?: number; // زمان تعویض اسلاید (میلی‌ثانیه)
+  transitionDuration?: number; // مدت انیمیشن انتقال
 }
 
+/**
+ * سرویس مدیریت اسلایدها
+ */
 class SliderService {
+  
+  /**
+   * دریافت تمام اسلایدهای فعال
+   */
   async getAllSlides(): Promise<Slide[]> {
-    console.log('🔄 Fetching slides from:', `${API_BASE}/slides`);
     try {
-      const response = await fetch(`${API_BASE}/slides`);
-      console.log('📡 Response status:', response.status);
-      console.log('📡 Response ok:', response.ok);
+      const response = await fetch(`${API_BASE}/slides/active`);
       
       if (!response.ok) {
-        throw new Error(`Failed to fetch slides: ${response.status} ${response.statusText}`);
+        throw new Error(`Failed to fetch slides: ${response.status}`);
       }
       
-      const data = await response.json();
-      console.log('📦 Received data:', data);
-      return data;
+      const result = await response.json();
+      return result.data || [];
     } catch (error) {
-      console.error('❌ Error fetching slides:', error);
+      console.error('Error fetching slides:', error);
       throw error;
     }
   }
 
+  /**
+   * ایجاد اسلاید جدید
+   */
   async createSlide(slideData: Omit<Slide, 'id'>): Promise<Slide> {
-    console.log('🔄 Creating slide:', slideData);
     try {
       const response = await fetch(`${API_BASE}/slides`, {
         method: 'POST',
@@ -45,23 +60,24 @@ class SliderService {
         body: JSON.stringify(slideData)
       });
       
-      console.log('📡 Create response status:', response.status);
-      
       if (!response.ok) {
-        throw new Error(`Failed to create slide: ${response.status} ${response.statusText}`);
+        const errorText = await response.text();
+        console.error('Error creating slide:', errorText);
+        throw new Error(`Failed to create slide: ${response.status}`);
       }
       
-      const data = await response.json();
-      console.log('📦 Created slide:', data);
-      return data;
+      const result = await response.json();
+      return result.data;
     } catch (error) {
-      console.error('❌ Error creating slide:', error);
+      console.error('Error creating slide:', error);
       throw error;
     }
   }
 
+  /**
+   * به‌روزرسانی اسلاید موجود
+   */
   async updateSlide(id: string, slideData: Partial<Slide>): Promise<Slide> {
-    console.log('🔄 Updating slide:', id, slideData);
     try {
       const response = await fetch(`${API_BASE}/slides/${id}`, {
         method: 'PUT',
@@ -69,64 +85,75 @@ class SliderService {
         body: JSON.stringify(slideData)
       });
       
-      console.log('📡 Update response status:', response.status);
-      
       if (!response.ok) {
-        throw new Error(`Failed to update slide: ${response.status} ${response.statusText}`);
+        throw new Error(`Failed to update slide: ${response.status}`);
       }
       
-      const data = await response.json();
-      console.log('📦 Updated slide:', data);
-      return data;
+      return await response.json();
     } catch (error) {
-      console.error('❌ Error updating slide:', error);
+      console.error('Error updating slide:', error);
       throw error;
     }
   }
 
+  /**
+   * حذف اسلاید
+   */
   async deleteSlide(id: string): Promise<void> {
-    console.log('🔄 Deleting slide:', id);
     try {
       const response = await fetch(`${API_BASE}/slides/${id}`, { 
         method: 'DELETE' 
       });
       
-      console.log('📡 Delete response status:', response.status);
-      
       if (!response.ok) {
-        throw new Error(`Failed to delete slide: ${response.status} ${response.statusText}`);
+        throw new Error(`Failed to delete slide: ${response.status}`);
       }
-      
-      console.log('✅ Slide deleted successfully');
     } catch (error) {
-      console.error('❌ Error deleting slide:', error);
+      console.error('Error deleting slide:', error);
       throw error;
     }
   }
 
+  /**
+   * تغییر وضعیت فعال/غیرفعال اسلاید
+   */
   async toggleSlideStatus(id: string, isActive: boolean): Promise<Slide> {
-    console.log('🔄 Toggling slide status:', id, isActive);
     try {
       const response = await fetch(`${API_BASE}/slides/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isActive: isActive })
+        body: JSON.stringify({ isActive })
       });
       
-      console.log('📡 Toggle response status:', response.status);
-      
       if (!response.ok) {
-        throw new Error(`Failed to toggle slide status: ${response.status} ${response.statusText}`);
+        throw new Error(`Failed to toggle slide status: ${response.status}`);
       }
       
-      const data = await response.json();
-      console.log('📦 Toggled slide:', data);
-      return data;
+      return await response.json();
     } catch (error) {
-      console.error('❌ Error toggling slide status:', error);
+      console.error('Error toggling slide status:', error);
       throw error;
+    }
+  }
+
+  /**
+   * دریافت لیست فایل‌های مدیا
+   */
+  async getMediaFiles(): Promise<string[]> {
+    try {
+      const response = await fetch(`${API_BASE}/media/files`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch media files: ${response.status}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching media files:', error);
+      return [];
     }
   }
 }
 
+// ایجاد نمونه از سرویس
 export const sliderService = new SliderService();

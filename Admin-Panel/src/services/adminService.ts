@@ -1,5 +1,4 @@
-const API_BASE_URL = 'http://localhost:8083';
-
+const API_BASE_URL = 'http://localhost:8080/api';
 const adminService = {
   // Hotel Management
   getHotels: () => fetch(`${API_BASE_URL}/hotels`),
@@ -22,6 +21,28 @@ const adminService = {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(userData)
   }),
+
+
+// حذف کاربر
+deleteUser: async (userId: number) => {
+  const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+    method: 'DELETE'
+  });
+  return await response.json();
+},
+
+  
+  // 🔐 تغییر رمز عبور کاربر - تابع جدید
+  changeUserPassword: async (userId: number, newPassword: string) => {
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/change-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ newPassword })
+    });
+    return await response.json();
+  },
   
   // Booking Management
   getBookings: () => fetch(`${API_BASE_URL}/bookings`),

@@ -338,36 +338,78 @@ const MediaManager: React.FC = () => {
     severity: 'success' as 'success' | 'error' 
   });
 
-  // بارگذاری فایل‌ها
-  const loadFiles = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await mediaService.getFiles();
+ // بارگذاری فایل‌ها
+const loadFiles = useCallback(async () => {
+  try {
+    setLoading(true);
+    console.log('🔄 شروع بارگذاری فایل‌ها...');
+    
+    const response = await mediaService.getFiles();
+    
+    console.log('📋 پاسخ از mediaService:', response);
+    
+    if (response.success && response.data) {
+      console.log('✅ تعداد فایل‌های دریافت شده:', response.data.length);
       
-      console.log('📋 پاسخ از mediaService:', response);
+      // ✅ لاگ مفصل برای دیباگ تصاویر
+      const imageFiles = response.data.filter((file: MediaFile) => file.type === 'image');
+      console.log('🖼️ تعداد فایل‌های تصویری:', imageFiles.length);
       
-      if (response.success && response.data) {
-        console.log('✅ فایل‌های قابل نمایش:', response.data.length);
-        setFiles(response.data);
-      } else {
-        console.log('❌ خطا در دریافت فایل‌ها:', response.message);
-        setSnackbar({
-          open: true,
-          message: response.message,
-          severity: 'error'
+      imageFiles.forEach((file: MediaFile, index: number) => {
+        console.log(`📸 تصویر ${index + 1}:`, {
+          name: file.name,
+          url: file.url,
+          size: file.size,
+          type: file.type
+        });
+        
+        // ✅ تست پیش‌بارگذاری تصاویر - روش درست
+        const testImage = document.createElement('img');
+        testImage.onload = () => console.log(`✅ تصویر "${file.name}" قابل دسترس است`);
+        testImage.onerror = () => console.log(`❌ خطا در بارگذاری تصویر "${file.name}" - آدرس: ${file.url}`);
+        testImage.src = file.url;
+      });
+
+      // ✅ لاگ فایل‌های غیرتصویری هم
+      const otherFiles = response.data.filter((file: MediaFile) => file.type !== 'image');
+      console.log('📄 فایل‌های غیرتصویری:', otherFiles.length);
+      
+      // ✅ نمایش اولین فایل تصویری برای تست
+      if (imageFiles.length > 0) {
+        const firstImage = imageFiles[0];
+        console.log('🔍 تست اولین تصویر:', {
+          name: firstImage.name,
+          url: firstImage.url,
+          fullInfo: firstImage
         });
       }
-    } catch (error) {
-      console.error('💥 خطای غیرمنتظره:', error);
+      
+      setFiles(response.data);
+      
+      console.log('🎉 بارگذاری فایل‌ها با موفقیت انجام شد');
+    } else {
+      console.log('❌ خطا در دریافت فایل‌ها:', response.message);
       setSnackbar({
         open: true,
-        message: 'خطا در بارگذاری فایل‌ها',
+        message: response.message,
         severity: 'error'
       });
-    } finally {
-      setLoading(false);
     }
-  }, []);
+  } catch (error) {
+    console.error('💥 خطای غیرمنتظره در بارگذاری فایل‌ها:', error);
+    setSnackbar({
+      open: true,
+      message: 'خطا در بارگذاری فایل‌ها',
+      severity: 'error'
+    });
+  } finally {
+    setLoading(false);
+  }
+}, []);
+
+
+
+
 
   useEffect(() => {
     loadFiles();

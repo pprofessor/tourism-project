@@ -32,7 +32,10 @@ import {
   ShoppingCart,
   Person,
   Badge,
-  TrendingUp
+  TrendingUp,
+  Key,
+  LockReset,
+  Delete
 } from '@mui/icons-material';
 import adminService from '../../services/adminService';
 
@@ -68,6 +71,11 @@ const UserManagement: React.FC = () => {
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [activeTab, setActiveTab] = useState(0);
+  const [deleteConfirmUser, setDeleteConfirmUser] = useState<User | null>(null);
+  const [changePasswordUser, setChangePasswordUser] = useState<User | null>(null);
+const [newPassword, setNewPassword] = useState('');
+const [confirmPassword, setConfirmPassword] = useState('');
+const [passwordError, setPasswordError] = useState('');
   const [purchases, setPurchases] = useState<Purchase[]>([]);
 
   // داده‌های نمونه برای خریدها
@@ -87,13 +95,14 @@ const UserManagement: React.FC = () => {
     try {
       const response = await adminService.getUsers();
       const data = await response.json();
-      setUsers(data);
+setUsers(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading users:', error);
     } finally {
       setLoading(false);
     }
   };
+
 
   const handleUpdateUser = async () => {
     if (!editingUser) return;
@@ -106,6 +115,55 @@ const UserManagement: React.FC = () => {
       console.error('Error updating user:', error);
     }
   };
+
+const handleChangePassword = async () => {
+  if (!changePasswordUser) return;
+  
+  if (newPassword !== confirmPassword) {
+    setPasswordError('رمز عبور و تأیید رمز عبور مطابقت ندارند');
+    return;
+  }
+  
+  if (newPassword.length < 6) {
+    setPasswordError('رمز عبور باید حداقل ۶ کاراکتر باشد');
+    return;
+  }
+  
+  try {
+    const result = await adminService.changeUserPassword(changePasswordUser.id, newPassword);
+    
+    if (result.success) {
+      setChangePasswordUser(null);
+      setNewPassword('');
+      setConfirmPassword('');
+      setPasswordError('');
+      alert('رمز عبور با موفقیت تغییر کرد');
+    } else {
+      setPasswordError(result.message);
+    }
+  } catch (error) {
+    setPasswordError('خطا در تغییر رمز عبور');
+  }
+};
+  
+
+const handleDeleteUser = async () => {
+  if (!deleteConfirmUser) return;
+  
+  try {
+    const result = await adminService.deleteUser(deleteConfirmUser.id);
+    
+    if (result.success) {
+      setDeleteConfirmUser(null);
+      loadUsers(); // رفرش لیست کاربران
+      alert('کاربر با موفقیت حذف شد');
+    } else {
+      alert('خطا در حذف کاربر: ' + result.message);
+    }
+  } catch (error) {
+    alert('خطا در حذف کاربر');
+  }
+};
 
   const getUserTypeColor = (userType: string) => {
     switch (userType) {
@@ -130,12 +188,16 @@ const UserManagement: React.FC = () => {
   };
 
   const userStats = useMemo(() => {
-    const totalUsers = users.length;
-    const verifiedUsers = users.filter(u => u.userType === 'VERIFIED').length;
-    const ambassadorUsers = users.filter(u => u.userType === 'AMBASSADOR').length;
-    
-    return { totalUsers, verifiedUsers, ambassadorUsers };
-  }, [users]);
+  if (!Array.isArray(users)) {
+    return { totalUsers: 0, verifiedUsers: 0, ambassadorUsers: 0 };
+  }
+  
+  const totalUsers = users.length;
+  const verifiedUsers = users.filter(u => u.userType === 'VERIFIED').length;
+  const ambassadorUsers = users.filter(u => u.userType === 'AMBASSADOR').length;
+  
+  return { totalUsers, verifiedUsers, ambassadorUsers };
+}, [users]);
 
   const userPurchases = useMemo(() => {
     if (!selectedUser) return [];
@@ -278,27 +340,45 @@ const UserManagement: React.FC = () => {
                     </TableCell>
                     
                     <TableCell>
-                      <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Tooltip title="مشاهده جزئیات">
-                          <IconButton 
-                            size="small"
-                            onClick={() => setSelectedUser(user)}
-                            sx={{ color: theme.palette.info.main }}
-                          >
-                            <Visibility />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="ویرایش کاربر">
-                          <IconButton 
-                            size="small"
-                            onClick={() => setEditingUser(user)}
-                            sx={{ color: theme.palette.primary.main }}
-                          >
-                            <Edit />
-                          </IconButton>
-                        </Tooltip>
-                      </Box>
-                    </TableCell>
+  <Box sx={{ display: 'flex', gap: 1 }}>
+    <Tooltip title="مشاهده جزئیات">
+      <IconButton 
+        size="small"
+        onClick={() => setSelectedUser(user)}
+        sx={{ color: theme.palette.info.main }}
+      >
+        <Visibility />
+      </IconButton>
+    </Tooltip>
+    <Tooltip title="ویرایش کاربر">
+      <IconButton 
+        size="small"
+        onClick={() => setEditingUser(user)}
+        sx={{ color: theme.palette.primary.main }}
+      >
+        <Edit />
+      </IconButton>
+    </Tooltip>
+    <Tooltip title="تغییر رمز عبور">
+      <IconButton 
+        size="small"
+        onClick={() => setChangePasswordUser(user)}
+        sx={{ color: theme.palette.warning.main }}
+      >
+        <LockReset />
+      </IconButton>
+    </Tooltip>
+    <Tooltip title="حذف کاربر">
+  <IconButton 
+    size="small"
+    onClick={() => setDeleteConfirmUser(user)}
+    sx={{ color: theme.palette.error.main }}
+  >
+    <Delete />
+  </IconButton>
+</Tooltip>
+  </Box>
+</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -509,6 +589,86 @@ const UserManagement: React.FC = () => {
           <Button onClick={() => setSelectedUser(null)}>بستن</Button>
         </DialogActions>
       </Dialog>
+      
+      {/* 🔐 دیالوگ تغییر رمز عبور - این بخش رو اضافه کنید */}
+      <Dialog open={!!changePasswordUser} onClose={() => setChangePasswordUser(null)}>
+        <DialogTitle>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Key color="warning" />
+            تغییر رمز عبور
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" gutterBottom>
+            کاربر: {changePasswordUser?.username} ({changePasswordUser?.mobile})
+          </Typography>
+          
+          <TextField
+            fullWidth
+            type="password"
+            label="رمز عبور جدید"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            margin="normal"
+          />
+          
+          <TextField
+            fullWidth
+            type="password"
+            label="تأیید رمز عبور"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            margin="normal"
+            error={!!passwordError}
+            helperText={passwordError}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => {
+            setChangePasswordUser(null);
+            setNewPassword('');
+            setConfirmPassword('');
+            setPasswordError('');
+          }}>
+            انصراف
+          </Button>
+          <Button 
+            onClick={handleChangePassword} 
+            variant="contained" 
+            color="warning"
+            disabled={!newPassword || !confirmPassword}
+          >
+            تغییر رمز
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* دیالوگ تأیید حذف کاربر */}
+<Dialog open={!!deleteConfirmUser} onClose={() => setDeleteConfirmUser(null)}>
+  <DialogTitle>
+    تأیید حذف کاربر
+  </DialogTitle>
+  <DialogContent>
+    <Typography>
+      آیا از حذف کاربر <strong>{deleteConfirmUser?.username}</strong> ({deleteConfirmUser?.mobile}) مطمئن هستید؟
+    </Typography>
+    <Typography variant="body2" color="error" sx={{ mt: 2 }}>
+      این عمل غیرقابل بازگشت است!
+    </Typography>
+  </DialogContent>
+  <DialogActions>
+    <Button onClick={() => setDeleteConfirmUser(null)}>
+      انصراف
+    </Button>
+    <Button 
+      onClick={handleDeleteUser} 
+      variant="contained" 
+      color="error"
+      startIcon={<Delete />}
+    >
+      حذف کاربر
+    </Button>
+  </DialogActions>
+</Dialog>
     </Box>
   );
 };

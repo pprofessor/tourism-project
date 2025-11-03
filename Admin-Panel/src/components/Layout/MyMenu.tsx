@@ -12,7 +12,12 @@ const MyMenu = () => {
   const [open] = useSidebarState();
 
   return (
-    <Menu>
+    <Menu sx={{
+      '& .RaMenuItemLink-active': {
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        borderRight: '3px solid #3b82f6',
+      }
+    }}>
       <MenuItemLink
         to="/"
         primaryText="داشبورد"

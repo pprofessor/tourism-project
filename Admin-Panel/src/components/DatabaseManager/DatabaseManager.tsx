@@ -7,14 +7,10 @@ import {
   useTheme,
   useMediaQuery
 } from '@mui/material';
-import HotelManagement from './HotelManagement';
-import UserManagement from './UserManagement';
 import DataExport from './DataExport';
-import { Hotel, People, Backup } from '@mui/icons-material';
+import { Backup } from '@mui/icons-material';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import DatabaseTerminal from './DatabaseTerminal';
-import PaymentIcon from '@mui/icons-material/Payment';
-import PaymentGatewayManagement from './PaymentGatewayManagement';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -44,26 +40,12 @@ const DatabaseManager: React.FC = () => {
   };
 
   const tabs = useMemo(() => [
-  {
-  label: 'درگاه‌های پرداخت',
-  icon: <PaymentIcon />,
-  component: <PaymentGatewayManagement />
-},
+ 
   {
   label: 'ترمینال دیتابیس',
   icon: <TerminalIcon />,
   component: <DatabaseTerminal />
 },
-        {
-      label: 'مدیریت هتل‌ها',
-      icon: <Hotel />,
-      component: <HotelManagement />
-    },
-    {
-      label: 'مدیریت کاربران',
-      icon: <People />,
-      component: <UserManagement />
-    },
     {
       label: 'خروجی داده‌ها',
       icon: <Backup />,
@@ -158,7 +140,7 @@ const DatabaseManager: React.FC = () => {
       >
         <Box sx={{ textAlign: 'center' }}>
           <div className="text-sm text-gray-500">داده‌های فعال</div>
-          <div className="font-semibold text-gray-900">4 بخش</div>
+          <div className="font-semibold text-gray-900">2 بخش</div>
         </Box>
         <Box sx={{ textAlign: 'center' }}>
           <div className="text-sm text-gray-500">آخرین بروزرسانی</div>

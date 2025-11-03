@@ -13,7 +13,7 @@ const Login = () => {
 
     try {
       // استفاده از شماره موبایل admin: 09123456789
-      const response = await fetch('http://localhost:8083/api/auth/login-password', {
+      const response = await fetch('http://localhost:8080/api/auth/login-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

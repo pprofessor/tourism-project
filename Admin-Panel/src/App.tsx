@@ -1,21 +1,32 @@
 import React from 'react';
-import { Admin, Resource, List, Datagrid, TextField, Edit, Create, SimpleForm, TextInput, NumberInput, SelectInput, CustomRoutes } from 'react-admin';
+import { Admin, Resource, CustomRoutes } from 'react-admin';
 import { Route } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { dataProvider } from './dataProvider';
-import Dashboard from './Dashboard';
-import Login from './Login';
-import DatabaseManager from './components/DatabaseManager/DatabaseManager';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { faIR } from '@mui/material/locale';
+import CssBaseline from '@mui/material/CssBaseline';
+
 import { AuthProvider } from './contexts/AuthContext';
+import Login from './Login';
+import Dashboard from './Dashboard';
+import MyLayout from './components/Layout/MyLayout';
+import { dataProvider } from './dataProvider';
+
+// کامپوننت‌های مدیریت
+import DatabaseManager from './components/DatabaseManager/DatabaseManager';
 import SliderManagement from './components/DatabaseManager/SliderManagement';
 import MediaManager from './components/DatabaseManager/MediaManager';
-import MyLayout from './components/Layout/MyLayout';
-import SimpleLayout from './components/Layout/SimpleLayout';
 import PaymentGatewayManagement from './components/DatabaseManager/PaymentGatewayManagement';
+import HotelManagement from './components/DatabaseManager/HotelManagement';
+import UserManagement from './components/DatabaseManager/UserManagement';
 
-const queryClient = new QueryClient();
+// Layoutهای ساده
+const SimpleLayout = ({ children }: { children: React.ReactNode }) => (
+  <div style={{ padding: '20px', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+    {children}
+  </div>
+);
 
-// کامپوننت‌های wrapper با Layout ساده
 const DatabaseManagerWithSimpleLayout = () => (
   <SimpleLayout>
     <DatabaseManager />
@@ -40,78 +51,44 @@ const PaymentGatewayManagementWithSimpleLayout = () => (
   </SimpleLayout>
 );
 
-// کامپوننت‌های Hotel
-const HotelList = (props: any) => (
-  <List {...props}>
-    <Datagrid>
-      <TextField source="id" />
-      <TextField source="name" />
-      <TextField source="location" />
-      <TextField source="price" />
-    </Datagrid>
-  </List>
-);
+// تم مدرن برای پنل ادمین
+const adminTheme = createTheme({
+  direction: 'rtl',
+  palette: {
+    mode: 'light',
+    primary: {
+      main: '#2563eb',
+      light: '#3b82f6',
+      dark: '#1d4ed8',
+    },
+    secondary: {
+      main: '#7c3aed',
+    },
+    background: {
+      default: '#f8fafc',
+      paper: '#ffffff',
+    },
+  },
+  typography: {
+    fontFamily: '"Vazirmatn", "Tahoma", sans-serif',
+    h4: {
+      fontWeight: 700,
+      fontSize: '1.75rem',
+    },
+    h6: {
+      fontWeight: 600,
+    },
+    button: {
+      fontWeight: 500,
+      textTransform: 'none',
+    },
+  },
+  shape: {
+    borderRadius: 8,
+  },
+}, faIR);
 
-const HotelEdit = (props: any) => (
-  <Edit {...props}>
-    <SimpleForm>
-      <TextInput source="name" />
-      <TextInput source="location" />
-      <NumberInput source="price" />
-    </SimpleForm>
-  </Edit>
-);
-
-const HotelCreate = (props: any) => (
-  <Create {...props}>
-    <SimpleForm>
-      <TextInput source="name" />
-      <TextInput source="location" />
-      <NumberInput source="price" />
-    </SimpleForm>
-  </Create>
-);
-
-// کامپوننت‌های User
-const UserList = (props: any) => (
-  <List {...props}>
-    <Datagrid>
-      <TextField source="id" />
-      <TextField source="username" />
-      <TextField source="email" />
-      <TextField source="userType" />
-    </Datagrid>
-  </List>
-);
-
-const UserEdit = (props: any) => (
-  <Edit {...props}>
-    <SimpleForm>
-      <TextInput source="username" />
-      <TextInput source="email" />
-      <SelectInput source="userType" choices={[
-        { id: 'REGISTERED_TOURIST', name: 'Tourist' },
-        { id: 'VERIFIED_TOURIST', name: 'Verified' },
-        { id: 'AMBASSADOR', name: 'Ambassador' }
-      ]} />
-    </SimpleForm>
-  </Edit>
-);
-
-const UserCreate = (props: any) => (
-  <Create {...props}>
-    <SimpleForm>
-      <TextInput source="username" />
-      <TextInput source="email" />
-      <TextInput source="password" type="password" />
-      <SelectInput source="userType" choices={[
-        { id: 'REGISTERED_TOURIST', name: 'Tourist' },
-        { id: 'VERIFIED_TOURIST', name: 'Verified' },
-        { id: 'AMBASSADOR', name: 'Ambassador' }
-      ]} />
-    </SimpleForm>
-  </Create>
-);
+const queryClient = new QueryClient();
 
 function App() {
   const token = localStorage.getItem('token');
@@ -121,26 +98,28 @@ function App() {
   }
 
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <Admin 
-          dashboard={Dashboard}
-          dataProvider={dataProvider}
-          layout={MyLayout}
-          disableTelemetry 
-        >
-          <CustomRoutes>
-            {/* فقط از Layoutهای ساده استفاده کن - بدون منوی بالایی */}
-            <Route path="/database-manager" element={<DatabaseManagerWithSimpleLayout />} />
-            <Route path="/slider-management" element={<SliderManagementWithSimpleLayout />} />
-            <Route path="/media-management" element={<MediaManagerWithSimpleLayout />} />
-            <Route path="/payment-gateways" element={<PaymentGatewayManagementWithSimpleLayout />} />
-          </CustomRoutes>
-          <Resource name="hotels" list={HotelList} edit={HotelEdit} create={HotelCreate} />
-          <Resource name="users" list={UserList} edit={UserEdit} create={UserCreate} />
-        </Admin>
-      </QueryClientProvider>
-    </AuthProvider>
+    <ThemeProvider theme={adminTheme}>
+      <CssBaseline />
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <Admin 
+            dashboard={Dashboard}
+            dataProvider={dataProvider}
+            layout={MyLayout}
+            disableTelemetry 
+          >
+            <CustomRoutes>
+              <Route path="/database-manager" element={<DatabaseManagerWithSimpleLayout />} />
+              <Route path="/slider-management" element={<SliderManagementWithSimpleLayout />} />
+              <Route path="/media-management" element={<MediaManagerWithSimpleLayout />} />
+              <Route path="/payment-gateways" element={<PaymentGatewayManagementWithSimpleLayout />} />
+            </CustomRoutes>
+            <Resource name="hotels" list={HotelManagement} />
+            <Resource name="users" list={UserManagement} />
+          </Admin>
+        </QueryClientProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

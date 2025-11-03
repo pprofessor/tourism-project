@@ -1,6 +1,7 @@
 // ADMIN-PANEL/src/components/DatabaseManager/SliderManagement.tsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { sliderService, type Slide } from '../../services/sliderService'; // فقط این خط
+import { sliderService, type Slide } from '../../services/sliderService'; 
+import { mediaService, type MediaFile } from '../../services/mediaService';
 
 import {
   Box,
@@ -18,7 +19,8 @@ import {
   Typography,
   useTheme,
   useMediaQuery,
-  CircularProgress
+  CircularProgress,
+  MenuItem  
 } from '@mui/material';
 import {
   Add,
@@ -26,7 +28,8 @@ import {
   Delete,
   Visibility,
   VisibilityOff,
-  Upload
+  Upload,
+  
 } from '@mui/icons-material';
 
 interface SliderFormData {
@@ -37,10 +40,18 @@ interface SliderFormData {
   altText: string;
   seoTitle: string;
   seoDescription: string;
+   mediaSource: 'UPLOAD' | 'MEDIA_LIBRARY';
+  transitionType: 'fade' | 'slide' | 'zoom' | 'flip';
+  navigationType: 'dots' | 'arrows' | 'dots_arrows' | 'custom';
+  customNavigation: string;
+  slideInterval: number;
+  transitionDuration: number;
 }
 
 const SliderManagement: React.FC = () => {
   const theme = useTheme();
+  const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
+const [mediaLoading, setMediaLoading] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [slides, setSlides] = useState<Slide[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,8 +72,31 @@ const SliderManagement: React.FC = () => {
     buttonLink: '',
     altText: '',
     seoTitle: '',
-    seoDescription: ''
+    seoDescription: '',
+    mediaSource: 'UPLOAD',
+  transitionType: 'fade',
+  navigationType: 'dots_arrows',
+  customNavigation: 'default',
+  slideInterval: 5000,
+  transitionDuration: 500
   });
+
+
+  // بارگذاری فایل‌های مدیا
+const loadMediaFiles = async () => {
+  try {
+    setMediaLoading(true);
+    const result = await mediaService.getFiles();
+    if (result.success && result.data) {
+      setMediaFiles(result.data);
+    }
+  } catch (error) {
+    console.error('Error loading media files:', error);
+  } finally {
+    setMediaLoading(false);
+  }
+};
+
 
   // بارگذاری اسلایدها
   const loadSlides = useCallback(async () => {
@@ -126,39 +160,51 @@ const SliderManagement: React.FC = () => {
   };
 
   // باز کردن مدال برای اسلاید جدید
-  const handleAddSlide = () => {
-    setEditingSlide(null);
-    setFormData({
-      title: '',
-      description: '',
-      buttonText: '',
-      buttonLink: '',
-      altText: '',
-      seoTitle: '',
-      seoDescription: ''
-    });
-    setImagePreview('');
-    setOpenDialog(true);
-  };
+const handleAddSlide = () => {
+  setEditingSlide(null);
+  setFormData({
+    title: '',
+    description: '',
+    buttonText: '',
+    buttonLink: '',
+    altText: '',
+    seoTitle: '',
+    seoDescription: '',
+    mediaSource: 'UPLOAD',
+    transitionType: 'fade',
+    navigationType: 'dots_arrows',
+    customNavigation: 'default',
+    slideInterval: 5000,
+    transitionDuration: 500
+  });
+  setImagePreview('');
+  setOpenDialog(true);
+};
 
-  // باز کردن مدال برای ویرایش
-  const handleEditSlide = (slide: Slide) => {
-    setEditingSlide(slide);
-    setFormData({
-      title: slide.title,
-      description: slide.description,
-      buttonText: slide.buttonText,
-      buttonLink: slide.buttonLink,
-      altText: slide.altText,
-      seoTitle: slide.seoTitle || '',
-      seoDescription: slide.seoDescription || ''
-    });
-    setImagePreview(slide.image);
-    setOpenDialog(true);
-  };
+// باز کردن مدال برای ویرایش
+const handleEditSlide = (slide: Slide) => {
+  setEditingSlide(slide);
+  setFormData({
+    title: slide.title,
+    description: slide.description,
+    buttonText: slide.buttonText,
+buttonLink: slide.buttonLink, 
+   altText: slide.altText,
+    seoTitle: slide.seoTitle || '',
+    seoDescription: slide.seoDescription || '',
+    mediaSource: slide.mediaSource || 'UPLOAD',
+    transitionType: slide.transitionType || 'fade',
+    navigationType: slide.navigationType || 'dots_arrows',
+    customNavigation: slide.customNavigation || 'default',
+    slideInterval: slide.slideInterval || 5000,
+    transitionDuration: slide.transitionDuration || 500
+  });
+setImagePreview(slide.image);
+  setOpenDialog(true);
+};
 
   // ذخیره اسلاید
-  const handleSaveSlide = async () => {
+ const handleSaveSlide = async () => {
   if (!formData.title.trim() || !formData.description.trim() || !imagePreview) {
     setSnackbar({ 
       open: true, 
@@ -173,33 +219,34 @@ const SliderManagement: React.FC = () => {
       title: formData.title,
       description: formData.description,
       buttonText: formData.buttonText,
-      buttonLink: formData.buttonLink,
+      buttonLink: formData.buttonLink, // تغییر از buttonLink به targetUrl
+image: imagePreview,
       altText: formData.altText,
       seoTitle: formData.seoTitle,
       seoDescription: formData.seoDescription,
-      image: imagePreview,
-      isActive: true, // با حروف کوچک
-      sortOrder: editingSlide ? editingSlide.sortOrder : slides.length
+      isActive: true,
+displayOrder: editingSlide ? editingSlide.displayOrder : slides.length,      // فیلدهای پیشرفته
+      mediaSource: formData.mediaSource,
+      transitionType: formData.transitionType,
+      navigationType: formData.navigationType,
+      customNavigation: formData.customNavigation,
+      slideInterval: formData.slideInterval,
+      transitionDuration: formData.transitionDuration
     };
 
     if (editingSlide) {
-      await sliderService.updateSlide(editingSlide.id.toString(), slideData); // تبدیل به string
-      setSnackbar({ 
-        open: true, 
-        message: 'اسلاید با موفقیت به‌روزرسانی شد', 
-        severity: 'success' 
-      });
+      await sliderService.updateSlide(editingSlide.id.toString(), slideData);
     } else {
       await sliderService.createSlide(slideData);
-      setSnackbar({ 
-        open: true, 
-        message: 'اسلاید جدید با موفقیت ایجاد شد', 
-        severity: 'success' 
-      });
     }
     
     setOpenDialog(false);
     loadSlides();
+    setSnackbar({ 
+      open: true, 
+      message: editingSlide ? 'اسلاید با موفقیت به‌روزرسانی شد' : 'اسلاید جدید با موفقیت ایجاد شد', 
+      severity: 'success' 
+    });
   } catch (error) {
     setSnackbar({ 
       open: true, 
@@ -291,6 +338,7 @@ await sliderService.toggleSlideStatus(slide.id.toString(), !slide.isActive);    
                 sx={{
                   height: 200,
                   backgroundImage: `url(${slide.image})`,
+
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   position: 'relative'
@@ -371,60 +419,134 @@ await sliderService.toggleSlideStatus(slide.id.toString(), !slide.isActive);    
         <DialogContent>
           <Box display="flex" flexDirection="column" gap={3}>
             {/* آپلود تصویر */}
-            <Box>
-              <Box 
-                sx={{ 
-                  border: '2px dashed',
-                  borderColor: 'divider',
-                  borderRadius: 2,
-                  p: 3,
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  position: 'relative'
-                }}
-                onClick={() => document.getElementById('image-upload')?.click()}
-              >
-                <input
-                  id="image-upload"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  style={{ display: 'none' }}
-                />
-                
-                {imagePreview ? (
-                  <Box>
-                    <img 
-                      src={imagePreview} 
-                      alt="Preview" 
-                      style={{ 
-                        maxWidth: '100%', 
-                        maxHeight: 200, 
-                        borderRadius: 8 
-                      }} 
-                    />
-                    {uploadProgress > 0 && uploadProgress < 100 && (
-                      <Box mt={1}>
-                        <CircularProgress variant="determinate" value={uploadProgress} />
-                        <Typography variant="body2" mt={1}>
-                          {uploadProgress}% آپلود شده
-                        </Typography>
-                      </Box>
-                    )}
-                  </Box>
-                ) : (
-                  <Box>
-                    <Upload sx={{ fontSize: 48, color: 'text.secondary', mb: 1 }} />
-                    <Typography variant="body1" color="text.secondary">
-                      برای آپلود تصویر کلیک کنید
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" mt={1}>
-                      فرمت‌های مجاز: JPG, PNG, GIF - حداکثر سایز: 5MB
-                    </Typography>
-                  </Box>
-                )}
-              </Box>
+<Box>
+  <Typography variant="h6" gutterBottom>
+    تصویر اسلاید
+  </Typography>
+  
+  <Box display="flex" gap={2} mb={2}>
+    <Button
+      variant={formData.mediaSource === 'UPLOAD' ? 'contained' : 'outlined'}
+      onClick={() => setFormData(prev => ({ ...prev, mediaSource: 'UPLOAD' }))}
+    >
+      آپلود جدید
+    </Button>
+    <Button
+      variant={formData.mediaSource === 'MEDIA_LIBRARY' ? 'contained' : 'outlined'}
+      onClick={() => {
+        setFormData(prev => ({ ...prev, mediaSource: 'MEDIA_LIBRARY' }));
+        loadMediaFiles();
+      }}
+    >
+      انتخاب از کتابخانه
+    </Button>
+  </Box>
+
+  {formData.mediaSource === 'UPLOAD' && (
+    <Box 
+      sx={{ 
+        border: '2px dashed',
+        borderColor: 'divider',
+        borderRadius: 2,
+        p: 3,
+        textAlign: 'center',
+        cursor: 'pointer',
+        position: 'relative'
+      }}
+      onClick={() => document.getElementById('image-upload')?.click()}
+    >
+      <input
+        id="image-upload"
+        type="file"
+        accept="image/*"
+        onChange={handleImageUpload}
+        style={{ display: 'none' }}
+      />
+      
+      {imagePreview ? (
+        <Box>
+          <img 
+            src={imagePreview} 
+            alt="Preview" 
+            style={{ 
+              maxWidth: '100%', 
+              maxHeight: 200, 
+              borderRadius: 8 
+            }} 
+          />
+          {uploadProgress > 0 && uploadProgress < 100 && (
+            <Box mt={1}>
+              <CircularProgress variant="determinate" value={uploadProgress} />
+              <Typography variant="body2" mt={1}>
+                {uploadProgress}% آپلود شده
+              </Typography>
             </Box>
+          )}
+        </Box>
+      ) : (
+        <Box>
+          <Upload sx={{ fontSize: 48, color: 'text.secondary', mb: 1 }} />
+          <Typography variant="body1" color="text.secondary">
+            برای آپلود تصویر کلیک کنید
+          </Typography>
+          <Typography variant="body2" color="text.secondary" mt={1}>
+            فرمت‌های مجاز: JPG, PNG, GIF - حداکثر سایز: 5MB
+          </Typography>
+        </Box>
+      )}
+    </Box>
+  )}
+
+  {formData.mediaSource === 'MEDIA_LIBRARY' && (
+    <Box>
+      {mediaLoading ? (
+        <Box display="flex" justifyContent="center" p={3}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Box 
+          sx={{ 
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+            gap: 2,
+            maxHeight: 300,
+            overflow: 'auto',
+            p: 1
+          }}
+        >
+          {mediaFiles.filter(file => file.type === 'image').map((file) => (
+            <Card 
+              key={file.id}
+              sx={{ 
+                cursor: 'pointer',
+                border: imagePreview === file.url ? '2px solid' : '1px solid',
+                borderColor: imagePreview === file.url ? 'primary.main' : 'divider'
+              }}
+              onClick={() => setImagePreview(file.url)}
+            >
+              <Box sx={{ height: 100, position: 'relative' }}>
+                <img 
+                  src={file.url} 
+                  alt={file.name}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover'
+                  }}
+                />
+              </Box>
+              <Box p={1}>
+                <Typography variant="body2" noWrap title={file.name}>
+                  {file.name}
+                </Typography>
+              </Box>
+            </Card>
+          ))}
+        </Box>
+      )}
+    </Box>
+  )}
+</Box>
 
             {/* فیلدهای فرم */}
             <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={3}>
@@ -495,6 +617,67 @@ await sliderService.toggleSlideStatus(slide.id.toString(), !slide.isActive);    
                 helperText="توضیحات متا برای بهینه‌سازی موتورهای جستجو"
               />
             </Box>
+
+{/* تنظیمات پیشرفته اسلایدشو */}
+<Box>
+  <Typography variant="h6" gutterBottom>
+    تنظیمات پیشرفته اسلایدشو
+  </Typography>
+  
+  <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={3} mb={2}>
+    <TextField
+      fullWidth
+      select
+      label="منبع تصویر"
+      value={formData.mediaSource}
+      onChange={(e) => setFormData(prev => ({ ...prev, mediaSource: e.target.value as 'UPLOAD' | 'MEDIA_LIBRARY' }))}
+      helperText="منبع فایل اسلاید"
+    >
+      <MenuItem value="UPLOAD">آپلود جدید</MenuItem>
+      <MenuItem value="MEDIA_LIBRARY">کتابخانه مدیا</MenuItem>
+    </TextField>
+    
+    <TextField
+      fullWidth
+      select
+      label="نوع انتقال"
+      value={formData.transitionType}
+      onChange={(e) => setFormData(prev => ({ ...prev, transitionType: e.target.value as 'fade' | 'slide' | 'zoom' | 'flip' }))}
+      helperText="انیمیشن تغییر اسلاید"
+    >
+      <MenuItem value="fade">Fade (محو)</MenuItem>
+      <MenuItem value="slide">Slide (لغزش)</MenuItem>
+      <MenuItem value="zoom">Zoom (زوم)</MenuItem>
+      <MenuItem value="flip">Flip (چرخش)</MenuItem>
+    </TextField>
+  </Box>
+
+  <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={3} mb={2}>
+    <TextField
+      fullWidth
+      select
+      label="نوع ناوبری"
+      value={formData.navigationType}
+      onChange={(e) => setFormData(prev => ({ ...prev, navigationType: e.target.value as 'dots' | 'arrows' | 'dots_arrows' | 'custom' }))}
+      helperText="دکمه‌های تغییر اسلاید"
+    >
+      <MenuItem value="dots">نقطه‌ها</MenuItem>
+      <MenuItem value="arrows">فلش‌ها</MenuItem>
+      <MenuItem value="dots_arrows">نقطه و فلش</MenuItem>
+      <MenuItem value="custom">نمادهای خاص</MenuItem>
+    </TextField>
+    
+    <TextField
+      fullWidth
+      label="زمان تعویض (میلی‌ثانیه)"
+      type="number"
+      value={formData.slideInterval}
+      onChange={(e) => setFormData(prev => ({ ...prev, slideInterval: parseInt(e.target.value) || 5000 }))}
+      helperText="مثال: 5000 = 5 ثانیه"
+    />
+  </Box>
+</Box>
+
           </Box>
         </DialogContent>
 
