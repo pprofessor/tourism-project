@@ -9,7 +9,7 @@ import Support from './pages/Support';
 
 function App() {
   return (
-    <ThemeProvider> {/* این خط رو اضافه کنید */}
+    <ThemeProvider>
       <CartProvider>
         <Router>
           <div className="App">

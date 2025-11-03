@@ -152,7 +152,7 @@ const Profile: React.FC = () => {
     
     setUser(prevUser => {
       // ساخت آدرس کامل برای ذخیره‌سازی با اعتبارسنجی
-      const fullImageUrl = imageUrl.startsWith('http') ? imageUrl : `http://localhost:8083${imageUrl}`;
+      const fullImageUrl = imageUrl.startsWith('http') ? imageUrl : `http://localhost:8080${imageUrl}`;
       
       // اعتبارسنجی URL تصویر
       if (!isValidImageUrl(fullImageUrl)) {

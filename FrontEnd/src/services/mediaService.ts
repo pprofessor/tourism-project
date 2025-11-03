@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8083/api/media';
+const API_BASE_URL = 'http://localhost:8080/api/media';
 
 export interface MediaFile {
   id: string;
@@ -71,7 +71,7 @@ export const mediaService = {
         return {
           id: file.name,
           name: file.name,
-          url: `http://localhost:8083${file.url}`,
+          url: `http://localhost:8080${file.url}`,
           type: fileType,
           size: parseInt(file.size),
           uploadedAt: file.uploadedAt,

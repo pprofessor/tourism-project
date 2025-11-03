@@ -47,7 +47,7 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ userData, onIma
 
       console.log('📤 شروع آپلود به سرور...');
 
-      const response = await fetch('http://localhost:8083/api/upload/profile-image', {
+      const response = await fetch('http://localhost:8080/api/upload/profile-image', {
         method: 'POST',
         body: formData,
       });
@@ -91,7 +91,7 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({ userData, onIma
             />
           ) : userData.profileImage ? (
             <img 
-              src={userData.profileImage.includes('http') ? userData.profileImage : `http://localhost:8083${userData.profileImage}`}
+              src={userData.profileImage.includes('http') ? userData.profileImage : `http://localhost:8080${userData.profileImage}`}
               alt={t('profileImage.profileAlt')}
               className="w-full h-full object-cover"
             />
