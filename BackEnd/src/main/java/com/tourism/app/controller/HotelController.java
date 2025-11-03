@@ -31,7 +31,7 @@ public class HotelController {
         hotel.setName(hotelDetails.getName());
         hotel.setLocation(hotelDetails.getLocation());
         hotel.setPrice(hotelDetails.getPrice());
-        hotel.setImageUrl(hotelDetails.getImageUrl());
+        hotel.setImageUrl(hotelDetails.getImageUrl()); // تغییر از setImage و getImage به setImageUrl و getImageUrl
         
         return hotelRepository.save(hotel);
     }

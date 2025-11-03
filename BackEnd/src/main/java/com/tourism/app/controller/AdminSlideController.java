@@ -1,39 +1,77 @@
 package com.tourism.app.controller;
 
+import com.tourism.app.Service.SlideService;
 import com.tourism.app.entity.Slide;
-import com.tourism.app.repository.SlideRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin/slides")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"}) // اضافه کردن پنل ادمین
+@CrossOrigin(origins = "*")
 public class AdminSlideController {
     
     @Autowired
-    private SlideRepository slideRepository;
+    private SlideService slideService;
     
     @GetMapping
-    public List<Slide> getAllSlides() {
-        return slideRepository.findAll(Sort.by(Sort.Direction.ASC, "sortOrder"));
+    public ResponseEntity<?> getAllSlides() {
+        try {
+            List<Slide> slides = slideService.getAllSlides();
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "data", slides
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("success", false, "message", e.getMessage()));
+        }
     }
     
     @PostMapping
-    public Slide createSlide(@RequestBody Slide slide) {
-        return slideRepository.save(slide);
+    public ResponseEntity<?> createSlide(@RequestBody Slide slide) {
+        try {
+            Slide createdSlide = slideService.createSlide(slide);
+            return ResponseEntity.ok(Map.of(
+                "success", true, 
+                "message", "اسلاید ایجاد شد",
+                "data", createdSlide
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("success", false, "message", e.getMessage()));
+        }
     }
     
     @PutMapping("/{id}")
-    public Slide updateSlide(@PathVariable Long id, @RequestBody Slide slide) {
-        slide.setId(id);
-        return slideRepository.save(slide);
+    public ResponseEntity<?> updateSlide(@PathVariable Long id, @RequestBody Slide slide) {
+        try {
+            Slide updatedSlide = slideService.updateSlide(id, slide);
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "اسلاید بروزرسانی شد", 
+                "data", updatedSlide
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("success", false, "message", e.getMessage()));
+        }
     }
     
     @DeleteMapping("/{id}")
-    public void deleteSlide(@PathVariable Long id) {
-        slideRepository.deleteById(id);
+    public ResponseEntity<?> deleteSlide(@PathVariable Long id) {
+        try {
+            slideService.deleteSlide(id);
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "اسلاید حذف شد"
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("success", false, "message", e.getMessage()));
+        }
     }
 }

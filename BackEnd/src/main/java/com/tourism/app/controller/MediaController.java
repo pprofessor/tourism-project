@@ -10,16 +10,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.annotation.PostConstruct;
-
+import java.util.List;
+import java.util.ArrayList;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.text.SimpleDateFormat;
 
@@ -144,53 +143,58 @@ public class MediaController {
         }
     }
 
-    @GetMapping("/files")
-    public ResponseEntity<?> getFiles() {
-        logger.info("[REQUEST] Get files list request");
+   @GetMapping("/files")
+public ResponseEntity<?> getFiles() {
+    logger.info("[REQUEST] Get files list request");
+    
+    try {
+        List<Map<String, Object>> files = new ArrayList<>();
+        String[] categories = {"Images", "Videos", "Audios", "Others"};
+        int totalFiles = 0;
         
-        try {
-            List<Map<String, Object>> files = new ArrayList<>();
-            String[] categories = {"Images", "Videos", "Audios", "Others"};
-            int totalFiles = 0;
-            
-            for (String category : categories) {
-        File categoryDir = new File(mediaProperties.getUploadDir() + "/" + category);
-        if (categoryDir.exists() && categoryDir.isDirectory()) {
-            File[] fileList = categoryDir.listFiles();
-            if (fileList != null) {
-                for (File file : fileList) {
-                    if (file.isFile()) {
-                        Map<String, Object> fileInfo = new HashMap<>();
-                        fileInfo.put("id", file.getName());
-                        fileInfo.put("name", file.getName());
-                        fileInfo.put("url", String.format("http://localhost:%s/media/%s/%s", 
-                            serverPort, category, file.getName()));
-                        fileInfo.put("size", file.length());
-                        fileInfo.put("uploadedAt", formatFileDate(file));
-                        fileInfo.put("category", category.toLowerCase());
-                        fileInfo.put("type", getFileTypeFromExtension(file.getName()));
-                        files.add(fileInfo);
+        for (String category : categories) {
+            File categoryDir = new File(mediaProperties.getUploadDir() + "/" + category);
+            if (categoryDir.exists() && categoryDir.isDirectory()) {
+                File[] fileList = categoryDir.listFiles();
+                if (fileList != null) {
+                    for (File file : fileList) {
+                        if (file.isFile()) {
+                            Map<String, Object> fileInfo = new HashMap<>();
+                            fileInfo.put("id", file.getName());
+                            fileInfo.put("name", file.getName());
+                            
+                            // ✅ این خط رو اصلاح کن - استفاده از مسیر درست
+                            fileInfo.put("url", String.format("http://localhost:%s/media/images/%s", serverPort, file.getName()));
+                            
+                            fileInfo.put("size", file.length());
+                            fileInfo.put("uploadedAt", formatFileDate(file));
+                            fileInfo.put("category", category.toLowerCase());
+                            fileInfo.put("type", getFileTypeFromExtension(file.getName()));
+                            
+                            files.add(fileInfo);
+                            totalFiles++;
+                            logger.debug("[FOUND] File: {} in {}", file.getName(), category);
+                        }
                     }
                 }
             }
-                }
-            }
-            
-            logger.info("[SUCCESS] Returning {} files to frontend", totalFiles);
-            
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("data", files);
-            response.put("total", totalFiles);
-            
-            return ResponseEntity.ok(response);
-            
-        } catch (Exception e) {
-            logger.error("[ERROR] Error getting files list: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("success", false, "message", "Error getting files list: " + e.getMessage()));
         }
+        
+        logger.info("[SUCCESS] Returning {} files to frontend", totalFiles);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("data", files);
+        response.put("total", totalFiles);
+        
+        return ResponseEntity.ok(response);
+        
+    } catch (Exception e) {
+        logger.error("[ERROR] Error getting files list: {}", e.getMessage(), e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("success", false, "message", "Error getting files list: " + e.getMessage()));
     }
+}
 
     @PutMapping("/rename/{fileName}")
 public ResponseEntity<?> renameFile(@PathVariable String fileName, @RequestBody Map<String, String> request) {
