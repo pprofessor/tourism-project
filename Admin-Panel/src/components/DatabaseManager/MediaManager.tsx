@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Card,
@@ -12,7 +12,9 @@ import {
   DialogActions,
   Alert,
   Snackbar,
-  CircularProgress
+  CircularProgress,
+  Chip,
+  Tooltip,
 } from '@mui/material';
 import {
   Add,
@@ -26,19 +28,299 @@ import {
   ViewCompact,
   Edit,    
   Check,   
-  Close   
-   
+  Close,
+  Refresh,
+  GetApp,
+  ContentCopy
 } from '@mui/icons-material';
 import { mediaService, MediaFile } from '../../services/mediaService';
 
-interface ViewStyle {
-  container: any;
-  card: any;
-  image: { 
-    height: number; 
-    width?: number; // اضافه کردن width به عنوان optional
+// کامپوننت برای نمایش فایل
+const MediaFileCard: React.FC<{
+  file: MediaFile;
+  viewMode: 'grid' | 'list' | 'large';
+  onEdit: (file: MediaFile) => void;
+  onDelete: (id: string) => void;
+  onDownload?: (file: MediaFile) => void;
+  editingFileId: string | null;
+  editFileName: string;
+  editLoading: boolean;
+  onStartEditing: (file: MediaFile) => void;
+  onCancelEditing: () => void;
+  onConfirmEdit: (fileId: string, newName: string) => void;
+  onCopyUrl?: (url: string) => void;
+}> = ({ 
+  file, 
+  viewMode, 
+  onEdit, 
+  onDelete, 
+  onDownload,
+  editingFileId,
+  editFileName,
+  editLoading,
+  onStartEditing,
+  onCancelEditing,
+  onConfirmEdit,
+  onCopyUrl
+}) => {
+  const [imageError, setImageError] = useState(false);
+
+  const getFileIcon = (type: MediaFile['type']) => {
+    switch (type) {
+      case 'image': return <Image color="primary" />;
+      case 'video': return <VideoFile color="secondary" />;
+      case 'audio': return <AudioFile color="success" />;
+      default: return <InsertDriveFile color="action" />;
+    }
   };
-}
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return isNaN(date.getTime()) 
+        ? 'تاریخ نامشخص' 
+        : date.toLocaleDateString('fa-IR');
+    } catch {
+      return 'تاریخ نامشخص';
+    }
+  };
+
+  const getCardStyle = () => {
+    switch (viewMode) {
+      case 'grid':
+        return { height: '100%', minHeight: 280 };
+      case 'list':
+        return { display: 'flex', alignItems: 'center', height: 'auto' };
+      case 'large':
+        return { height: '100%', minHeight: 350 };
+      default:
+        return { height: '100%' };
+    }
+  };
+
+  const getImageStyle = () => {
+    switch (viewMode) {
+      case 'grid':
+        return { height: 160, width: '100%' };
+      case 'list':
+        return { height: 60, width: 80 };
+      case 'large':
+        return { height: 220, width: '100%' };
+      default:
+        return { height: 160, width: '100%' };
+    }
+  };
+
+  return (
+    <Card 
+      sx={{ 
+        ...getCardStyle(),
+        transition: 'all 0.3s ease',
+        '&:hover': {
+          transform: 'translateY(-4px)',
+          boxShadow: 4
+        }
+      }}
+    >
+      <CardContent sx={{ 
+        flexGrow: 1, 
+        p: viewMode === 'list' ? 2 : 3,
+        display: viewMode === 'list' ? 'flex' : 'block',
+        alignItems: viewMode === 'list' ? 'center' : 'normal',
+        width: '100%'
+      }}>
+        {/* Header */}
+        <Box display="flex" alignItems="flex-start" mb={viewMode === 'list' ? 0 : 2}>
+          <IconButton size="small" sx={{ mr: 1 }}>
+            {getFileIcon(file.type)}
+          </IconButton>
+          
+          <Box flex={1} sx={{ minWidth: 0 }}>
+            {/* حالت ویرایش یا نمایش */}
+            {editingFileId === file.id ? (
+              <Box display="flex" alignItems="center" gap={1}>
+                <input
+                  value={editFileName}
+                  onChange={(e) => onStartEditing({ ...file, name: e.target.value })}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      onConfirmEdit(file.id, editFileName);
+                    } else if (e.key === 'Escape') {
+                      onCancelEditing();
+                    }
+                  }}
+                  style={{
+                    flex: 1,
+                    padding: '4px 8px',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                    fontSize: '14px'
+                  }}
+                  autoFocus
+                  disabled={editLoading}
+                />
+                <IconButton 
+                  size="small" 
+                  onClick={() => onConfirmEdit(file.id, editFileName)}
+                  disabled={editLoading}
+                  color="primary"
+                >
+                  <Check />
+                </IconButton>
+                <IconButton 
+                  size="small" 
+                  onClick={onCancelEditing}
+                  disabled={editLoading}
+                  color="inherit"
+                >
+                  <Close />
+                </IconButton>
+              </Box>
+            ) : (
+              <Tooltip title={file.name}>
+                <Typography 
+                  variant={viewMode === 'list' ? "body1" : "h6"}
+                  noWrap 
+                  sx={{ fontWeight: 'medium', cursor: 'pointer' }}
+                  onClick={() => onStartEditing(file)}
+                >
+                  {file.name}
+                </Typography>
+              </Tooltip>
+            )}
+            
+            {/* اطلاعات فایل */}
+            {viewMode !== 'list' && (
+              <Box mt={1}>
+                <Chip 
+                  label={file.type} 
+                  size="small" 
+                  color={
+                    file.type === 'image' ? 'primary' :
+                    file.type === 'video' ? 'secondary' :
+                    file.type === 'audio' ? 'success' : 'default'
+                  }
+                  sx={{ mb: 1 }}
+                />
+                <Typography variant="caption" color="text.secondary" display="block">
+                  📏 حجم: {formatFileSize(file.size)}
+                </Typography>
+                <Typography variant="caption" color="text.secondary" display="block">
+                  📅 تاریخ: {formatDate(file.uploadedAt)}
+                </Typography>
+              </Box>
+            )}
+          </Box>
+          
+          {/* Actions */}
+          <Box display="flex" flexDirection={viewMode === 'list' ? 'row' : 'column'} gap={0.5}>
+            <Tooltip title="ویرایش نام">
+              <IconButton 
+                color="primary"
+                onClick={() => onStartEditing(file)}
+                disabled={editLoading}
+                size="small"
+              >
+                <Edit />
+              </IconButton>
+            </Tooltip>
+                       
+            {onDownload && (
+              <Tooltip title="دانلود">
+                <IconButton 
+                  color="info"
+                  onClick={() => onDownload(file)}
+                  size="small"
+                >
+                  <GetApp />
+                </IconButton>
+              </Tooltip>
+            )}
+            
+            <Tooltip title="حذف">
+              <IconButton 
+                color="error"
+                onClick={() => onDelete(file.id)}
+                disabled={editLoading}
+                size="small"
+              >
+                <Delete />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title="کپی آدرس فایل">
+  <IconButton 
+    color="info"
+    onClick={() => onCopyUrl?.(file.url)} // ✅ استفاده از prop
+    size="small"
+  >
+    <ContentCopy />
+  </IconButton>
+</Tooltip>
+          </Box>
+        </Box>
+
+        {/* اطلاعات مختصر برای حالت list */}
+        {viewMode === 'list' && (
+          <Box display="flex" gap={2} ml={2} flex={1}>
+            <Chip 
+              label={file.type} 
+              size="small" 
+              variant="outlined"
+            />
+            <Typography variant="caption" color="text.secondary">
+              📏 {formatFileSize(file.size)}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              📅 {formatDate(file.uploadedAt)}
+            </Typography>
+          </Box>
+        )}
+
+        {/* Image preview */}
+        {file.type === 'image' && viewMode !== 'list' && (
+          <Box mt={2}>
+            <img 
+              src={file.url}
+              alt={file.name}
+              style={{ 
+                ...getImageStyle(),
+                objectFit: 'cover',
+                borderRadius: 8,
+                border: '1px solid #e0e0e0',
+                display: imageError ? 'none' : 'block'
+              }} 
+              loading="lazy"
+              onError={() => setImageError(true)}
+            />
+            {imageError && (
+              <Box 
+                sx={{ 
+                  ...getImageStyle(),
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: 'grey.100',
+                  borderRadius: 2
+                }}
+              >
+                <Image sx={{ fontSize: 48, color: 'grey.400' }} />
+              </Box>
+            )}
+          </Box>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
 
 const MediaManager: React.FC = () => {
   const [files, setFiles] = useState<MediaFile[]>([]);
@@ -47,12 +329,64 @@ const MediaManager: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [editingFileId, setEditingFileId] = useState<string | null>(null);
-const [editFileName, setEditFileName] = useState('');
-const [editLoading, setEditLoading] = useState(false);
-  
-  
-// ویرایش نام فایل
-const handleEditFileName = async (fileId: string, newName: string) => {
+  const [editFileName, setEditFileName] = useState('');
+  const [editLoading, setEditLoading] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'large'>('grid');
+  const [snackbar, setSnackbar] = useState({ 
+    open: false, 
+    message: '', 
+    severity: 'success' as 'success' | 'error' 
+  });
+
+  // بارگذاری فایل‌ها
+  const loadFiles = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await mediaService.getFiles();
+      
+      console.log('📋 پاسخ از mediaService:', response);
+      
+      if (response.success && response.data) {
+        console.log('✅ فایل‌های قابل نمایش:', response.data.length);
+        setFiles(response.data);
+      } else {
+        console.log('❌ خطا در دریافت فایل‌ها:', response.message);
+        setSnackbar({
+          open: true,
+          message: response.message,
+          severity: 'error'
+        });
+      }
+    } catch (error) {
+      console.error('💥 خطای غیرمنتظره:', error);
+      setSnackbar({
+        open: true,
+        message: 'خطا در بارگذاری فایل‌ها',
+        severity: 'error'
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadFiles();
+  }, [loadFiles]);
+
+  // شروع ویرایش
+  const startEditing = (file: MediaFile) => {
+    setEditingFileId(file.id);
+    setEditFileName(file.name);
+  };
+
+  // لغو ویرایش
+  const cancelEditing = () => {
+    setEditingFileId(null);
+    setEditFileName('');
+  };
+
+  // تایید ویرایش
+  const handleEditFileName = async (fileId: string, newName: string) => {
   if (!newName.trim()) {
     setSnackbar({
       open: true,
@@ -62,29 +396,31 @@ const handleEditFileName = async (fileId: string, newName: string) => {
     return;
   }
 
-  // اگر نام تغییر نکرده، کاری نکن
   const file = files.find(f => f.id === fileId);
   if (file && file.name === newName) {
-    setEditingFileId(null);
-    setEditFileName('');
+    cancelEditing();
     return;
   }
 
   try {
     setEditLoading(true);
-    
-    // صدا زدن API برای تغییر نام فایل در بک‌اند
     const response = await mediaService.renameFile(fileId, newName);
     
-    if (response.success) {
-      // آپدیت state در فرانت‌اند
+    if (response.success && response.data) {
+      // ✅ استفاده از data با type assertion
+      const responseData = response.data as { newName: string; newUrl: string };
+      
+      // ✅ آپدیت state با اطلاعات جدید از سرور
       setFiles(prev => prev.map(file => 
-        file.id === fileId ? { ...file, name: newName } : file
+        file.id === fileId ? { 
+          ...file, 
+          name: responseData.newName,
+          url: responseData.newUrl,
+          id: responseData.newName
+        } : file
       ));
       
-      setEditingFileId(null);
-      setEditFileName('');
-      
+      cancelEditing();
       setSnackbar({
         open: true,
         message: 'نام فایل با موفقیت تغییر کرد',
@@ -108,118 +444,14 @@ const handleEditFileName = async (fileId: string, newName: string) => {
   }
 };
 
-// شروع ویرایش
-const startEditing = (file: MediaFile) => {
-  setEditingFileId(file.id);
-  setEditFileName(file.name);
-};
-
-// لغو ویرایش
-const cancelEditing = () => {
-  setEditingFileId(null);
-  setEditFileName('');
-};
-
-// حالت‌های جدید برای نمایش
-  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'large'>('grid');
-  
-  //const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [snackbar, setSnackbar] = useState({ 
-    open: false, 
-    message: '', 
-    severity: 'success' as 'success' | 'error' 
-  });
-
-  // بارگذاری فایل‌ها از سرور
-  useEffect(() => {
-    loadFiles();
-  }, []);
-
-/// تابع برای استایل‌های مختلف بر اساس view mode
-const getViewStyle = (): ViewStyle => {
-  switch (viewMode) {
-    case 'grid':
-      return {
-        container: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 3 },
-        card: { height: '100%' },
-        image: { height: 180 }
-      };
-    case 'list':
-      return {
-        container: { display: 'flex', flexDirection: 'column', gap: 2 },
-        card: { display: 'flex', alignItems: 'center' },
-        image: { height: 80, width: 120 } // حالا width مجاز هست
-      };
-    case 'large':
-      return {
-        container: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: 3 },
-        card: { height: '100%' },
-        image: { height: 250 }
-      };
-    default:
-      return {
-        container: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 3 },
-        card: { height: '100%' },
-        image: { height: 180 }
-      };
-  }
-};
-
-  // تابع برای بارگذاری فایل‌ها
-  const loadFiles = async () => {
-    try {
-      setLoading(true);
-      const response = await mediaService.getFiles();
-      
-      console.log('📋 پاسخ از mediaService:', response);
-      
-      if (response.success && response.data) {
-        console.log('✅ فایل‌های قابل نمایش:', response.data);
-        setFiles(response.data);
-      } else {
-        console.log('❌ خطا در دریافت فایل‌ها:', response.message);
-        setSnackbar({
-          open: true,
-          message: response.message,
-          severity: 'error'
-        });
-      }
-    } catch (error) {
-      console.error('💥 خطای غیرمنتظره:', error);
-      setSnackbar({
-        open: true,
-        message: 'خطا در بارگذاری فایل‌ها',
-        severity: 'error'
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getFileType = (file: File): MediaFile['type'] => {
-    if (file.type.startsWith('image/')) return 'image';
-    if (file.type.startsWith('video/')) return 'video';
-    if (file.type.startsWith('audio/')) return 'audio';
-    return 'document';
-  };
-
-  const getFileIcon = (type: MediaFile['type']) => {
-    switch (type) {
-      case 'image': return <Image />;
-      case 'video': return <VideoFile />;
-      case 'audio': return <AudioFile />;
-      default: return <InsertDriveFile />;
-    }
-  };
-
+  // آپلود فایل
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // ریست کردن input برای آپلود فایل تکراری
     event.target.value = '';
 
-    if (file.size > 50 * 1024 * 1024) { // 50MB limit
+    if (file.size > 50 * 1024 * 1024) {
       setSnackbar({
         open: true,
         message: 'سایز فایل نباید بیشتر از 50MB باشد',
@@ -232,7 +464,6 @@ const getViewStyle = (): ViewStyle => {
     setOpenUpload(true);
   };
 
-  // آپلود فایل به سرور
   const handleUploadConfirm = async () => {
     if (!selectedFile) return;
 
@@ -241,7 +472,6 @@ const getViewStyle = (): ViewStyle => {
       const response = await mediaService.uploadFile(selectedFile);
       
       if (response.success) {
-        // ریلود لیست فایل‌ها از سرور
         await loadFiles();
         setOpenUpload(false);
         setSelectedFile(null);
@@ -268,8 +498,10 @@ const getViewStyle = (): ViewStyle => {
     }
   };
 
-  // حذف فایل از سرور
+  // حذف فایل
   const handleDeleteFile = async (id: string) => {
+    if (!window.confirm('آیا از حذف این فایل اطمینان دارید؟')) return;
+
     try {
       const response = await mediaService.deleteFile(id);
       
@@ -296,122 +528,117 @@ const getViewStyle = (): ViewStyle => {
     }
   };
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  // دانلود فایل
+  const handleDownloadFile = (file: MediaFile) => {
+    const link = document.createElement('a');
+    link.href = file.url;
+    link.download = file.name;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
-// تابع برای فرمت تاریخ
-const formatDate = (dateString: string, fileName: string) => {
-  try {
-    const date = new Date(dateString);
-    
-    // اگر تاریخ معتبر نیست، از timestamp استفاده کن
-    if (isNaN(date.getTime())) {
-      // سعی کن تاریخ رو از نام فایل استخراج کنی
-      const timestampMatch = fileName.match(/^(\d+)_/);
-      if (timestampMatch) {
-        const timestamp = parseInt(timestampMatch[1]);
-        const validDate = new Date(timestamp);
-        return validDate.toLocaleDateString('fa-IR');
-      }
-      return 'تاریخ نامشخص';
+  
+  const handleCopyFileUrl = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setSnackbar({
+        open: true,
+        message: 'آدرس فایل در کلیپ‌بورد کپی شد',
+        severity: 'success'
+      });
+    } catch (error) {
+      // Fallback برای مرورگرهای قدیمی
+      const textArea = document.createElement('textarea');
+      textArea.value = url;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      setSnackbar({
+        open: true,
+        message: 'آدرس فایل کپی شد',
+        severity: 'success'
+      });
     }
-    
-    return date.toLocaleDateString('fa-IR');
-  } catch (error) {
-    return 'تاریخ نامشخص';
-  }
-};
-
-// تابع برای فرمت زمان
-const formatTime = (dateString: string, fileName: string) => {
-  try {
-    const date = new Date(dateString);
-    
-    if (isNaN(date.getTime())) {
-      const timestampMatch = fileName.match(/^(\d+)_/);
-      if (timestampMatch) {
-        const timestamp = parseInt(timestampMatch[1]);
-        const validDate = new Date(timestamp);
-        return validDate.toLocaleTimeString('fa-IR', { 
-          hour: '2-digit', 
-          minute: '2-digit' 
-        });
-      }
-      return 'زمان نامشخص';
-    }
-    
-    return date.toLocaleTimeString('fa-IR', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
-  } catch (error) {
-    return 'زمان نامشخص';
-  }
-};
-
+  };
 
   return (
     <Box sx={{ p: 3 }}>
-      {/* هدر و دکمه آپلود */}
+      {/* هدر */}
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-  <Typography variant="h4" component="h1" fontWeight="bold" color="primary">
-    مدیریت فایل‌های رسانه‌ای
-  </Typography>
-  
-  <Box display="flex" alignItems="center" gap={2}>
-    {/* دکمه‌های تغییر حالت نمایش */}
-    <Box display="flex" border={1} borderColor="grey.300" borderRadius={2}>
-      <IconButton 
-        onClick={() => setViewMode('grid')}
-        color={viewMode === 'grid' ? 'primary' : 'default'}
-        size="small"
-        title="نمایش شبکه‌ای"
-      >
-        <ViewModule />
-      </IconButton>
-      <IconButton 
-        onClick={() => setViewMode('list')}
-        color={viewMode === 'list' ? 'primary' : 'default'}
-        size="small"
-        title="نمایش لیستی"
-      >
-        <ViewList />
-      </IconButton>
-      <IconButton 
-        onClick={() => setViewMode('large')}
-        color={viewMode === 'large' ? 'primary' : 'default'}
-        size="small"
-        title="نمایش بزرگ"
-      >
-        <ViewCompact />
-      </IconButton>
-    </Box>
+        <Typography variant="h4" component="h1" fontWeight="bold" color="primary">
+          مدیریت فایل‌های رسانه‌ای
+          <Typography variant="subtitle1" color="text.secondary">
+            {files.length} فایل found
+          </Typography>
+        </Typography>
+        
+        <Box display="flex" alignItems="center" gap={2}>
+          {/* View Mode Buttons */}
+          <Box display="flex" border={1} borderColor="grey.300" borderRadius={2}>
+            <Tooltip title="نمایش شبکه‌ای">
+              <IconButton 
+                onClick={() => setViewMode('grid')}
+                color={viewMode === 'grid' ? 'primary' : 'default'}
+                size="small"
+              >
+                <ViewModule />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="نمایش لیستی">
+              <IconButton 
+                onClick={() => setViewMode('list')}
+                color={viewMode === 'list' ? 'primary' : 'default'}
+                size="small"
+              >
+                <ViewList />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="نمایش بزرگ">
+              <IconButton 
+                onClick={() => setViewMode('large')}
+                color={viewMode === 'large' ? 'primary' : 'default'}
+                size="small"
+              >
+                <ViewCompact />
+              </IconButton>
+            </Tooltip>
+          </Box>
 
-    {/* دکمه آپلود */}
-    <Button
-      variant="contained"
-      startIcon={loading ? <CircularProgress size={20} /> : <Add />}
-      onClick={() => document.getElementById('file-upload')?.click()}
-      disabled={loading}
-      size="large"
-    >
-      {loading ? 'در حال بارگذاری...' : 'آپلود فایل'}
-    </Button>
-  </Box>
-  
-  <input
-    id="file-upload"
-    type="file"
-    onChange={handleFileUpload}
-    style={{ display: 'none' }}
-    accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"
-  />
-</Box>
+          {/* Refresh Button */}
+          <Tooltip title="بارگذاری مجدد">
+            <IconButton 
+              onClick={loadFiles}
+              disabled={loading}
+              color="primary"
+            >
+              <Refresh />
+            </IconButton>
+          </Tooltip>
+
+          {/* Upload Button */}
+          <Button
+            variant="contained"
+            startIcon={loading ? <CircularProgress size={20} /> : <Add />}
+            onClick={() => document.getElementById('file-upload')?.click()}
+            disabled={loading}
+            size="large"
+          >
+            {loading ? 'در حال بارگذاری...' : 'آپلود فایل'}
+          </Button>
+        </Box>
+        
+        <input
+          id="file-upload"
+          type="file"
+          onChange={handleFileUpload}
+          style={{ display: 'none' }}
+          accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"
+        />
+      </Box>
 
       {/* Loading State */}
       {loading && (
@@ -445,188 +672,45 @@ const formatTime = (dateString: string, fileName: string) => {
         </Box>
       )}
 
-      {/* List Files */}
-{!loading && files.length > 0 && (
-  <Box sx={getViewStyle().container as any}>
-    {files.map((file) => (
-      <Card 
-  key={file.id} 
-  sx={{ 
-    ...(getViewStyle().card as any),
-    transition: 'all 0.3s ease',
-    '&:hover': {
-      transform: 'translateY(-4px)',
-      boxShadow: 4
-    }
-  }}
->
-  <CardContent sx={{ 
-    flexGrow: 1, 
-    p: viewMode === 'list' ? 2 : 3,
-    display: viewMode === 'list' ? 'flex' : 'block',
-    alignItems: viewMode === 'list' ? 'center' : 'normal',
-    width: '100%'
-  }}>
-    {/* Header with icon and actions */}
-    <Box display="flex" alignItems="flex-start" mb={viewMode === 'list' ? 0 : 2}>
-      <IconButton size="large" sx={{ color: 'primary.main' }}>
-        {getFileIcon(file.type)}
-      </IconButton>
-      <Box flex={1} ml={2} sx={{ minWidth: 0 }}>
-        {/* حالت ویرایش یا نمایش */}
-  {editingFileId === file.id ? (
-    <Box display="flex" alignItems="center" gap={1}>
-      <input
-        value={editFileName}
-        onChange={(e) => setEditFileName(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            handleEditFileName(file.id, editFileName);
-          } else if (e.key === 'Escape') {
-            cancelEditing();
-          }
-        }}
-        style={{
-          flex: 1,
-          padding: '4px 8px',
-          border: '1px solid #ccc',
-          borderRadius: '4px',
-          fontSize: viewMode === 'list' ? '14px' : '16px'
-        }}
-        autoFocus
-        disabled={editLoading}
-      />
-      <IconButton 
-        size="small" 
-        onClick={() => handleEditFileName(file.id, editFileName)}
-        disabled={editLoading}
-        color="primary"
-      >
-        <Check />
-      </IconButton>
-      <IconButton 
-        size="small" 
-        onClick={cancelEditing}
-        disabled={editLoading}
-        color="inherit"
-      >
-        <Close />
-      </IconButton>
-    </Box>
-  ) : (
-    <Typography 
-      variant={viewMode === 'list' ? "body1" : "h6"}
-      noWrap 
-      title={file.name}
-      sx={{ fontWeight: 'medium' }}
-    >
-      {file.name.length > 30 ? file.name.substring(0, 30) + '...' : file.name}
-    </Typography>
-  )}
-        
-{/* اطلاعات فایل - فقط در حالت‌های grid و large */}
-{viewMode !== 'list' && (
-  <Box mt={1}>
-    <Typography variant="caption" color="text.secondary" display="block">
-      📏 حجم: {formatFileSize(file.size)}
-    </Typography>
-    <Typography variant="caption" color="text.secondary" display="block">
-      📅 تاریخ آپلود: {formatDate(file.uploadedAt, file.name)}
-    </Typography>
-    <Typography variant="caption" color="text.secondary" display="block">
-      🕒 زمان: {formatTime(file.uploadedAt, file.name)}
-    </Typography>
-    <Typography 
-      variant="caption" 
-      color="text.secondary" 
-      display="block"
-      sx={{ 
-        wordBreak: 'break-all',
-        fontFamily: 'monospace',
-        fontSize: '0.7rem'
-      }}
-      title={file.url} // نمایش کامل آدرس در tooltip
-    >
-      🔗 آدرس: {file.url}
-    </Typography>
-  </Box>
-)}
-      </Box>
-      
-      {/* Actions */}
-<Box display="flex" flexDirection={viewMode === 'list' ? 'row' : 'column'} gap={1}>
-  {/* دکمه ویرایش */}
-  <IconButton 
-    color="primary"
-    onClick={() => startEditing(file)}
-    aria-label={`ویرایش ${file.name}`}
-    disabled={loading}
-    size="small"
-  >
-    <Edit />
-  </IconButton>
-  
-  {/* دکمه حذف */}
-  <IconButton 
-    color="error"
-    onClick={() => handleDeleteFile(file.id)}
-    aria-label={`حذف ${file.name}`}
-    disabled={loading}
-    size="small"
-  >
-    <Delete />
-  </IconButton>
+      {/* Files Grid */}
+      {!loading && files.length > 0 && (
+        <Box sx={{ 
+  display: 'grid', 
+  gridTemplateColumns: { 
+    xs: '1fr',
+    md: viewMode === 'list' ? '1fr' : viewMode === 'large' ? '1fr 1fr' : '1fr 1fr 1fr' 
+  },
+  gap: 3 
+}}>
+  {files.map((file) => (
+    <Box key={file.id}>
+              <MediaFileCard
+                file={file}
+                viewMode={viewMode}
+                onEdit={startEditing}
+                onDelete={handleDeleteFile}
+                onDownload={handleDownloadFile}
+                editingFileId={editingFileId}
+                editFileName={editFileName}
+                editLoading={editLoading}
+                onStartEditing={startEditing}
+                onCancelEditing={cancelEditing}
+                onConfirmEdit={handleEditFileName}
+                onCopyUrl={handleCopyFileUrl}
+              />
+            </Box>
+  ))}
 </Box>
-    </Box>
-    
-    {/* اطلاعات مختصر برای حالت list */}
-{viewMode === 'list' && (
-  <Box display="flex" gap={2} ml={2}>
-    <Typography variant="caption" color="text.secondary">
-      📏 {formatFileSize(file.size)}
-    </Typography>
-    <Typography variant="caption" color="text.secondary">
-      📅 {formatDate(file.uploadedAt, file.name)}
-    </Typography>
-  </Box>
-)}
+      )}
 
-    {/* Image preview - فقط در حالت‌های grid و large */}
-    {file.type === 'image' && viewMode !== 'list' && (
-      <Box mt={2}>
-        <img 
-          src={file.url} 
-          alt={file.name}
-          style={{ 
-            width: '100%', 
-            height: getViewStyle().image.height, 
-            objectFit: 'cover',
-            borderRadius: 8,
-            border: '1px solid #e0e0e0'
-          }} 
-          loading="lazy"
-          onError={(e) => {
-            e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRjBGMEYwIi8+CjxwYXRoIGQ9Ik04MCA2MEgxMjBNODAgODBIMTIwTTgwIDEwMEgxMjBNNjAgNjBWNzBNNjAgODBWMTAwTTYwIDYwSDE0ME02MCA2MFYxNDBNNjAgMTQwSDE0ME0xNDAgMTQwVjYwIiBzdHJva2U9IiM5OTk5OTkiIHN0cm9rZS13aWR0aD0iMiIvPgo8L3N2Zz4K';
-            e.currentTarget.alt = 'تصویر قابل نمایش نیست';
-          }}
-        />
-      </Box>
-    )}
-  </CardContent>
-</Card>
-    ))}
-  </Box>
-)}
-      {/* مدال آپلود */}
+      {/* Upload Dialog */}
       <Dialog 
         open={openUpload} 
         onClose={() => !uploading && setOpenUpload(false)}
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>
-          آپلود فایل جدید
-        </DialogTitle>
+        <DialogTitle>آپلود فایل جدید</DialogTitle>
         <DialogContent>
           {selectedFile && (
             <Box sx={{ pt: 1 }}>
@@ -634,10 +718,10 @@ const formatTime = (dateString: string, fileName: string) => {
                 <strong>نام فایل:</strong> {selectedFile.name}
               </Typography>
               <Typography variant="body2" color="text.secondary" gutterBottom>
-                <strong>سایز:</strong> {formatFileSize(selectedFile.size)}
+                <strong>سایز:</strong> {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                <strong>نوع:</strong> {getFileType(selectedFile)}
+                <strong>نوع:</strong> {selectedFile.type || 'نامشخص'}
               </Typography>
             </Box>
           )}
@@ -661,7 +745,7 @@ const formatTime = (dateString: string, fileName: string) => {
         </DialogActions>
       </Dialog>
 
-      {/* اسنک‌بار */}
+      {/* Snackbar */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}

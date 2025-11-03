@@ -54,6 +54,7 @@
 			<scope>runtime</scope>
 		</dependency>
 		
+
 	
 		<dependency>
     <groupId>io.jsonwebtoken</groupId>
@@ -72,10 +73,23 @@
     <version>0.11.5</version>
     <scope>runtime</scope>
 	</dependency>
+
 	<!-- Spring Boot Actuator for Monitoring -->
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-configuration-processor</artifactId>
+    <optional>true</optional>
+</dependency>
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-configuration-processor</artifactId>
+    <optional>true</optional>
 </dependency>
 
 <!-- Micrometer Prometheus -->
