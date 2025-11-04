@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   Box,
   Card,
@@ -22,46 +22,32 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Tab,
-  Tabs,
-  useTheme
+  useTheme,
+  CircularProgress,
+  Alert
 } from '@mui/material';
 import {
   Edit,
   Visibility,
-  ShoppingCart,
   Person,
   Badge,
   TrendingUp,
-  Key,
   LockReset,
   Delete
 } from '@mui/icons-material';
 import adminService from '../../services/adminService';
 
+// اینترفیس User منطبق با سرویس
 interface User {
   id: number;
   username: string;
   email: string;
-  mobile: string;
-  role: string;
-  userType: string;
   firstName: string;
   lastName: string;
-  emailVerified: boolean;
+  phone: string;
+  isActive: boolean;
+  role: string;
   createdAt: string;
-  nationalCode?: string;
-  passportNumber?: string;
-  address?: string;
-}
-
-interface Purchase {
-  id: number;
-  userId: number;
-  amount: number;
-  date: string;
-  type: string;
-  status: string;
 }
 
 const UserManagement: React.FC = () => {
@@ -70,167 +56,172 @@ const UserManagement: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [activeTab, setActiveTab] = useState(0);
   const [deleteConfirmUser, setDeleteConfirmUser] = useState<User | null>(null);
   const [changePasswordUser, setChangePasswordUser] = useState<User | null>(null);
-const [newPassword, setNewPassword] = useState('');
-const [confirmPassword, setConfirmPassword] = useState('');
-const [passwordError, setPasswordError] = useState('');
-  const [purchases, setPurchases] = useState<Purchase[]>([]);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [error, setError] = useState<string>('');
+  const [success, setSuccess] = useState<string>('');
 
-  // داده‌های نمونه برای خریدها
-  const samplePurchases: Purchase[] = useMemo(() => [
-    { id: 1, userId: 10, amount: 250000, date: '2024-01-15', type: 'هتل', status: 'تکمیل شده' },
-    { id: 2, userId: 10, amount: 180000, date: '2024-01-20', type: 'تور', status: 'تکمیل شده' },
-    { id: 3, userId: 11, amount: 120000, date: '2024-01-18', type: 'هتل', status: 'در انتظار' }
-  ], []);
-
-  useEffect(() => {
-    loadUsers();
-    setPurchases(samplePurchases);
-  }, [samplePurchases]);
-
-  const loadUsers = async () => {
+  // توابع با useCallback برای بهینه‌سازی
+  const loadUsers = useCallback(async () => {
     setLoading(true);
+    setError('');
     try {
-      const response = await adminService.getUsers();
-      const data = await response.json();
-setUsers(Array.isArray(data) ? data : []);
+      const data = await adminService.getUsers();
+      setUsers(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error loading users:', error);
+      setError('خطا در بارگذاری کاربران');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-
-  const handleUpdateUser = async () => {
+  const handleUpdateUser = useCallback(async () => {
     if (!editingUser) return;
     
+    setLoading(true);
     try {
       await adminService.updateUser(editingUser.id, editingUser);
       setEditingUser(null);
-      loadUsers();
+      setSuccess('کاربر با موفقیت به‌روزرسانی شد');
+      await loadUsers();
     } catch (error) {
       console.error('Error updating user:', error);
+      setError('خطا در به‌روزرسانی کاربر');
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [editingUser, loadUsers]);
 
-const handleChangePassword = async () => {
-  if (!changePasswordUser) return;
-  
-  if (newPassword !== confirmPassword) {
-    setPasswordError('رمز عبور و تأیید رمز عبور مطابقت ندارند');
-    return;
-  }
-  
-  if (newPassword.length < 6) {
-    setPasswordError('رمز عبور باید حداقل ۶ کاراکتر باشد');
-    return;
-  }
-  
-  try {
-    const result = await adminService.changeUserPassword(changePasswordUser.id, newPassword);
+  const handleChangePassword = useCallback(async () => {
+    if (!changePasswordUser) return;
     
-    if (result.success) {
-      setChangePasswordUser(null);
-      setNewPassword('');
-      setConfirmPassword('');
-      setPasswordError('');
-      alert('رمز عبور با موفقیت تغییر کرد');
-    } else {
-      setPasswordError(result.message);
+    if (newPassword !== confirmPassword) {
+      setPasswordError('رمز عبور و تأیید رمز عبور مطابقت ندارند');
+      return;
     }
-  } catch (error) {
-    setPasswordError('خطا در تغییر رمز عبور');
-  }
-};
-  
-
-const handleDeleteUser = async () => {
-  if (!deleteConfirmUser) return;
-  
-  try {
-    const result = await adminService.deleteUser(deleteConfirmUser.id);
     
-    if (result.success) {
-      setDeleteConfirmUser(null);
-      loadUsers(); // رفرش لیست کاربران
-      alert('کاربر با موفقیت حذف شد');
-    } else {
-      alert('خطا در حذف کاربر: ' + result.message);
+    if (newPassword.length < 6) {
+      setPasswordError('رمز عبور باید حداقل ۶ کاراکتر باشد');
+      return;
     }
-  } catch (error) {
-    alert('خطا در حذف کاربر');
-  }
-};
-
-  const getUserTypeColor = (userType: string) => {
-    switch (userType) {
-      case 'VERIFIED': return 'success';
-      case 'AMBASSADOR': return 'secondary';
-      case 'REGISTERED_TOURIST': return 'primary';
-      default: return 'default';
+    
+    setLoading(true);
+    try {
+      const result = await adminService.changeUserPassword(changePasswordUser.id, newPassword);
+      if (result.success) {
+        setChangePasswordUser(null);
+        setNewPassword('');
+        setConfirmPassword('');
+        setPasswordError('');
+        setSuccess('رمز عبور با موفقیت تغییر کرد');
+      } else {
+        setPasswordError('خطا در تغییر رمز عبور');
+      }
+    } catch (error) {
+      setPasswordError('خطا در تغییر رمز عبور');
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [changePasswordUser, newPassword, confirmPassword]);
 
-  const getUserTypeLabel = (userType: string) => {
-    switch (userType) {
-      case 'VERIFIED': return 'تایید شده';
-      case 'AMBASSADOR': return 'سفیر';
-      case 'REGISTERED_TOURIST': return 'تورگردان ثبت‌نام شده';
-      default: return userType;
+  const handleDeleteUser = useCallback(async () => {
+    if (!deleteConfirmUser) return;
+    
+    setLoading(true);
+    try {
+      const result = await adminService.deleteUser(deleteConfirmUser.id);
+      if (result.success) {
+        setDeleteConfirmUser(null);
+        setSuccess('کاربر با موفقیت حذف شد');
+        await loadUsers();
+      } else {
+        setError('خطا در حذف کاربر');
+      }
+    } catch (error) {
+      setError('خطا در حذف کاربر');
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [deleteConfirmUser, loadUsers]);
 
-  const getRoleColor = (role: string) => {
+  // بارگذاری اولیه
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
+
+  // توابع کمکی
+  const getRoleColor = useCallback((role: string) => {
     return role === 'ADMIN' ? 'error' : 'info';
-  };
+  }, []);
 
+  const getStatusColor = useCallback((isActive: boolean) => {
+    return isActive ? 'success' : 'default';
+  }, []);
+
+  // آمار کاربران
   const userStats = useMemo(() => {
-  if (!Array.isArray(users)) {
-    return { totalUsers: 0, verifiedUsers: 0, ambassadorUsers: 0 };
-  }
-  
-  const totalUsers = users.length;
-  const verifiedUsers = users.filter(u => u.userType === 'VERIFIED').length;
-  const ambassadorUsers = users.filter(u => u.userType === 'AMBASSADOR').length;
-  
-  return { totalUsers, verifiedUsers, ambassadorUsers };
-}, [users]);
+    const totalUsers = users.length;
+    const activeUsers = users.filter(u => u.isActive).length;
+    const adminUsers = users.filter(u => u.role === 'ADMIN').length;
+    
+    return { totalUsers, activeUsers, adminUsers };
+  }, [users]);
 
-  const userPurchases = useMemo(() => {
-    if (!selectedUser) return [];
-    return purchases.filter(p => p.userId === selectedUser.id);
-  }, [selectedUser, purchases]);
+  // پاک کردن پیام‌ها بعد از 5 ثانیه
+  useEffect(() => {
+    if (success || error) {
+      const timer = setTimeout(() => {
+        setSuccess('');
+        setError('');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success, error]);
 
-  const totalSpent = useMemo(() => {
-    return userPurchases.reduce((sum, purchase) => sum + purchase.amount, 0);
-  }, [userPurchases]);
-
-  if (loading) {
+  // کامپوننت لودینگ
+  if (loading && users.length === 0) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
-        <Typography>در حال بارگذاری...</Typography>
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+        <CircularProgress />
       </Box>
     );
   }
 
   return (
-    <Box>
+    <Box sx={{ p: 3 }}>
+      {/* نمایش پیام‌های موفقیت/خطا */}
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>
+          {error}
+        </Alert>
+      )}
+      {success && (
+        <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccess('')}>
+          {success}
+        </Alert>
+      )}
+
       {/* آمار کاربران */}
       <Box sx={{ 
         display: 'grid',
-        gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' },
+        gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
         gap: 3,
         mb: 4
       }}>
-        <Card sx={{ background: `linear-gradient(135deg, ${theme.palette.primary.main}15, ${theme.palette.primary.main}25)` }}>
+        <Card sx={{ 
+          background: `linear-gradient(135deg, ${theme.palette.primary.main}15, ${theme.palette.primary.main}25)`,
+          transition: 'transform 0.2s',
+          '&:hover': { transform: 'translateY(-2px)' }
+        }}>
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Person sx={{ color: theme.palette.primary.main, fontSize: 40 }} />
               <Box>
-                <Typography variant="h4" fontWeight="bold">
+                <Typography variant="h4" fontWeight="bold" component="div">
                   {userStats.totalUsers}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -241,32 +232,40 @@ const handleDeleteUser = async () => {
           </CardContent>
         </Card>
         
-        <Card sx={{ background: `linear-gradient(135deg, ${theme.palette.success.main}15, ${theme.palette.success.main}25)` }}>
+        <Card sx={{ 
+          background: `linear-gradient(135deg, ${theme.palette.success.main}15, ${theme.palette.success.main}25)`,
+          transition: 'transform 0.2s',
+          '&:hover': { transform: 'translateY(-2px)' }
+        }}>
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Badge sx={{ color: theme.palette.success.main, fontSize: 40 }} />
               <Box>
-                <Typography variant="h4" fontWeight="bold">
-                  {userStats.verifiedUsers}
+                <Typography variant="h4" fontWeight="bold" component="div">
+                  {userStats.activeUsers}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  کاربر تایید شده
+                  کاربر فعال
                 </Typography>
               </Box>
             </Box>
           </CardContent>
         </Card>
         
-        <Card sx={{ background: `linear-gradient(135deg, ${theme.palette.secondary.main}15, ${theme.palette.secondary.main}25)` }}>
+        <Card sx={{ 
+          background: `linear-gradient(135deg, ${theme.palette.secondary.main}15, ${theme.palette.secondary.main}25)`,
+          transition: 'transform 0.2s',
+          '&:hover': { transform: 'translateY(-2px)' }
+        }}>
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <TrendingUp sx={{ color: theme.palette.secondary.main, fontSize: 40 }} />
               <Box>
-                <Typography variant="h4" fontWeight="bold">
-                  {userStats.ambassadorUsers}
+                <Typography variant="h4" fontWeight="bold" component="div">
+                  {userStats.adminUsers}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  کاربر سفیر
+                  کاربر مدیر
                 </Typography>
               </Box>
             </Box>
@@ -277,121 +276,213 @@ const handleDeleteUser = async () => {
       {/* لیست کاربران */}
       <Card>
         <CardContent>
-          <Typography variant="h5" gutterBottom fontWeight="600">
+          <Typography variant="h5" gutterBottom fontWeight="600" component="h2">
             لیست کاربران
           </Typography>
           
-          <TableContainer component={Paper} elevation={0}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>اطلاعات کاربر</TableCell>
-                  <TableCell>تماس</TableCell>
-                  <TableCell>وضعیت</TableCell>
-                  <TableCell>اقدامات</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {users.map((user) => (
-                  <TableRow key={user.id} hover>
-                    <TableCell>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
-                          {user.firstName?.[0] || user.username?.[0] || 'U'}
-                        </Avatar>
-                        <Box>
-                          <Typography variant="subtitle1" fontWeight="600">
-                            {user.firstName && user.lastName 
-                              ? `${user.firstName} ${user.lastName}`
-                              : user.username
-                            }
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            @{user.username}
+          {users.length === 0 ? (
+            <Box textAlign="center" py={4}>
+              <Typography color="text.secondary">
+                هیچ کاربری یافت نشد
+              </Typography>
+            </Box>
+          ) : (
+            <TableContainer component={Paper} elevation={0}>
+              <Table aria-label="لیست کاربران">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>اطلاعات کاربر</TableCell>
+                    <TableCell>تماس</TableCell>
+                    <TableCell>وضعیت</TableCell>
+                    <TableCell>اقدامات</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {users.map((user) => (
+                    <TableRow key={user.id} hover>
+                      <TableCell>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <Avatar 
+                            sx={{ bgcolor: theme.palette.primary.main }}
+                            alt={user.firstName || user.username}
+                          >
+                            {user.firstName?.[0] || user.username?.[0] || 'U'}
+                          </Avatar>
+                          <Box>
+                            <Typography variant="subtitle1" fontWeight="600">
+                              {user.firstName && user.lastName 
+                                ? `${user.firstName} ${user.lastName}`
+                                : user.username
+                              }
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              @{user.username}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <Typography variant="body2">{user.email}</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {user.phone}
+                        </Typography>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                          <Chip 
+                            label={user.role} 
+                            color={getRoleColor(user.role)}
+                            size="small"
+                          />
+                          <Chip 
+                            label={user.isActive ? 'فعال' : 'غیرفعال'} 
+                            color={getStatusColor(user.isActive)}
+                            size="small"
+                            variant="outlined"
+                          />
+                          <Typography variant="caption" color="text.secondary">
+                            عضویت: {new Date(user.createdAt).toLocaleDateString('fa-IR')}
                           </Typography>
                         </Box>
-                      </Box>
-                    </TableCell>
-                    
-                    <TableCell>
-                      <Typography variant="body2">{user.email}</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {user.mobile}
-                      </Typography>
-                    </TableCell>
-                    
-                    <TableCell>
-                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                        <Chip 
-                          label={user.role} 
-                          color={getRoleColor(user.role)}
-                          size="small"
-                        />
-                        <Chip 
-                          label={getUserTypeLabel(user.userType)} 
-                          color={getUserTypeColor(user.userType) as any}
-                          size="small"
-                          variant="outlined"
-                        />
-                        <Typography variant="caption" color="text.secondary">
-                          عضویت: {new Date(user.createdAt).toLocaleDateString('fa-IR')}
-                        </Typography>
-                      </Box>
-                    </TableCell>
-                    
-                    <TableCell>
-  <Box sx={{ display: 'flex', gap: 1 }}>
-    <Tooltip title="مشاهده جزئیات">
-      <IconButton 
-        size="small"
-        onClick={() => setSelectedUser(user)}
-        sx={{ color: theme.palette.info.main }}
-      >
-        <Visibility />
-      </IconButton>
-    </Tooltip>
-    <Tooltip title="ویرایش کاربر">
-      <IconButton 
-        size="small"
-        onClick={() => setEditingUser(user)}
-        sx={{ color: theme.palette.primary.main }}
-      >
-        <Edit />
-      </IconButton>
-    </Tooltip>
-    <Tooltip title="تغییر رمز عبور">
-      <IconButton 
-        size="small"
-        onClick={() => setChangePasswordUser(user)}
-        sx={{ color: theme.palette.warning.main }}
-      >
-        <LockReset />
-      </IconButton>
-    </Tooltip>
-    <Tooltip title="حذف کاربر">
-  <IconButton 
-    size="small"
-    onClick={() => setDeleteConfirmUser(user)}
-    sx={{ color: theme.palette.error.main }}
-  >
-    <Delete />
-  </IconButton>
-</Tooltip>
-  </Box>
-</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                      </TableCell>
+                      
+                      <TableCell>
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                          <Tooltip title="مشاهده جزئیات">
+                            <IconButton 
+                              size="small"
+                              onClick={() => setSelectedUser(user)}
+                              sx={{ color: theme.palette.info.main }}
+                              aria-label={`مشاهده جزئیات ${user.username}`}
+                            >
+                              <Visibility />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="ویرایش کاربر">
+                            <IconButton 
+                              size="small"
+                              onClick={() => setEditingUser(user)}
+                              sx={{ color: theme.palette.primary.main }}
+                              aria-label={`ویرایش ${user.username}`}
+                            >
+                              <Edit />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="تغییر رمز عبور">
+                            <IconButton 
+                              size="small"
+                              onClick={() => setChangePasswordUser(user)}
+                              sx={{ color: theme.palette.warning.main }}
+                              aria-label={`تغییر رمز عبور ${user.username}`}
+                            >
+                              <LockReset />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="حذف کاربر">
+                            <IconButton 
+                              size="small"
+                              onClick={() => setDeleteConfirmUser(user)}
+                              sx={{ color: theme.palette.error.main }}
+                              aria-label={`حذف ${user.username}`}
+                            >
+                              <Delete />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
         </CardContent>
       </Card>
 
+      {/* دیالوگ مشاهده جزئیات کاربر */}
+      <Dialog open={!!selectedUser} onClose={() => setSelectedUser(null)} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          جزئیات کاربر
+        </DialogTitle>
+        <DialogContent>
+          {selectedUser && (
+            <Box sx={{ mt: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                <Avatar 
+                  sx={{ 
+                    bgcolor: theme.palette.primary.main,
+                    width: 60,
+                    height: 60,
+                    fontSize: '1.5rem'
+                  }}
+                  alt={selectedUser.firstName || selectedUser.username}
+                >
+                  {selectedUser.firstName?.[0] || selectedUser.username?.[0] || 'U'}
+                </Avatar>
+                <Box>
+                  <Typography variant="h6" fontWeight="600">
+                    {selectedUser.firstName && selectedUser.lastName 
+                      ? `${selectedUser.firstName} ${selectedUser.lastName}`
+                      : selectedUser.username
+                    }
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    @{selectedUser.username}
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box sx={{ display: 'grid', gap: 2 }}>
+                <Box>
+                  <Typography variant="subtitle2" color="text.secondary">ایمیل</Typography>
+                  <Typography variant="body1">{selectedUser.email}</Typography>
+                </Box>
+                
+                <Box>
+                  <Typography variant="subtitle2" color="text.secondary">شماره تماس</Typography>
+                  <Typography variant="body1">{selectedUser.phone}</Typography>
+                </Box>
+                
+                <Box sx={{ display: 'flex', gap: 2 }}>
+                  <Box>
+                    <Typography variant="subtitle2" color="text.secondary">نقش</Typography>
+                    <Chip 
+                      label={selectedUser.role} 
+                      color={getRoleColor(selectedUser.role)}
+                      size="small"
+                    />
+                  </Box>
+                  
+                  <Box>
+                    <Typography variant="subtitle2" color="text.secondary">وضعیت</Typography>
+                    <Chip 
+                      label={selectedUser.isActive ? 'فعال' : 'غیرفعال'} 
+                      color={getStatusColor(selectedUser.isActive)}
+                      size="small"
+                    />
+                  </Box>
+                </Box>
+                
+                <Box>
+                  <Typography variant="subtitle2" color="text.secondary">تاریخ عضویت</Typography>
+                  <Typography variant="body1">
+                    {new Date(selectedUser.createdAt).toLocaleDateString('fa-IR')}
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSelectedUser(null)}>بستن</Button>
+        </DialogActions>
+      </Dialog>
+
       {/* دیالوگ ویرایش کاربر */}
       <Dialog open={!!editingUser} onClose={() => setEditingUser(null)} maxWidth="md" fullWidth>
-        <DialogTitle>
-          ویرایش کاربر
-        </DialogTitle>
+        <DialogTitle>ویرایش کاربر</DialogTitle>
         <DialogContent>
           {editingUser && (
             <Box sx={{ 
@@ -420,9 +511,9 @@ const handleDeleteUser = async () => {
               />
               <TextField
                 fullWidth
-                label="شماره موبایل"
-                value={editingUser.mobile}
-                onChange={(e) => setEditingUser({...editingUser, mobile: e.target.value})}
+                label="شماره تماس"
+                value={editingUser.phone}
+                onChange={(e) => setEditingUser({...editingUser, phone: e.target.value})}
               />
               <TextField
                 fullWidth
@@ -437,170 +528,36 @@ const handleDeleteUser = async () => {
               <TextField
                 fullWidth
                 select
-                label="سطح کاربری"
-                value={editingUser.userType}
-                onChange={(e) => setEditingUser({...editingUser, userType: e.target.value})}
+                label="وضعیت"
+                value={editingUser.isActive ? 'active' : 'inactive'}
+                onChange={(e) => setEditingUser({...editingUser, isActive: e.target.value === 'active'})}
               >
-                <MenuItem value="REGISTERED_TOURIST">تورگردان ثبت‌نام شده</MenuItem>
-                <MenuItem value="VERIFIED">تایید شده</MenuItem>
-                <MenuItem value="AMBASSADOR">سفیر</MenuItem>
+                <MenuItem value="active">فعال</MenuItem>
+                <MenuItem value="inactive">غیرفعال</MenuItem>
               </TextField>
-              <TextField
-                fullWidth
-                label="کد ملی"
-                value={editingUser.nationalCode || ''}
-                onChange={(e) => setEditingUser({...editingUser, nationalCode: e.target.value})}
-              />
-              <TextField
-                fullWidth
-                label="شماره پاسپورت"
-                value={editingUser.passportNumber || ''}
-                onChange={(e) => setEditingUser({...editingUser, passportNumber: e.target.value})}
-              />
-              <Box sx={{ gridColumn: '1 / -1' }}>
-                <TextField
-                  fullWidth
-                  multiline
-                  rows={3}
-                  label="آدرس"
-                  value={editingUser.address || ''}
-                  onChange={(e) => setEditingUser({...editingUser, address: e.target.value})}
-                />
-              </Box>
             </Box>
           )}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setEditingUser(null)}>انصراف</Button>
-          <Button onClick={handleUpdateUser} variant="contained">ذخیره تغییرات</Button>
+          <Button 
+            onClick={handleUpdateUser} 
+            variant="contained"
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={24} /> : 'ذخیره تغییرات'}
+          </Button>
         </DialogActions>
       </Dialog>
 
-      {/* دیالوگ مشاهده جزئیات کاربر */}
-      <Dialog open={!!selectedUser} onClose={() => setSelectedUser(null)} maxWidth="lg" fullWidth>
-        <DialogTitle>
-          جزئیات کاربر
-        </DialogTitle>
-        <DialogContent>
-          {selectedUser && (
-            <Box>
-              <Tabs value={activeTab} onChange={(e, newValue) => setActiveTab(newValue)}>
-                <Tab label="اطلاعات هویتی" />
-                <Tab label="گزارش خریدها" />
-              </Tabs>
-              
-              <Box sx={{ pt: 3 }}>
-                {activeTab === 0 && (
-                  <Box sx={{ 
-                    display: 'grid',
-                    gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
-                    gap: 3
-                  }}>
-                    <Box>
-                      <Typography variant="subtitle2" color="text.secondary">نام کامل</Typography>
-                      <Typography variant="body1">
-                        {selectedUser.firstName && selectedUser.lastName 
-                          ? `${selectedUser.firstName} ${selectedUser.lastName}`
-                          : 'تعیین نشده'
-                        }
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography variant="subtitle2" color="text.secondary">کد ملی</Typography>
-                      <Typography variant="body1">
-                        {selectedUser.nationalCode || 'تعیین نشده'}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography variant="subtitle2" color="text.secondary">شماره پاسپورت</Typography>
-                      <Typography variant="body1">
-                        {selectedUser.passportNumber || 'تعیین نشده'}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography variant="subtitle2" color="text.secondary">آدرس</Typography>
-                      <Typography variant="body1">
-                        {selectedUser.address || 'تعیین نشده'}
-                      </Typography>
-                    </Box>
-                  </Box>
-                )}
-                
-                {activeTab === 1 && (
-                  <Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                      <ShoppingCart color="primary" />
-                      <Typography variant="h6">گزارش خریدها</Typography>
-                    </Box>
-                    
-                    {userPurchases.length > 0 ? (
-                      <TableContainer component={Paper} elevation={0}>
-                        <Table>
-                          <TableHead>
-                            <TableRow>
-                              <TableCell>تاریخ</TableCell>
-                              <TableCell>نوع</TableCell>
-                              <TableCell>مبلغ</TableCell>
-                              <TableCell>وضعیت</TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {userPurchases.map((purchase) => (
-                              <TableRow key={purchase.id}>
-                                <TableCell>
-                                  {new Date(purchase.date).toLocaleDateString('fa-IR')}
-                                </TableCell>
-                                <TableCell>{purchase.type}</TableCell>
-                                <TableCell>
-                                  {purchase.amount.toLocaleString()} تومان
-                                </TableCell>
-                                <TableCell>
-                                  <Chip 
-                                    label={purchase.status}
-                                    color={purchase.status === 'تکمیل شده' ? 'success' : 'warning'}
-                                    size="small"
-                                  />
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                    ) : (
-                      <Typography color="text.secondary" textAlign="center" py={4}>
-                        هیچ خرید‌ای یافت نشد
-                      </Typography>
-                    )}
-                    
-                    {totalSpent > 0 && (
-                      <Box sx={{ mt: 3, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
-                        <Typography variant="subtitle1" fontWeight="600">
-                          مجموع خریدها: {totalSpent.toLocaleString()} تومان
-                        </Typography>
-                      </Box>
-                    )}
-                  </Box>
-                )}
-              </Box>
-            </Box>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setSelectedUser(null)}>بستن</Button>
-        </DialogActions>
-      </Dialog>
-      
-      {/* 🔐 دیالوگ تغییر رمز عبور - این بخش رو اضافه کنید */}
+      {/* دیالوگ تغییر رمز عبور */}
       <Dialog open={!!changePasswordUser} onClose={() => setChangePasswordUser(null)}>
         <DialogTitle>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Key color="warning" />
-            تغییر رمز عبور
-          </Box>
+          تغییر رمز عبور
         </DialogTitle>
         <DialogContent>
           <Typography variant="body2" color="text.secondary" gutterBottom>
-            کاربر: {changePasswordUser?.username} ({changePasswordUser?.mobile})
+            کاربر: {changePasswordUser?.username}
           </Typography>
           
           <TextField
@@ -633,44 +590,46 @@ const handleDeleteUser = async () => {
             انصراف
           </Button>
           <Button 
-            onClick={handleChangePassword} 
+            onClick={handleChangePassword}
             variant="contained" 
             color="warning"
-            disabled={!newPassword || !confirmPassword}
+            disabled={!newPassword || !confirmPassword || loading}
           >
-            تغییر رمز
+            {loading ? <CircularProgress size={24} /> : 'تغییر رمز'}
           </Button>
         </DialogActions>
       </Dialog>
+
       {/* دیالوگ تأیید حذف کاربر */}
-<Dialog open={!!deleteConfirmUser} onClose={() => setDeleteConfirmUser(null)}>
-  <DialogTitle>
-    تأیید حذف کاربر
-  </DialogTitle>
-  <DialogContent>
-    <Typography>
-      آیا از حذف کاربر <strong>{deleteConfirmUser?.username}</strong> ({deleteConfirmUser?.mobile}) مطمئن هستید؟
-    </Typography>
-    <Typography variant="body2" color="error" sx={{ mt: 2 }}>
-      این عمل غیرقابل بازگشت است!
-    </Typography>
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={() => setDeleteConfirmUser(null)}>
-      انصراف
-    </Button>
-    <Button 
-      onClick={handleDeleteUser} 
-      variant="contained" 
-      color="error"
-      startIcon={<Delete />}
-    >
-      حذف کاربر
-    </Button>
-  </DialogActions>
-</Dialog>
+      <Dialog open={!!deleteConfirmUser} onClose={() => setDeleteConfirmUser(null)}>
+        <DialogTitle>
+          تأیید حذف کاربر
+        </DialogTitle>
+        <DialogContent>
+          <Typography>
+            آیا از حذف کاربر <strong>{deleteConfirmUser?.username}</strong> ({deleteConfirmUser?.email}) مطمئن هستید؟
+          </Typography>
+          <Typography variant="body2" color="error" sx={{ mt: 2 }}>
+            این عمل غیرقابل بازگشت است!
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteConfirmUser(null)}>
+            انصراف
+          </Button>
+          <Button 
+            onClick={handleDeleteUser}
+            variant="contained" 
+            color="error"
+            startIcon={<Delete />}
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={24} /> : 'حذف کاربر'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
 
-export default UserManagement;
+export default React.memo(UserManagement);
