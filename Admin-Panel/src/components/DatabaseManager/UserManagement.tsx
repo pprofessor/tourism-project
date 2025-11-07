@@ -33,23 +33,11 @@ import {
   Badge,
   TrendingUp,
   LockReset,
-  Delete
+  Delete,
+  Add,
 } from '@mui/icons-material';
 import adminService from '../../services/adminService';
-
-// اینترفیس User منطبق با سرویس
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  isActive: boolean;
-  role: string;
-  createdAt: string;
-}
-
+import type { User } from '../../services/adminService';
 const UserManagement: React.FC = () => {
   const theme = useTheme();
   const [users, setUsers] = useState<User[]>([]);
@@ -62,39 +50,123 @@ const UserManagement: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [error, setError] = useState<string>('');
+  const [activeTab, setActiveTab] = useState<'list' | 'add' | 'edit'>('list');
+  const [updateLoading, setUpdateLoading] = useState(false);
   const [success, setSuccess] = useState<string>('');
 
-  // توابع با useCallback برای بهینه‌سازی
-  const loadUsers = useCallback(async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const data = await adminService.getUsers();
-      setUsers(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error('Error loading users:', error);
-      setError('خطا در بارگذاری کاربران');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const [newUser, setNewUser] = useState<{
+    username: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    password: string;
+    role: string;
+    emailVerified: boolean;
+  }>({
+    username: '',
+    email: '',
+    firstName: '',
+    lastName: '',
+    phone: '',
+    password: '',
+    role: 'USER',
+    emailVerified: true,
+  });
+  const [createLoading, setCreateLoading] = useState(false);
 
-  const handleUpdateUser = useCallback(async () => {
-    if (!editingUser) return;
+  const loadUsers = useCallback(async () => {
+  setLoading(true);
+  setError('');
+  try {
+    const data = await adminService.getUsers();
+    console.log('📥 Users loaded from server - FULL DATA:', data);
     
-    setLoading(true);
+    // 🔍 بررسی کاربر خاص
+    const user56 = data.find((user: any) => user.id === 56);
+    console.log('🔍 User 56 details:', user56);
+    
+    setUsers(Array.isArray(data) ? data : []);
+  } catch (error) {
+    console.error('Error loading users:', error);
+    setError('خطا در بارگذاری کاربران');
+  } finally {
+    setLoading(false);
+  }
+}, []);
+
+  const handleCreateUser = useCallback(async () => {
+    if (!newUser.username || !newUser.email || !newUser.password) {
+      setError('نام کاربری، ایمیل و رمز عبور ضروری هستند');
+      return;
+    }
+
+    setCreateLoading(true);
     try {
-      await adminService.updateUser(editingUser.id, editingUser);
-      setEditingUser(null);
-      setSuccess('کاربر با موفقیت به‌روزرسانی شد');
+      await adminService.createUser(newUser);
+      setNewUser({
+        username: '',
+        email: '',
+        firstName: '',
+        lastName: '',
+        phone: '',
+        password: '',
+        role: 'USER',
+        emailVerified: true,
+      });
+      setSuccess('کاربر جدید با موفقیت ایجاد شد');
+      setActiveTab('list');
       await loadUsers();
     } catch (error) {
-      console.error('Error updating user:', error);
-      setError('خطا در به‌روزرسانی کاربر');
+      console.error('Error creating user:', error);
+      setError('خطا در ایجاد کاربر جدید');
     } finally {
-      setLoading(false);
+      setCreateLoading(false);
     }
-  }, [editingUser, loadUsers]);
+  }, [newUser, loadUsers]);
+
+const handleUpdateUser = useCallback(async () => {
+  if (!editingUser) return;
+  
+  setUpdateLoading(true);
+  setError('');
+  try {
+    // اعتبارسنجی فیلدهای ضروری
+    if (!editingUser.email || !editingUser.username) {
+      setError('ایمیل و نام کاربری ضروری هستند');
+      return;
+    }
+
+    // 🔍 دیباگ کامل
+    console.log('emailVerified value before sending:', editingUser.emailVerified, 'Type:', typeof editingUser.emailVerified);
+    console.log('Full editingUser object:', editingUser);
+    
+    // 🔧 ایجاد کپی از داده با اطمینان از ارسال emailVerified
+    const userDataToSend = {
+      ...editingUser,
+      emailVerified: Boolean(editingUser.emailVerified) // اطمینان از boolean بودن
+    };
+    
+    console.log('Data being sent after cleanup:', userDataToSend);
+    
+    await adminService.updateUser(editingUser.id, userDataToSend);
+    setEditingUser(null);
+    setSuccess('کاربر با موفقیت به‌روزرسانی شد');
+    await loadUsers();
+  } catch (error) {
+    console.error('Error updating user:', error);
+    setError('خطا در به‌روزرسانی کاربر');
+  } finally {
+    setUpdateLoading(false);
+  }
+}, [editingUser, loadUsers]);
+
+  const handleEditUser = useCallback((user: User) => {
+  setEditingUser({
+    ...user,
+    emailVerified: user.emailVerified !== undefined ? user.emailVerified : false  
+  });
+}, []);
 
   const handleChangePassword = useCallback(async () => {
     if (!changePasswordUser) return;
@@ -158,14 +230,14 @@ const UserManagement: React.FC = () => {
     return role === 'ADMIN' ? 'error' : 'info';
   }, []);
 
-  const getStatusColor = useCallback((isActive: boolean) => {
-    return isActive ? 'success' : 'default';
-  }, []);
+  const getStatusColor = useCallback((emailVerified: boolean) => {
+  return emailVerified ? 'success' : 'default';
+}, []);
 
   // آمار کاربران
   const userStats = useMemo(() => {
     const totalUsers = users.length;
-    const activeUsers = users.filter(u => u.isActive).length;
+    const activeUsers = users.filter(u => u.emailVerified).length;
     const adminUsers = users.filter(u => u.role === 'ADMIN').length;
     
     return { totalUsers, activeUsers, adminUsers };
@@ -204,6 +276,21 @@ const UserManagement: React.FC = () => {
           {success}
         </Alert>
       )}
+
+      {/* هدر صفحه با دکمه ایجاد کاربر */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h4" component="h1" fontWeight="bold">
+          مدیریت کاربران
+        </Typography>
+        <Button 
+          variant="contained" 
+          startIcon={<Add />} 
+          onClick={() => setActiveTab('add')}
+          size="large"
+        >
+          کاربر جدید
+        </Button>
+      </Box>
 
       {/* آمار کاربران */}
       <Box sx={{ 
@@ -297,109 +384,212 @@ const UserManagement: React.FC = () => {
                     <TableCell>اقدامات</TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
-                  {users.map((user) => (
-                    <TableRow key={user.id} hover>
-                      <TableCell>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                          <Avatar 
-                            sx={{ bgcolor: theme.palette.primary.main }}
-                            alt={user.firstName || user.username}
-                          >
-                            {user.firstName?.[0] || user.username?.[0] || 'U'}
-                          </Avatar>
-                          <Box>
-                            <Typography variant="subtitle1" fontWeight="600">
-                              {user.firstName && user.lastName 
-                                ? `${user.firstName} ${user.lastName}`
-                                : user.username
-                              }
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              @{user.username}
+                                <TableBody>
+                  {users.map((user) => {
+                    console.log('🔄 Rendering user in table:', user.id, 'emailVerified:', user.emailVerified);
+                    return (
+                      <TableRow key={user.id} hover>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Avatar 
+                              sx={{ bgcolor: theme.palette.primary.main }}
+                              alt={user.firstName || user.username}
+                            >
+                              {user.firstName?.[0] || user.username?.[0] || 'U'}
+                            </Avatar>
+                            <Box>
+                              <Typography variant="subtitle1" fontWeight="600">
+                                {user.firstName && user.lastName 
+                                  ? `${user.firstName} ${user.lastName}`
+                                  : user.username
+                                }
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary">
+                                @{user.username}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </TableCell>
+                        
+                        <TableCell>
+                          <Typography variant="body2">{user.email}</Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {user.phone}
+                          </Typography>
+                        </TableCell>
+                        
+                        <TableCell>
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                            <Chip 
+                              label={user.role} 
+                              color={getRoleColor(user.role)}
+                              size="small"
+                            />
+                            <Chip 
+                              label={user.emailVerified ? 'فعال' : 'غیرفعال'}
+                              color={user.emailVerified ? 'success' : 'default'}
+                              size="small"
+                            />
+                            <Typography variant="caption" color="text.secondary">
+                              عضویت: {new Date(user.createdAt).toLocaleDateString('fa-IR')}
                             </Typography>
                           </Box>
-                        </Box>
-                      </TableCell>
-                      
-                      <TableCell>
-                        <Typography variant="body2">{user.email}</Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {user.phone}
-                        </Typography>
-                      </TableCell>
-                      
-                      <TableCell>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                          <Chip 
-                            label={user.role} 
-                            color={getRoleColor(user.role)}
-                            size="small"
-                          />
-                          <Chip 
-                            label={user.isActive ? 'فعال' : 'غیرفعال'} 
-                            color={getStatusColor(user.isActive)}
-                            size="small"
-                            variant="outlined"
-                          />
-                          <Typography variant="caption" color="text.secondary">
-                            عضویت: {new Date(user.createdAt).toLocaleDateString('fa-IR')}
-                          </Typography>
-                        </Box>
-                      </TableCell>
-                      
-                      <TableCell>
-                        <Box sx={{ display: 'flex', gap: 1 }}>
-                          <Tooltip title="مشاهده جزئیات">
-                            <IconButton 
-                              size="small"
-                              onClick={() => setSelectedUser(user)}
-                              sx={{ color: theme.palette.info.main }}
-                              aria-label={`مشاهده جزئیات ${user.username}`}
-                            >
-                              <Visibility />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="ویرایش کاربر">
-                            <IconButton 
-                              size="small"
-                              onClick={() => setEditingUser(user)}
-                              sx={{ color: theme.palette.primary.main }}
-                              aria-label={`ویرایش ${user.username}`}
-                            >
-                              <Edit />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="تغییر رمز عبور">
-                            <IconButton 
-                              size="small"
-                              onClick={() => setChangePasswordUser(user)}
-                              sx={{ color: theme.palette.warning.main }}
-                              aria-label={`تغییر رمز عبور ${user.username}`}
-                            >
-                              <LockReset />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="حذف کاربر">
-                            <IconButton 
-                              size="small"
-                              onClick={() => setDeleteConfirmUser(user)}
-                              sx={{ color: theme.palette.error.main }}
-                              aria-label={`حذف ${user.username}`}
-                            >
-                              <Delete />
-                            </IconButton>
-                          </Tooltip>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                        </TableCell>
+                        
+                        <TableCell>
+                          <Box sx={{ display: 'flex', gap: 1 }}>
+                            <Tooltip title="مشاهده جزئیات">
+                              <IconButton 
+                                size="small"
+                                onClick={() => setSelectedUser(user)}
+                                sx={{ color: theme.palette.info.main }}
+                                aria-label={`مشاهده جزئیات ${user.username}`}
+                              >
+                                <Visibility />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="ویرایش کاربر">
+                              <IconButton 
+                                size="small"
+                                onClick={() => handleEditUser(user)}
+                                sx={{ color: theme.palette.primary.main }}
+                                aria-label={`ویرایش ${user.username}`}
+                              >
+                                <Edit />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="تغییر رمز عبور">
+                              <IconButton 
+                                size="small"
+                                onClick={() => setChangePasswordUser(user)}
+                                sx={{ color: theme.palette.warning.main }}
+                                aria-label={`تغییر رمز عبور ${user.username}`}
+                              >
+                                <LockReset />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="حذف کاربر">
+                              <IconButton 
+                                size="small"
+                                onClick={() => setDeleteConfirmUser(user)}
+                                sx={{ color: theme.palette.error.main }}
+                                aria-label={`حذف ${user.username}`}
+                              >
+                                <Delete />
+                              </IconButton>
+                            </Tooltip>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </TableContainer>
           )}
         </CardContent>
       </Card>
+
+      {/* فرم ایجاد کاربر جدید */}
+      {activeTab === 'add' && (
+        <Card sx={{ mt: 3 }}>
+          <CardContent>
+            <Typography variant="h5" gutterBottom fontWeight="600">
+              ایجاد کاربر جدید
+            </Typography>
+            
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3, mt: 2 }}>
+              <TextField 
+                fullWidth 
+                label="نام کاربری *" 
+                value={newUser.username}
+                onChange={(e) => setNewUser({...newUser, username: e.target.value})}
+              />
+              <TextField 
+                fullWidth 
+                label="ایمیل *" 
+                type="email"
+                value={newUser.email}
+                onChange={(e) => setNewUser({...newUser, email: e.target.value})}
+              />
+              <TextField 
+                fullWidth 
+                label="نام" 
+                value={newUser.firstName}
+                onChange={(e) => setNewUser({...newUser, firstName: e.target.value})}
+              />
+              <TextField 
+                fullWidth 
+                label="نام خانوادگی" 
+                value={newUser.lastName}
+                onChange={(e) => setNewUser({...newUser, lastName: e.target.value})}
+              />
+              <TextField 
+                fullWidth 
+                label="شماره تماس" 
+                value={newUser.phone}
+                onChange={(e) => setNewUser({...newUser, phone: e.target.value})}
+              />
+              <TextField 
+                fullWidth 
+                label="رمز عبور *" 
+                type="password"
+                value={newUser.password}
+                onChange={(e) => setNewUser({...newUser, password: e.target.value})}
+              />
+              <TextField 
+                fullWidth 
+                select 
+                label="نقش" 
+                value={newUser.role}
+                onChange={(e) => setNewUser({...newUser, role: e.target.value})}
+              >
+                <MenuItem value="USER">کاربر</MenuItem>
+                <MenuItem value="ADMIN">مدیر</MenuItem>
+              </TextField>
+              <TextField 
+                fullWidth 
+                select 
+                label="وضعیت" 
+                value={newUser.emailVerified ? "true" : "false"}
+                onChange={(e) => setNewUser({...newUser, emailVerified: e.target.value === "true"})}
+              >
+                <MenuItem value="true">فعال</MenuItem>
+                <MenuItem value="false">غیرفعال</MenuItem>
+              </TextField>
+            </Box>
+            
+            <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
+              <Button 
+                variant="contained" 
+                onClick={handleCreateUser}
+                disabled={createLoading}
+                startIcon={createLoading ? <CircularProgress size={16} /> : null}
+              >
+                {createLoading ? 'در حال ایجاد...' : 'ایجاد کاربر'}
+              </Button>
+              <Button 
+                onClick={() => {
+                  setActiveTab('list');
+                  setNewUser({
+                    username: '',
+                    email: '',
+                    firstName: '',
+                    lastName: '',
+                    phone: '',
+                    password: '',
+                    role: 'USER',
+                    emailVerified: true,
+                  });
+                }}
+                disabled={createLoading}
+              >
+                انصراف
+              </Button>
+            </Box>
+          </CardContent>
+        </Card>
+      )}
 
       {/* دیالوگ مشاهده جزئیات کاربر */}
       <Dialog open={!!selectedUser} onClose={() => setSelectedUser(null)} maxWidth="sm" fullWidth>
@@ -442,7 +632,7 @@ const UserManagement: React.FC = () => {
                 
                 <Box>
                   <Typography variant="subtitle2" color="text.secondary">شماره تماس</Typography>
-                  <Typography variant="body1">{selectedUser.phone}</Typography>
+                  <Typography variant="body1">{selectedUser.phone || selectedUser.mobile || 'ثبت نشده'}</Typography>
                 </Box>
                 
                 <Box sx={{ display: 'flex', gap: 2 }}>
@@ -458,8 +648,8 @@ const UserManagement: React.FC = () => {
                   <Box>
                     <Typography variant="subtitle2" color="text.secondary">وضعیت</Typography>
                     <Chip 
-                      label={selectedUser.isActive ? 'فعال' : 'غیرفعال'} 
-                      color={getStatusColor(selectedUser.isActive)}
+                      label={selectedUser.emailVerified ? 'فعال' : 'غیرفعال'} 
+                      color={getStatusColor(selectedUser.emailVerified)}
                       size="small"
                     />
                   </Box>
@@ -492,11 +682,11 @@ const UserManagement: React.FC = () => {
               mt: 1
             }}>
               <TextField
-                fullWidth
-                label="نام"
-                value={editingUser.firstName || ''}
-                onChange={(e) => setEditingUser({...editingUser, firstName: e.target.value})}
-              />
+  fullWidth
+  label="نام"
+  value={editingUser.firstName || ''}
+  onChange={(e) => setEditingUser({...editingUser, firstName: e.target.value})}
+/>
               <TextField
                 fullWidth
                 label="نام خانوادگی"
@@ -512,8 +702,8 @@ const UserManagement: React.FC = () => {
               <TextField
                 fullWidth
                 label="شماره تماس"
-                value={editingUser.phone}
-                onChange={(e) => setEditingUser({...editingUser, phone: e.target.value})}
+                value={editingUser.mobile || ''}
+                onChange={(e) => setEditingUser({...editingUser, mobile: e.target.value})}
               />
               <TextField
                 fullWidth
@@ -526,26 +716,29 @@ const UserManagement: React.FC = () => {
                 <MenuItem value="ADMIN">مدیر</MenuItem>
               </TextField>
               <TextField
-                fullWidth
-                select
-                label="وضعیت"
-                value={editingUser.isActive ? 'active' : 'inactive'}
-                onChange={(e) => setEditingUser({...editingUser, isActive: e.target.value === 'active'})}
-              >
-                <MenuItem value="active">فعال</MenuItem>
-                <MenuItem value="inactive">غیرفعال</MenuItem>
-              </TextField>
+  fullWidth
+  select
+  label="وضعیت"
+  value={editingUser.emailVerified ? "true" : "false"} 
+  onChange={(e) => setEditingUser({...editingUser, emailVerified: e.target.value === "true"})} 
+>
+  <MenuItem value="true">فعال</MenuItem>
+  <MenuItem value="false">غیرفعال</MenuItem>
+</TextField>
             </Box>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setEditingUser(null)}>انصراف</Button>
+          <Button onClick={() => setEditingUser(null)} disabled={updateLoading}>
+            انصراف
+          </Button>
           <Button 
             onClick={handleUpdateUser} 
             variant="contained"
-            disabled={loading}
+            disabled={updateLoading}
+            startIcon={updateLoading ? <CircularProgress size={16} /> : null}
           >
-            {loading ? <CircularProgress size={24} /> : 'ذخیره تغییرات'}
+            {updateLoading ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
           </Button>
         </DialogActions>
       </Dialog>

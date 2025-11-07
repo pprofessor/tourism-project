@@ -1,6 +1,7 @@
 package com.tourism.app.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "users")
@@ -21,6 +22,7 @@ public class User {
     private String verificationCode;
     private String ambassadorCode;
     private Integer referredCount = 0;
+    
     
     // فیلدهای اطلاعات هویتی
     private String profileImage;
@@ -55,7 +57,6 @@ public class User {
     public String getPassword() { return password; }
     public String getRole() { return role; }
     public String getUserType() { return userType; }
-    public boolean isEmailVerified() { return emailVerified; }
     public String getVerificationCode() { return verificationCode; }
     public String getAmbassadorCode() { return ambassadorCode; }
     public Integer getReferredCount() { return referredCount; }
@@ -67,6 +68,11 @@ public class User {
     public String getAddress() { return address; }
     public String getCreatedAt() { return createdAt; }
     public String getUpdatedAt() { return updatedAt; }
+    @JsonProperty("emailVerified")
+    public boolean isEmailVerified() { 
+    return emailVerified; 
+}
+    
     
     // Setters
     public void setId(Long id) { this.id = id; }
@@ -95,9 +101,9 @@ public class User {
         this.updatedAt = java.time.LocalDateTime.now().toString();
     }
     public void setEmailVerified(boolean emailVerified) { 
-        this.emailVerified = emailVerified; 
-        this.updatedAt = java.time.LocalDateTime.now().toString();
-    }
+    this.emailVerified = emailVerified; 
+    this.updatedAt = java.time.LocalDateTime.now().toString();
+}
     public void setVerificationCode(String verificationCode) { 
         this.verificationCode = verificationCode; 
         this.updatedAt = java.time.LocalDateTime.now().toString();
@@ -130,6 +136,7 @@ public class User {
         this.passportNumber = passportNumber; 
         this.updatedAt = java.time.LocalDateTime.now().toString();
     }
+   
     public void setAddress(String address) { 
         this.address = address; 
         this.updatedAt = java.time.LocalDateTime.now().toString();

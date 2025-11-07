@@ -1,5 +1,6 @@
 const API_BASE_URL = 'http://localhost:8080/api';
 
+
 // اینترفیس‌های کامل برای نوع‌دهی بهتر
 interface Hotel {
   id: number;
@@ -32,16 +33,26 @@ interface Hotel {
   updatedAt: string;
 }
 
-interface User {
-  id: number;
+export interface User {  id: number;
   username: string;
   email: string;
   firstName: string;
   lastName: string;
   phone: string;
-  isActive: boolean;
+  emailVerified: boolean;
   role: string;
   createdAt: string;
+  mobile?: string;
+  password?: string;
+  userType?: string;
+  verificationCode?: string;
+  ambassadorCode?: string;
+  referredCount?: number;
+  profileImage?: string;
+  nationalCode?: string;
+  passportNumber?: string;
+  address?: string;
+  updatedAt?: string;
 }
 
 interface Booking {
@@ -54,6 +65,7 @@ interface Booking {
   totalPrice: number;
   status: string;
   createdAt: string;
+  emailVerified: true;
 }
 
 // تابع کمکی برای مدیریت درخواست‌ها
@@ -165,11 +177,23 @@ const adminService = {
   getUserById: (id: number): Promise<User> => 
     handleRequest(`${API_BASE_URL}/users/${id}`),
 
-  updateUser: (id: number, userData: Partial<User>): Promise<User> => 
-    handleRequest(`${API_BASE_URL}/users/${id}`, {
+  updateUser: (id: number, userData: Partial<User>): Promise<User> => {
+    console.log('🔄 Sending UPDATE request to server...');
+    console.log('📤 User ID:', id);
+    console.log('📤 User Data being sent:', userData);
+  console.log('📤 emailVerified value:', userData.emailVerified, 'Type:', typeof userData.emailVerified); // ✅ تغییر این خط
+    
+    return handleRequest(`${API_BASE_URL}/users/${id}`, {
       method: 'PUT',
       body: JSON.stringify(userData),
-    }),
+    }).then(response => {
+      console.log('✅ Server response:', response);
+      return response;
+    }).catch(error => {
+      console.error('❌ Error in updateUser:', error);
+      throw error;
+    });
+  },
 
   deleteUser: (userId: number): Promise<{ success: boolean }> => 
     handleRequest(`${API_BASE_URL}/users/${userId}`, {
@@ -182,6 +206,22 @@ const adminService = {
       method: 'POST',
       body: JSON.stringify({ newPassword }),
     }),
+
+  createUser: (userData: Partial<User>): Promise<User> => {
+    console.log('🔄 Sending CREATE request to server...');
+    console.log('📤 User Data being sent:', userData);
+console.log('📤 emailVerified value:', userData.emailVerified, 'Type:', typeof userData.emailVerified);    
+    return handleRequest(`${API_BASE_URL}/users`, {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    }).then(response => {
+      console.log('✅ Server response:', response);
+      return response;
+    }).catch(error => {
+      console.error('❌ Error in createUser:', error);
+      throw error;
+    });
+  },
 
   // 📅 Booking Management - بهبود یافته
   getBookings: (): Promise<Booking[]> => 
@@ -197,11 +237,11 @@ const adminService = {
     }),
 
   // 📊 Data Export & Statistics
-exportData: async (type: string): Promise<Blob> => {
-  const response = await fetch(`${API_BASE_URL}/admin/export/${type}`);
-  if (!response.ok) throw new Error('Export failed');
-  return await response.blob();
-},
+  exportData: async (type: string): Promise<Blob> => {
+    const response = await fetch(`${API_BASE_URL}/admin/export/${type}`);
+    if (!response.ok) throw new Error('Export failed');
+    return await response.blob();
+  },
 
   // سیستم مدیریت رسانه
   uploadMedia: (file: File, category: string = 'hotels'): Promise<{ url: string; filename: string }> => {

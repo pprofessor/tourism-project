@@ -35,7 +35,7 @@ public class UserController {
         User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("User not found"));
         
-        user.setUsername(userDetails.getUsername());
+    user.setUsername(userDetails.getUsername());
     user.setEmail(userDetails.getEmail());
     user.setMobile(userDetails.getMobile());
     user.setRole(userDetails.getRole());
@@ -45,6 +45,7 @@ public class UserController {
     user.setNationalCode(userDetails.getNationalCode());
     user.setPassportNumber(userDetails.getPassportNumber());
     user.setAddress(userDetails.getAddress());
+    user.setEmailVerified(userDetails.isEmailVerified());
         
         return userRepository.save(user);
     }
