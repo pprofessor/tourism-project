@@ -1,6 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Box, IconButton, Typography } from '@mui/material';
-import { NavigateBefore, NavigateNext, PlayArrow, Pause, FiberManualRecord } from '@mui/icons-material';
+import React, { useState, useEffect } from "react";
+import { Box, IconButton, Typography } from "@mui/material";
+import {
+  NavigateBefore,
+  NavigateNext,
+  PlayArrow,
+  Pause,
+  FiberManualRecord,
+} from "@mui/icons-material";
 
 interface Slide {
   id: number;
@@ -9,7 +15,7 @@ interface Slide {
   imageUrl: string;
   targetUrl: string;
   transitionDuration: number;
-  navigationStyle: 'dots' | 'arrows' | 'both' | 'minimal';
+  navigationStyle: "dots" | "arrows" | "both" | "minimal";
 }
 
 interface EnhancedSliderProps {
@@ -21,7 +27,7 @@ interface EnhancedSliderProps {
 const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
   slides,
   autoPlay = true,
-  showControls = true
+  showControls = true,
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(autoPlay);
@@ -31,7 +37,7 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
       const interval = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % slides.length);
       }, slides[currentSlide]?.transitionDuration * 1000 || 5000);
-      
+
       return () => clearInterval(interval);
     }
   }, [isPlaying, currentSlide, slides]);
@@ -50,47 +56,54 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
 
   if (slides.length === 0) {
     return (
-      <Box sx={{ height: 400, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Box
+        sx={{
+          height: 400,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <Typography>هیچ اسلایدی برای نمایش وجود ندارد</Typography>
       </Box>
     );
   }
 
   const currentSlideData = slides[currentSlide];
-  const navigationStyle = currentSlideData?.navigationStyle || 'both';
+  const navigationStyle = currentSlideData?.navigationStyle || "both";
 
   return (
-    <Box sx={{ position: 'relative', height: 500, overflow: 'hidden' }}>
+    <Box sx={{ position: "relative", height: 500, overflow: "hidden" }}>
       {/* اسلاید فعلی */}
       <Box
         sx={{
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           left: 0,
-          width: '100%',
-          height: '100%',
+          width: "100%",
+          height: "100%",
           backgroundImage: `url(${currentSlideData.imageUrl})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          transition: 'opacity 0.5s ease'
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          transition: "opacity 0.5s ease",
         }}
       >
         {/* Overlay */}
         <Box
           sx={{
-            position: 'absolute',
+            position: "absolute",
             top: 0,
             left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(0,0,0,0.3)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0,0,0,0.3)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
           {/* محتوای اسلاید */}
-          <Box sx={{ textAlign: 'center', color: 'white', maxWidth: '80%' }}>
+          <Box sx={{ textAlign: "center", color: "white", maxWidth: "80%" }}>
             <Typography variant="h3" component="h2" gutterBottom>
               {currentSlideData.title}
             </Typography>
@@ -98,13 +111,13 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
               {currentSlideData.description}
             </Typography>
             {currentSlideData.targetUrl && (
-  <a
-    href={currentSlideData.targetUrl}
-    className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition-colors duration-300"
-  >
-    بیشتر بدانید
-  </a>
-)}
+              <a
+                href={currentSlideData.targetUrl}
+                className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition-colors duration-300"
+              >
+                بیشتر بدانید
+              </a>
+            )}
           </Box>
         </Box>
       </Box>
@@ -113,30 +126,30 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
       {showControls && (
         <>
           {/* فلش‌های نویگیشن */}
-          {(navigationStyle === 'arrows' || navigationStyle === 'both') && (
+          {(navigationStyle === "arrows" || navigationStyle === "both") && (
             <>
               <IconButton
                 sx={{
-                  position: 'absolute',
+                  position: "absolute",
                   left: 16,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  backgroundColor: 'rgba(255,255,255,0.8)',
-                  '&:hover': { backgroundColor: 'white' }
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  backgroundColor: "rgba(255,255,255,0.8)",
+                  "&:hover": { backgroundColor: "white" },
                 }}
                 onClick={prevSlide}
               >
                 <NavigateBefore />
               </IconButton>
-              
+
               <IconButton
                 sx={{
-                  position: 'absolute',
+                  position: "absolute",
                   right: 16,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  backgroundColor: 'rgba(255,255,255,0.8)',
-                  '&:hover': { backgroundColor: 'white' }
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  backgroundColor: "rgba(255,255,255,0.8)",
+                  "&:hover": { backgroundColor: "white" },
                 }}
                 onClick={nextSlide}
               >
@@ -148,11 +161,11 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
           {/* دکمه‌های پلی/پاز */}
           <IconButton
             sx={{
-              position: 'absolute',
+              position: "absolute",
               top: 16,
               right: 16,
-              backgroundColor: 'rgba(255,255,255,0.8)',
-              '&:hover': { backgroundColor: 'white' }
+              backgroundColor: "rgba(255,255,255,0.8)",
+              "&:hover": { backgroundColor: "white" },
             }}
             onClick={() => setIsPlaying(!isPlaying)}
           >
@@ -160,15 +173,15 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
           </IconButton>
 
           {/* نقطه‌های نویگیشن */}
-          {(navigationStyle === 'dots' || navigationStyle === 'both') && (
+          {(navigationStyle === "dots" || navigationStyle === "both") && (
             <Box
               sx={{
-                position: 'absolute',
+                position: "absolute",
                 bottom: 16,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                display: 'flex',
-                gap: 1
+                left: "50%",
+                transform: "translateX(-50%)",
+                display: "flex",
+                gap: 1,
               }}
             >
               {slides.map((_, index) => (
@@ -177,8 +190,8 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
                   size="small"
                   onClick={() => goToSlide(index)}
                   sx={{
-                    color: index === currentSlide ? 'primary.main' : 'grey.400',
-                    '&:hover': { color: 'primary.main' }
+                    color: index === currentSlide ? "primary.main" : "grey.400",
+                    "&:hover": { color: "primary.main" },
                   }}
                 >
                   <FiberManualRecord sx={{ fontSize: 12 }} />
@@ -191,14 +204,14 @@ const EnhancedSlider: React.FC<EnhancedSliderProps> = ({
           <Typography
             variant="body2"
             sx={{
-              position: 'absolute',
+              position: "absolute",
               bottom: 16,
               right: 16,
-              color: 'white',
-              backgroundColor: 'rgba(0,0,0,0.5)',
+              color: "white",
+              backgroundColor: "rgba(0,0,0,0.5)",
               px: 1,
               py: 0.5,
-              borderRadius: 1
+              borderRadius: 1,
             }}
           >
             {currentSlide + 1} / {slides.length}

@@ -1,5 +1,4 @@
-const API_BASE_URL = 'http://localhost:8080/api';
-
+const API_BASE_URL = "http://localhost:8080/api";
 
 // اینترفیس‌های کامل برای نوع‌دهی بهتر
 interface Hotel {
@@ -33,7 +32,8 @@ interface Hotel {
   updatedAt: string;
 }
 
-export interface User {  id: number;
+export interface User {
+  id: number;
   username: string;
   email: string;
   firstName: string;
@@ -74,7 +74,7 @@ const handleRequest = async (url: string, options: RequestInit = {}) => {
     const response = await fetch(url, {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...options.headers,
       },
     });
@@ -84,48 +84,47 @@ const handleRequest = async (url: string, options: RequestInit = {}) => {
     }
 
     // برای درخواست‌های DELETE که ممکن است بدنه نداشته باشند
-    if (response.status === 204 || options.method === 'DELETE') {
+    if (response.status === 204 || options.method === "DELETE") {
       return { success: true };
     }
 
     return await response.json();
   } catch (error) {
-    console.error('API Request failed:', error);
+    console.error("API Request failed:", error);
     throw error;
   }
 };
 
 const adminService = {
   // 🏨 Hotel Management - کامل و بهینه
-  getHotels: (): Promise<Hotel[]> => 
-    handleRequest(`${API_BASE_URL}/hotels`),
+  getHotels: (): Promise<Hotel[]> => handleRequest(`${API_BASE_URL}/hotels`),
 
-  getActiveHotels: (): Promise<Hotel[]> => 
+  getActiveHotels: (): Promise<Hotel[]> =>
     handleRequest(`${API_BASE_URL}/hotels/active`),
 
-  getHotelById: (id: number): Promise<Hotel> => 
+  getHotelById: (id: number): Promise<Hotel> =>
     handleRequest(`${API_BASE_URL}/hotels/${id}`),
 
-  createHotel: (hotelData: Partial<Hotel>): Promise<Hotel> => 
+  createHotel: (hotelData: Partial<Hotel>): Promise<Hotel> =>
     handleRequest(`${API_BASE_URL}/hotels`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify(hotelData),
     }),
 
-  updateHotel: (id: number, hotelData: Partial<Hotel>): Promise<Hotel> => 
+  updateHotel: (id: number, hotelData: Partial<Hotel>): Promise<Hotel> =>
     handleRequest(`${API_BASE_URL}/hotels/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(hotelData),
     }),
 
-  deleteHotel: (id: number): Promise<{ success: boolean }> => 
+  deleteHotel: (id: number): Promise<{ success: boolean }> =>
     handleRequest(`${API_BASE_URL}/hotels/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     }),
 
-  deactivateHotel: (id: number): Promise<Hotel> => 
+  deactivateHotel: (id: number): Promise<Hotel> =>
     handleRequest(`${API_BASE_URL}/hotels/${id}/deactivate`, {
-      method: 'PUT',
+      method: "PUT",
     }),
 
   // جستجوی پیشرفته هتل‌ها
@@ -142,26 +141,34 @@ const adminService = {
         queryParams.append(key, value.toString());
       }
     });
-    
+
     return handleRequest(`${API_BASE_URL}/hotels/search?${queryParams}`);
   },
 
   // آپدیت اتاق‌های موجود
-  updateAvailableRooms: (id: number, availableRooms: number): Promise<Hotel> => 
-    handleRequest(`${API_BASE_URL}/hotels/${id}/rooms?availableRooms=${availableRooms}`, {
-      method: 'PUT',
-    }),
+  updateAvailableRooms: (id: number, availableRooms: number): Promise<Hotel> =>
+    handleRequest(
+      `${API_BASE_URL}/hotels/${id}/rooms?availableRooms=${availableRooms}`,
+      {
+        method: "PUT",
+      }
+    ),
 
   // اعمال تخفیف
   applyDiscount: (
-    id: number, 
-    discountPercentage: number, 
-    discountCode?: string, 
+    id: number,
+    discountPercentage: number,
+    discountCode?: string,
     discountExpiry?: string
-  ): Promise<Hotel> => 
-    handleRequest(`${API_BASE_URL}/hotels/${id}/discount?discountPercentage=${discountPercentage}${discountCode ? `&discountCode=${discountCode}` : ''}${discountExpiry ? `&discountExpiry=${discountExpiry}` : ''}`, {
-      method: 'PUT',
-    }),
+  ): Promise<Hotel> =>
+    handleRequest(
+      `${API_BASE_URL}/hotels/${id}/discount?discountPercentage=${discountPercentage}${
+        discountCode ? `&discountCode=${discountCode}` : ""
+      }${discountExpiry ? `&discountExpiry=${discountExpiry}` : ""}`,
+      {
+        method: "PUT",
+      }
+    ),
 
   // آمار هتل‌ها
   getHotelStats: (): Promise<{
@@ -171,95 +178,114 @@ const adminService = {
   }> => handleRequest(`${API_BASE_URL}/hotels/stats`),
 
   // 👥 User Management - بهبود یافته
-  getUsers: (): Promise<User[]> => 
-    handleRequest(`${API_BASE_URL}/users`),
+  getUsers: (): Promise<User[]> => handleRequest(`${API_BASE_URL}/users`),
 
-  getUserById: (id: number): Promise<User> => 
+  getUserById: (id: number): Promise<User> =>
     handleRequest(`${API_BASE_URL}/users/${id}`),
 
   updateUser: (id: number, userData: Partial<User>): Promise<User> => {
-    console.log('🔄 Sending UPDATE request to server...');
-    console.log('📤 User ID:', id);
-    console.log('📤 User Data being sent:', userData);
-  console.log('📤 emailVerified value:', userData.emailVerified, 'Type:', typeof userData.emailVerified); // ✅ تغییر این خط
-    
+    console.log("🔄 Sending UPDATE request to server...");
+    console.log("📤 User ID:", id);
+    console.log("📤 User Data being sent:", userData);
+    console.log(
+      "📤 emailVerified value:",
+      userData.emailVerified,
+      "Type:",
+      typeof userData.emailVerified
+    ); // ✅ تغییر این خط
+
     return handleRequest(`${API_BASE_URL}/users/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(userData),
-    }).then(response => {
-      console.log('✅ Server response:', response);
-      return response;
-    }).catch(error => {
-      console.error('❌ Error in updateUser:', error);
-      throw error;
-    });
+    })
+      .then((response) => {
+        console.log("✅ Server response:", response);
+        return response;
+      })
+      .catch((error) => {
+        console.error("❌ Error in updateUser:", error);
+        throw error;
+      });
   },
 
-  deleteUser: (userId: number): Promise<{ success: boolean }> => 
+  deleteUser: (userId: number): Promise<{ success: boolean }> =>
     handleRequest(`${API_BASE_URL}/users/${userId}`, {
-      method: 'DELETE',
+      method: "DELETE",
     }),
 
   // 🔐 تغییر رمز عبور کاربر
-  changeUserPassword: (userId: number, newPassword: string): Promise<{ success: boolean }> => 
+  changeUserPassword: (
+    userId: number,
+    newPassword: string
+  ): Promise<{ success: boolean }> =>
     handleRequest(`${API_BASE_URL}/users/${userId}/change-password`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ newPassword }),
     }),
 
   createUser: (userData: Partial<User>): Promise<User> => {
-    console.log('🔄 Sending CREATE request to server...');
-    console.log('📤 User Data being sent:', userData);
-console.log('📤 emailVerified value:', userData.emailVerified, 'Type:', typeof userData.emailVerified);    
+    console.log("🔄 Sending CREATE request to server...");
+    console.log("📤 User Data being sent:", userData);
+    console.log(
+      "📤 emailVerified value:",
+      userData.emailVerified,
+      "Type:",
+      typeof userData.emailVerified
+    );
     return handleRequest(`${API_BASE_URL}/users`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify(userData),
-    }).then(response => {
-      console.log('✅ Server response:', response);
-      return response;
-    }).catch(error => {
-      console.error('❌ Error in createUser:', error);
-      throw error;
-    });
+    })
+      .then((response) => {
+        console.log("✅ Server response:", response);
+        return response;
+      })
+      .catch((error) => {
+        console.error("❌ Error in createUser:", error);
+        throw error;
+      });
   },
 
   // 📅 Booking Management - بهبود یافته
-  getBookings: (): Promise<Booking[]> => 
+  getBookings: (): Promise<Booking[]> =>
     handleRequest(`${API_BASE_URL}/bookings`),
 
-  getBookingById: (id: number): Promise<Booking> => 
+  getBookingById: (id: number): Promise<Booking> =>
     handleRequest(`${API_BASE_URL}/bookings/${id}`),
 
-  updateBookingStatus: (id: number, status: string): Promise<Booking> => 
+  updateBookingStatus: (id: number, status: string): Promise<Booking> =>
     handleRequest(`${API_BASE_URL}/bookings/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify({ status }),
     }),
 
   // 📊 Data Export & Statistics
   exportData: async (type: string): Promise<Blob> => {
     const response = await fetch(`${API_BASE_URL}/admin/export/${type}`);
-    if (!response.ok) throw new Error('Export failed');
+    if (!response.ok) throw new Error("Export failed");
     return await response.blob();
   },
 
   // سیستم مدیریت رسانه
-  uploadMedia: (file: File, category: string = 'hotels'): Promise<{ url: string; filename: string }> => {
+  uploadMedia: (
+    file: File,
+    category: string = "hotels"
+  ): Promise<{ url: string; filename: string }> => {
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('category', category);
+    formData.append("file", file);
+    formData.append("category", category);
 
     return fetch(`${API_BASE_URL}/media/upload`, {
-      method: 'POST',
+      method: "POST",
       body: formData,
-    }).then(response => {
-      if (!response.ok) throw new Error('Upload failed');
+    }).then((response) => {
+      if (!response.ok) throw new Error("Upload failed");
       return response.json();
     });
   },
 
   // سیستم لاگ و مانیتورینگ
-  getSystemLogs: (): Promise<any[]> => 
+  getSystemLogs: (): Promise<any[]> =>
     handleRequest(`${API_BASE_URL}/admin/logs`),
 
   getSystemStats: (): Promise<{

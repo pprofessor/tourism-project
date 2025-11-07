@@ -10,24 +10,24 @@ import java.util.List;
 
 @Service
 public class SlideService {
-    
+
     @Autowired
     private SlideRepository slideRepository;
-    
+
     public List<Slide> getActiveSlides() {
         return slideRepository.findByIsActiveTrueOrderByDisplayOrderAsc();
     }
-    
+
     public Slide createSlide(Slide slide) {
         slide.setCreatedAt(LocalDateTime.now());
         slide.setUpdatedAt(LocalDateTime.now());
         return slideRepository.save(slide);
     }
-    
+
     public Slide updateSlide(Long id, Slide slideDetails) {
         Slide slide = slideRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Slide not found"));
-        
+
         slide.setTitle(slideDetails.getTitle());
         slide.setDescription(slideDetails.getDescription());
         slide.setImage(slideDetails.getImage());
@@ -36,7 +36,7 @@ public class SlideService {
         slide.setAltText(slideDetails.getAltText());
         slide.setSeoTitle(slideDetails.getSeoTitle());
         slide.setSeoDescription(slideDetails.getSeoDescription());
-        
+
         // فیلدهای جدید
         slide.setSlideType(slideDetails.getSlideType());
         slide.setMediaSource(slideDetails.getMediaSource());
@@ -48,10 +48,10 @@ public class SlideService {
         slide.setTransitionDuration(slideDetails.getTransitionDuration());
         slide.setIsActive(slideDetails.getIsActive());
         slide.setUpdatedAt(LocalDateTime.now());
-        
+
         return slideRepository.save(slide);
     }
-    
+
     public void deleteSlide(Long id) {
         slideRepository.deleteById(id);
     }

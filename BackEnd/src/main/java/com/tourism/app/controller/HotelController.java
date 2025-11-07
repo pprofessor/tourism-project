@@ -48,10 +48,10 @@ public class HotelController {
     @PutMapping("/{id}")
     public ResponseEntity<Hotel> updateHotel(@PathVariable Long id, @RequestBody Hotel hotelDetails) {
         Optional<Hotel> hotelOptional = hotelRepository.findById(id);
-        
+
         if (hotelOptional.isPresent()) {
             Hotel hotel = hotelOptional.get();
-            
+
             // آپدیت فیلدها
             hotel.setName(hotelDetails.getName());
             hotel.setDescription(hotelDetails.getDescription());
@@ -78,7 +78,7 @@ public class HotelController {
             hotel.setSeoTitle(hotelDetails.getSeoTitle());
             hotel.setSeoDescription(hotelDetails.getSeoDescription());
             hotel.setSeoKeywords(hotelDetails.getSeoKeywords());
-            
+
             Hotel updatedHotel = hotelRepository.save(hotel);
             return ResponseEntity.ok(updatedHotel);
         } else {
@@ -90,7 +90,7 @@ public class HotelController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Boolean>> deleteHotel(@PathVariable Long id) {
         Optional<Hotel> hotel = hotelRepository.findById(id);
-        
+
         if (hotel.isPresent()) {
             hotelRepository.deleteById(id);
             Map<String, Boolean> response = new HashMap<>();
@@ -105,7 +105,7 @@ public class HotelController {
     @PutMapping("/{id}/deactivate")
     public ResponseEntity<Hotel> deactivateHotel(@PathVariable Long id) {
         Optional<Hotel> hotelOptional = hotelRepository.findById(id);
-        
+
         if (hotelOptional.isPresent()) {
             Hotel hotel = hotelOptional.get();
             hotel.setIsActive(false);
@@ -148,7 +148,7 @@ public class HotelController {
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) Integer minRating,
             @RequestParam(required = false) Boolean hasAvailableRooms) {
-        
+
         return hotelRepository.searchHotels(city, minPrice, maxPrice, minRating, hasAvailableRooms);
     }
 
@@ -156,7 +156,7 @@ public class HotelController {
     @PutMapping("/{id}/rooms")
     public ResponseEntity<Hotel> updateAvailableRooms(@PathVariable Long id, @RequestParam Integer availableRooms) {
         Optional<Hotel> hotelOptional = hotelRepository.findById(id);
-        
+
         if (hotelOptional.isPresent()) {
             Hotel hotel = hotelOptional.get();
             hotel.setAvailableRooms(availableRooms);
@@ -174,9 +174,9 @@ public class HotelController {
             @RequestParam Double discountPercentage,
             @RequestParam(required = false) String discountCode,
             @RequestParam(required = false) String discountExpiry) {
-        
+
         Optional<Hotel> hotelOptional = hotelRepository.findById(id);
-        
+
         if (hotelOptional.isPresent()) {
             Hotel hotel = hotelOptional.get();
             hotel.setDiscountPercentage(discountPercentage);

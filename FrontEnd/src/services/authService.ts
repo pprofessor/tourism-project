@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8080/api/auth';
+const API_BASE_URL = "http://localhost:8080/api/auth";
 
 export interface AuthResponse {
   success: boolean;
@@ -17,23 +17,23 @@ export const authService = {
   async initLogin(mobile: string): Promise<AuthResponse> {
     try {
       const response = await fetch(`${API_BASE_URL}/init-login`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ mobile }),
       });
 
       if (!response.ok) {
-        throw new Error('خطا در ارتباط با سرور');
+        throw new Error("خطا در ارتباط با سرور");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Error in initLogin:', error);
+      console.error("Error in initLogin:", error);
       return {
         success: false,
-        message: 'خطا در ارتباط با سرور'
+        message: "خطا در ارتباط با سرور",
       };
     }
   },
@@ -42,23 +42,23 @@ export const authService = {
   async sendVerificationCode(mobile: string): Promise<AuthResponse> {
     try {
       const response = await fetch(`${API_BASE_URL}/send-verification`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ mobile }),
       });
 
       if (!response.ok) {
-        throw new Error('خطا در ارسال کد تایید');
+        throw new Error("خطا در ارسال کد تایید");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Error in sendVerificationCode:', error);
+      console.error("Error in sendVerificationCode:", error);
       return {
         success: false,
-        message: 'خطا در ارسال کد تایید'
+        message: "خطا در ارسال کد تایید",
       };
     }
   },
@@ -67,49 +67,52 @@ export const authService = {
   async verifyCode(mobile: string, code: string): Promise<AuthResponse> {
     try {
       const response = await fetch(`${API_BASE_URL}/verify-code`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ mobile, code }),
       });
 
       if (!response.ok) {
-        throw new Error('خطا در تأیید کد');
+        throw new Error("خطا در تأیید کد");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Error in verifyCode:', error);
+      console.error("Error in verifyCode:", error);
       return {
         success: false,
-        message: 'خطا در تأیید کد'
+        message: "خطا در تأیید کد",
       };
     }
   },
 
   // مرحله ۴: ورود با رمز عبور
-  async loginWithPassword(mobile: string, password: string): Promise<AuthResponse> {
+  async loginWithPassword(
+    mobile: string,
+    password: string
+  ): Promise<AuthResponse> {
     try {
       const response = await fetch(`${API_BASE_URL}/login-password`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ mobile, password }),
       });
 
       if (!response.ok) {
-        throw new Error('خطا در ورود');
+        throw new Error("خطا در ورود");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Error in loginWithPassword:', error);
+      console.error("Error in loginWithPassword:", error);
       return {
         success: false,
-        message: 'خطا در ورود'
+        message: "خطا در ورود",
       };
     }
-  }
+  },
 };
