@@ -19,7 +19,13 @@
     "currency": "Tümen",
     "cancel": "İptal",
     "close": "Kapat",
+    "later": "Sonra",
     "seeYouSoon": "Yakında görüşmek üzere"
+  },
+  "installPrompt": {
+    "title": "Turino Uygulamasını Yükle",
+    "description": "Daha hızlı erişim ve daha iyi deneyim",
+    "install": "Yükle"
   },
   "hotel": {
     "bookNow": "Rezervasyon Yap",
@@ -222,7 +228,7 @@
       "placeholder": "Ne arıyorsunuz?",
       "inputLabel": "Seyahat hizmetleri için arama terimi",
       "resultsFound": "{{count}} sonuç bulundu",
-    "noResults": "Hiç sonuç bulunamadı",
+      "noResults": "Hiç sonuç bulunamadı",
       "buttonLabel": "Ara",
       "logging": "Aranıyor:",
       "validation": {

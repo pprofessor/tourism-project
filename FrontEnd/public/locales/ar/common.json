@@ -19,7 +19,13 @@
     "currency": "تومان",
     "cancel": "إلغاء",
     "close": "إغلاق",
+    "later": "لاحقاً",
     "seeYouSoon": "أتمنى أن أراك قريبًا"
+  },
+  "installPrompt": {
+    "title": "ثبّت تطبيق تورينو",
+    "description": "وصول أسرع وتجربة أفضل",
+    "install": "تثبيت"
   },
   "hotel": {
     "bookNow": "احجز الآن",
@@ -223,7 +229,7 @@
       "inputLabel": "كلمة البحث لخدمات السفر",
       "buttonLabel": "بحث",
       "resultsFound": "تم العثور على {{count}} نتيجة",
-    "noResults": "لم يتم العثور على نتائج",
+      "noResults": "لم يتم العثور على نتائج",
       "logging": "البحث عن:",
       "validation": {
         "minLength": "يجب أن تكون كلمة البحث على الأقل حرفين"

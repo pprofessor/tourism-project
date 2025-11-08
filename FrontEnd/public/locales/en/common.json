@@ -19,6 +19,7 @@
     "currency": "Toman",
     "cancel": "Cancel",
     "close": "Close",
+    "later": "Later",
     "seeYouSoon": "Hope to see you soon"
   },
   "hotel": {
@@ -208,6 +209,11 @@
       "invalidImageUrl": "Invalid image URL"
     }
   },
+  "installPrompt": {
+    "title": "Install Turino App",
+    "description": "Faster access and better experience",
+    "install": "Install"
+  },
   "home": {
     "meta": {
       "title": "Turino - Tour and Hotel Booking System",
@@ -223,7 +229,7 @@
       "inputLabel": "Search term for travel services",
       "buttonLabel": "Search",
       "resultsFound": "{{count}} results found",
-    "noResults": "No results found",
+      "noResults": "No results found",
       "logging": "Searching for:",
       "validation": {
         "minLength": "Search term must be at least 2 characters"
