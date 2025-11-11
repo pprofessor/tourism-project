@@ -1,4 +1,4 @@
-// Header.tsx - کد کامل و اصلاح شده
+// Header.tsx - نسخه اصلاح شده
 import React, {
   useState,
   useEffect,
@@ -30,23 +30,28 @@ const Header: React.FC<HeaderProps> = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const searchModalRef = useRef<HTMLDivElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const { theme, toggleTheme } = useTheme();
   const { t, i18n } = useTranslation();
   const { state: cartState } = useCart();
 
   // زبان فعلی
-  const currentLanguage =
-    supportedLanguages[i18n.language as keyof typeof supportedLanguages] ||
-    supportedLanguages.fa;
+  const currentLanguage = useMemo(
+    () =>
+      supportedLanguages[i18n.language as keyof typeof supportedLanguages] ||
+      supportedLanguages.fa,
+    [i18n.language]
+  );
 
   // تغییر زبان
-  const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
-    setIsLanguageMenuOpen(false);
-  };
+  const changeLanguage = useCallback(
+    (lng: string) => {
+      i18n.changeLanguage(lng);
+      setIsLanguageMenuOpen(false);
+      setIsMenuOpen(false);
+    },
+    [i18n]
+  );
 
   // Navigation items با i18n
   const navItems = useMemo(
@@ -78,7 +83,13 @@ const Header: React.FC<HeaderProps> = () => {
 
     if (savedLoginStatus === "true" && savedUserData) {
       setIsLoggedIn(true);
-      setUserData(JSON.parse(savedUserData));
+      try {
+        setUserData(JSON.parse(savedUserData));
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+        localStorage.removeItem("userData");
+        localStorage.removeItem("isLoggedIn");
+      }
     }
 
     const handleClickOutside = (event: MouseEvent) => {
@@ -101,30 +112,41 @@ const Header: React.FC<HeaderProps> = () => {
 
   // Event handlers با useCallback برای performance
   const handleLoginSuccess = useCallback((userData: any) => {
-    console.log("کاربر با موفقیت وارد شد:", userData);
     setIsLoggedIn(true);
     setUserData(userData);
     setIsLoginModalOpen(false);
 
+    // نمایش پیام خوش‌آمدگویی در وسط صفحه
     setShowWelcome(true);
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setShowWelcome(false);
-    }, 2000);
+    }, 3000);
 
-    localStorage.setItem("userData", JSON.stringify(userData));
-    localStorage.setItem("isLoggedIn", "true");
+    // ذخیره ایمن داده‌های کاربر
+    try {
+      localStorage.setItem("userData", JSON.stringify(userData));
+      localStorage.setItem("isLoggedIn", "true");
+    } catch (error) {
+      console.error("Error saving user data:", error);
+    }
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleLogout = useCallback(() => {
     setShowGoodbye(true);
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setIsLoggedIn(false);
       setUserData(null);
       setIsProfileMenuOpen(false);
       setShowGoodbye(false);
+
+      // پاکسازی ایمن localStorage
       localStorage.removeItem("userData");
       localStorage.removeItem("isLoggedIn");
     }, 3000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleProfileMenuToggle = useCallback(() => {
@@ -133,10 +155,6 @@ const Header: React.FC<HeaderProps> = () => {
 
   const handleMenuToggle = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
-  }, []);
-
-  const handleCartToggle = useCallback(() => {
-    setIsCartOpen(true);
   }, []);
 
   const handleCloseMenu = useCallback(() => {
@@ -160,16 +178,14 @@ const Header: React.FC<HeaderProps> = () => {
     const sanitizedQuery = searchQuery.trim().slice(0, 100);
 
     if (sanitizedQuery.length < 2) {
-      console.warn(t("home.search.validation.minLength"));
       return;
     }
 
     setIsSearching(true);
 
     try {
-      console.log(t("home.search.logging"), sanitizedQuery);
       // منطق جستجو اینجا اضافه بشه
-      // ...
+      await new Promise((resolve) => setTimeout(resolve, 500));
     } catch (error) {
       console.error("خطا در جستجو:", error);
     } finally {
@@ -220,6 +236,53 @@ const Header: React.FC<HeaderProps> = () => {
     [t]
   );
 
+  // کامپوننت پاپ‌آپ مرکزی
+  const CentralPopup = useMemo(
+    () =>
+      ({
+        show,
+        message,
+        icon,
+        theme,
+      }: {
+        show: boolean;
+        message: string;
+        icon: React.ReactNode;
+        theme: string;
+      }) => {
+        if (!show) return null;
+
+        return (
+          <div
+            className="fixed inset-0 flex items-center justify-center z-50"
+            role="alert"
+            aria-live="polite"
+          >
+            <div className="bg-black bg-opacity-50 absolute inset-0"></div>
+            <div
+              className={`px-8 py-6 rounded-2xl shadow-2xl z-10 transform animate-scale-in ${
+                theme === "dark"
+                  ? "bg-gray-800 text-white"
+                  : "bg-white text-gray-800"
+              }`}
+            >
+              <div className="text-center">
+                <div
+                  className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${
+                    theme === "dark" ? "bg-blue-800" : "bg-blue-100"
+                  }`}
+                >
+                  {icon}
+                </div>
+                <p className="text-lg font-medium">{message}</p>
+              </div>
+            </div>
+          </div>
+        );
+      },
+    []
+  );
+
   return (
     <>
       <header
@@ -231,15 +294,19 @@ const Header: React.FC<HeaderProps> = () => {
       >
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center py-4">
-            {/* لوگو */}
-            <div className="flex items-center">
+            {/* لوگو - فقط در دسکتاپ نمایش داده بشه */}
+            <div className="hidden md:flex items-center">
               {location.pathname === "/" ? (
                 // در صفحه اصلی - بدون لینک
                 <>
                   <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                     <span className="text-white font-bold text-lg">ت</span>
                   </div>
-                  <span className="mr-3 text-xl font-bold text-gray-800">
+                  <span
+                    className={`mr-3 text-xl font-bold ${
+                      theme === "dark" ? "text-white" : "text-gray-800"
+                    }`}
+                  >
                     تورینو
                   </span>
                 </>
@@ -248,11 +315,16 @@ const Header: React.FC<HeaderProps> = () => {
                 <Link
                   to="/"
                   className="flex items-center hover:opacity-80 transition-opacity"
+                  aria-label="بازگشت به صفحه اصلی"
                 >
                   <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                     <span className="text-white font-bold text-lg">ت</span>
                   </div>
-                  <span className="mr-3 text-xl font-bold text-gray-800">
+                  <span
+                    className={`mr-3 text-xl font-bold ${
+                      theme === "dark" ? "text-white" : "text-gray-800"
+                    }`}
+                  >
                     تورینو
                   </span>
                 </Link>
@@ -260,7 +332,10 @@ const Header: React.FC<HeaderProps> = () => {
             </div>
 
             {/* منوی دسکتاپ */}
-            <nav className="hidden md:flex items-center space-x-8 space-x-reverse">
+            <nav
+              className="hidden md:flex items-center space-x-8 space-x-reverse"
+              aria-label="منوی اصلی"
+            >
               {navItems.map((item) => (
                 <a
                   key={item.href}
@@ -274,33 +349,33 @@ const Header: React.FC<HeaderProps> = () => {
               ))}
             </nav>
 
-            {/* 🔍 این دکمه سرچ رو اینجا اضافه کن */}
-            <button
-              onClick={() => setIsSearchOpen(true)}
-              className={`p-2 transition-colors duration-200 ${
-                theme === "dark"
-                  ? "text-gray-300 hover:text-white"
-                  : "text-gray-600 hover:text-blue-600"
-              }`}
-              aria-label={t("header.search")}
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </button>
-
-            {/* آیکن‌های سمت چپ */}
+            {/* آیکن‌های سمت چپ - دسکتاپ */}
             <div className="hidden md:flex items-center space-x-4 space-x-reverse">
+              {/* دکمه جستجو */}
+              <button
+                onClick={() => setIsSearchOpen(true)}
+                className={`p-2 transition-colors duration-200 ${
+                  theme === "dark"
+                    ? "text-gray-300 hover:text-white"
+                    : "text-gray-600 hover:text-blue-600"
+                }`}
+                aria-label={t("header.search")}
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </button>
+
               {/* سوییچ زبان */}
               <div className="relative">
                 <button
@@ -309,6 +384,7 @@ const Header: React.FC<HeaderProps> = () => {
                     theme === "dark" ? "text-gray-300" : "text-gray-700"
                   }`}
                   aria-label="تغییر زبان"
+                  aria-expanded={isLanguageMenuOpen}
                 >
                   <span className="text-sm font-medium">
                     {currentLanguage.code.toUpperCase()}
@@ -336,6 +412,7 @@ const Header: React.FC<HeaderProps> = () => {
                         ? "bg-gray-800 border-gray-700"
                         : "bg-white border-gray-200"
                     }`}
+                    role="menu"
                   >
                     {Object.entries(supportedLanguages).map(([code, lang]) => (
                       <button
@@ -350,6 +427,7 @@ const Header: React.FC<HeaderProps> = () => {
                             ? "text-gray-300 hover:bg-gray-700"
                             : "text-gray-700"
                         }`}
+                        role="menuitem"
                       >
                         <span>{lang.name}</span>
                         <span className="text-xs text-gray-500">
@@ -369,6 +447,11 @@ const Header: React.FC<HeaderProps> = () => {
                     ? "text-yellow-400 hover:text-yellow-300"
                     : "text-gray-700 hover:text-blue-600"
                 }`}
+                aria-label={
+                  theme === "light"
+                    ? "فعال کردن حالت تاریک"
+                    : "فعال کردن حالت روشن"
+                }
               >
                 {theme === "light" ? (
                   <svg
@@ -403,7 +486,6 @@ const Header: React.FC<HeaderProps> = () => {
 
               {/* آیکن سبد خرید */}
               <button
-                onClick={handleCartToggle}
                 className={`relative p-2 hover:text-blue-600 transition ${
                   theme === "dark" ? "text-gray-300" : "text-gray-700"
                 }`}
@@ -423,7 +505,10 @@ const Header: React.FC<HeaderProps> = () => {
                   />
                 </svg>
                 {cartState.itemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  <span
+                    className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+                    aria-live="polite"
+                  >
                     {cartState.itemCount}
                   </span>
                 )}
@@ -435,13 +520,15 @@ const Header: React.FC<HeaderProps> = () => {
                   <button
                     onClick={handleProfileMenuToggle}
                     className="flex items-center space-x-2 space-x-reverse border border-blue-600 text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-600 hover:text-white transition font-medium"
+                    aria-expanded={isProfileMenuOpen}
                   >
                     <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden">
                       <img
                         src={userProfileImage}
-                        alt="پروفایل"
+                        alt="پروفایل کاربر"
                         className="w-full h-full object-cover"
                         onError={handleImageError}
+                        loading="lazy"
                       />
                     </div>
                     <span>{t("header.profile")}</span>
@@ -455,6 +542,7 @@ const Header: React.FC<HeaderProps> = () => {
                           ? "bg-gray-800 border-gray-700"
                           : "bg-white border-gray-200"
                       }`}
+                      role="menu"
                     >
                       {/* امتیاز کاربر */}
                       <div className="p-4 border-b border-gray-200 text-center">
@@ -499,6 +587,7 @@ const Header: React.FC<HeaderProps> = () => {
                                 ? "text-gray-300 hover:bg-gray-700"
                                 : "text-gray-700 hover:bg-gray-100"
                             }`}
+                            role="menuitem"
                           >
                             <span>{item.label}</span>
                             <svg
@@ -519,6 +608,7 @@ const Header: React.FC<HeaderProps> = () => {
                               ? "text-red-400 hover:bg-gray-700"
                               : "text-red-600 hover:bg-red-50"
                           }`}
+                          role="menuitem"
                         >
                           <span>{t("header.logout")}</span>
                           <svg
@@ -549,62 +639,281 @@ const Header: React.FC<HeaderProps> = () => {
               )}
             </div>
 
-            {/* منوی موبایل */}
-            <button
-              className="md:hidden text-gray-700"
-              onClick={handleMenuToggle}
-              aria-label="منو"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            </button>
+            {/* منوی موبایل - دکمه همبرگری */}
+            <div className="md:hidden flex items-center justify-between w-full">
+              {/* لوگو و عنوان - فقط در موبایل */}
+              <div className="flex items-center flex-shrink-0">
+                {location.pathname === "/" ? (
+                  <>
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                      <span className="text-white font-bold text-sm">ت</span>
+                    </div>
+                    <span
+                      className={`mr-2 text-lg font-bold ${
+                        theme === "dark" ? "text-white" : "text-gray-800"
+                      }`}
+                    >
+                      تورینو
+                    </span>
+                  </>
+                ) : (
+                  <Link
+                    to="/"
+                    className="flex items-center hover:opacity-80 transition-opacity flex-shrink-0"
+                    aria-label="بازگشت به صفحه اصلی"
+                  >
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                      <span className="text-white font-bold text-sm">ت</span>
+                    </div>
+                    <span
+                      className={`mr-2 text-lg font-bold ${
+                        theme === "dark" ? "text-white" : "text-gray-800"
+                      }`}
+                    >
+                      تورینو
+                    </span>
+                  </Link>
+                )}
+              </div>
+
+              {/* دکمه‌های کنترلی - فشرده‌تر */}
+              <div className="flex items-center space-x-2 space-x-reverse">
+                {/* انتخاب زبان - کوچک‌تر */}
+                <div className="relative">
+                  <button
+                    onClick={() => setIsLanguageMenuOpen(!isLanguageMenuOpen)}
+                    className={`flex items-center space-x-1 p-1 transition ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                    }`}
+                    aria-label="تغییر زبان"
+                  >
+                    <span className="text-xs font-medium">
+                      {currentLanguage.code.toUpperCase()}
+                    </span>
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  {/* منوی زبان */}
+                  {isLanguageMenuOpen && (
+                    <div
+                      className={`absolute left-0 mt-2 w-28 rounded-lg shadow-lg border z-50 ${
+                        theme === "dark"
+                          ? "bg-gray-800 border-gray-700"
+                          : "bg-white border-gray-200"
+                      }`}
+                    >
+                      {Object.entries(supportedLanguages).map(
+                        ([code, lang]) => (
+                          <button
+                            key={code}
+                            onClick={() => changeLanguage(code)}
+                            className={`w-full text-right px-3 py-2 hover:bg-gray-100 transition flex items-center justify-between text-sm ${
+                              i18n.language === code
+                                ? theme === "dark"
+                                  ? "bg-blue-600 text-white"
+                                  : "bg-blue-50 text-blue-600"
+                                : theme === "dark"
+                                ? "text-gray-300 hover:bg-gray-700"
+                                : "text-gray-700"
+                            }`}
+                          >
+                            <span className="text-xs">{lang.name}</span>
+                          </button>
+                        )
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* دکمه تغییر تم - کوچک‌تر */}
+                <button
+                  onClick={toggleTheme}
+                  className={`p-1 transition ${
+                    theme === "dark"
+                      ? "text-yellow-400 hover:text-yellow-300"
+                      : "text-gray-700 hover:text-blue-600"
+                  }`}
+                  aria-label={
+                    theme === "light"
+                      ? "فعال کردن حالت تاریک"
+                      : "فعال کردن حالت روشن"
+                  }
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    {theme === "light" ? (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                      />
+                    ) : (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                      />
+                    )}
+                  </svg>
+                </button>
+
+                {/* دکمه جستجو - کوچک‌تر */}
+                <button
+                  onClick={() => setIsSearchOpen(true)}
+                  className={`p-1 transition-colors duration-200 ${
+                    theme === "dark"
+                      ? "text-gray-300 hover:text-white"
+                      : "text-gray-600 hover:text-blue-600"
+                  }`}
+                  aria-label={t("header.search")}
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </button>
+
+                {/* دکمه منو - کوچک‌تر */}
+                <button
+                  className="text-gray-700 p-1"
+                  onClick={handleMenuToggle}
+                  aria-label="منو"
+                  aria-expanded={isMenuOpen}
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
 
-          {/* منوی موبایل */}
+          {/* منوی موبایل - کامل و ریسپانسیو */}
           {isMenuOpen && (
-            <div className="md:hidden bg-white py-4 border-t">
+            <div
+              className={`md:hidden py-4 border-t ${
+                theme === "dark"
+                  ? "bg-gray-900 border-gray-700"
+                  : "bg-white border-gray-200"
+              }`}
+              role="menu"
+            >
               <div className="flex flex-col space-y-4">
+                {/* آیتم‌های منوی اصلی */}
                 {navItems.map((item) => (
                   <a
                     key={item.href}
                     href={item.href}
-                    className="text-gray-700 hover:text-blue-600 transition font-medium text-right"
+                    className={`text-right px-4 py-2 transition font-medium ${
+                      theme === "dark"
+                        ? "text-gray-300 hover:text-white hover:bg-gray-800"
+                        : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+                    }`}
                     onClick={handleCloseMenu}
+                    role="menuitem"
                   >
                     {item.label}
                   </a>
                 ))}
-                <div className="flex flex-col space-y-2 pt-4 border-t">
-                  {isLoggedIn ? (
-                    <Link
-                      to="/profile"
-                      onClick={handleCloseMenu}
-                      className="border border-blue-600 text-blue-600 px-6 py-2 rounded-lg hover:bg-blue-600 hover:text-white transition font-medium text-center"
-                    >
-                      {t("header.profile")}
-                    </Link>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        setIsLoginModalOpen(true);
-                        handleCloseMenu();
-                      }}
-                      className="border border-blue-600 text-blue-600 px-6 py-2 rounded-lg hover:bg-blue-600 hover:text-white transition font-medium"
-                    >
-                      {t("header.login")}
-                    </button>
-                  )}
+
+                <div className="border-t pt-4 mt-2 space-y-3">
+                  {/* سبد خرید در موبایل */}
+                  <div
+                    className={`px-4 py-3 rounded-lg flex items-center justify-between ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                    }`}
+                  >
+                    <span>سبد خرید</span>
+                    <div className="flex items-center space-x-2 space-x-reverse">
+                      <span className="text-sm">
+                        ({cartState.itemCount} آیتم)
+                      </span>
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5.5M7 13l2.5 5.5m0 0L17 21"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* دکمه ورود/پروفایل در موبایل */}
+                  <div className="px-4 pt-2">
+                    {isLoggedIn ? (
+                      <div className="space-y-2">
+                        <Link
+                          to="/profile"
+                          onClick={handleCloseMenu}
+                          className="block w-full border border-blue-600 text-blue-600 px-6 py-3 rounded-lg hover:bg-blue-600 hover:text-white transition font-medium text-center"
+                          role="menuitem"
+                        >
+                          {t("header.profile")}
+                        </Link>
+                        <button
+                          onClick={handleLogout}
+                          className="block w-full border border-red-600 text-red-600 px-6 py-3 rounded-lg hover:bg-red-600 hover:text-white transition font-medium text-center"
+                          role="menuitem"
+                        >
+                          {t("header.logout")}
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setIsLoginModalOpen(true);
+                          handleCloseMenu();
+                        }}
+                        className="block w-full border border-blue-600 text-blue-600 px-6 py-3 rounded-lg hover:bg-blue-600 hover:text-white transition font-medium text-center"
+                        role="menuitem"
+                      >
+                        {t("header.login")}
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -612,39 +921,49 @@ const Header: React.FC<HeaderProps> = () => {
         </div>
       </header>
 
-      {/* پاپ‌آپ خوش آمدید */}
-      {showWelcome && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in-out">
-          خوش آمدید! 🎉
-        </div>
-      )}
+      {/* پاپ‌آپ خوش آمدید - نسخه جدید در وسط صفحه */}
+      <CentralPopup
+        show={showWelcome}
+        message="خوش آمدید! 🎉"
+        icon={
+          <svg
+            className="w-8 h-8 text-blue-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        }
+        theme={theme}
+      />
 
       {/* پاپ‌آپ خداحافظی */}
-      {showGoodbye && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-black bg-opacity-50 absolute inset-0"></div>
-          <div className="bg-white text-gray-800 px-8 py-6 rounded-2xl shadow-2xl z-10 transform animate-scale-in">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg
-                  className="w-8 h-8 text-blue-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <p className="text-gray-600">{t("common.seeYouSoon")} 👋</p>
-            </div>
-          </div>
-        </div>
-      )}
+      <CentralPopup
+        show={showGoodbye}
+        message={t("common.seeYouSoon") + " 👋"}
+        icon={
+          <svg
+            className="w-8 h-8 text-blue-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        }
+        theme={theme}
+      />
 
       {/* کامپوننت مودال ورود */}
       <LoginModal
@@ -652,7 +971,8 @@ const Header: React.FC<HeaderProps> = () => {
         onClose={() => setIsLoginModalOpen(false)}
         onLoginSuccess={handleLoginSuccess}
       />
-      {/*   مودال سرچ     */}
+
+      {/* مودال جستجو */}
       {isSearchOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-center pt-20">
           <div
