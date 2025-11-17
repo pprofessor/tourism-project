@@ -12,7 +12,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByMobile(String mobile);
 
-    // اضافه کردن متد برای پیدا کردن کاربر با کد تایید
     Optional<User> findByMobileAndVerificationCode(String mobile, String verificationCode);
 
     long countByRole(String role);

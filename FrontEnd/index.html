@@ -1,14 +1,50 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-  <link rel="manifest" href="/manifest.json" />
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>تورینو</title>
+    <title>تورینو - سامانه رزرو تور و هتل</title>
+    <meta
+      name="description"
+      content="رزرو آنلاین تور، هتل و بلیط با بهترین قیمت و کیفیت"
+    />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3B82F6" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="تورینو" />
+    <link rel="apple-touch-icon" href="/logo192.png" />
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="تورینو - سامانه رزرو تور و هتل" />
+    <meta
+      property="og:description"
+      content="رزرو آنلاین تور، هتل و بلیط با بهترین قیمت و کیفیت"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/logo512.png" />
   </head>
-    <body>
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/index.tsx"></script>
+
+    <!-- PWA Service Worker -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .then((registration) => {
+              console.log("SW registered: ", registration);
+            })
+            .catch((registrationError) => {
+              console.log("SW registration failed: ", registrationError);
+            });
+        });
+      }
+    </script>
   </body>
 </html>
