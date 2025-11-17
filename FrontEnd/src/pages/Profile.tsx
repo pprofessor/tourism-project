@@ -365,7 +365,7 @@ const Profile: React.FC = () => {
                     theme === "dark" ? "text-white" : "text-gray-800"
                   }`}
                 >
-                  {user.mobile || "-"}
+                  {user.mobile ? ` ${user.mobile} 98+` : "-"}
                 </p>
               </div>
             </div>

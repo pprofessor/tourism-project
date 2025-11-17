@@ -1,6 +1,7 @@
-// ProfileForm.tsx - نسخه تصحیح شده
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+// ProfileForm.tsx - نسخه نهایی اصلاح شده
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+
 interface UserData {
   id?: number;
   mobile?: string;
@@ -28,193 +29,233 @@ interface FormData {
 }
 
 // اعتبارسنجی فرم
-const validateForm = (formData: FormData, t: any): { isValid: boolean; errors: string[] } => {
+const validateForm = (
+  formData: FormData,
+  t: any
+): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
 
   // اعتبارسنجی نام
   if (!formData.firstName.trim()) {
-    errors.push(t('validation.firstNameRequired'));
+    errors.push(t("validation.firstNameRequired"));
   } else if (formData.firstName.length < 2) {
-    errors.push(t('validation.firstNameMinLength'));
+    errors.push(t("validation.firstNameMinLength"));
   }
 
   // اعتبارسنجی نام خانوادگی
   if (!formData.lastName.trim()) {
-    errors.push(t('validation.lastNameRequired'));
+    errors.push(t("validation.lastNameRequired"));
   } else if (formData.lastName.length < 2) {
-    errors.push(t('validation.lastNameMinLength'));
+    errors.push(t("validation.lastNameMinLength"));
   }
 
   // اعتبارسنجی کد ملی (اگر پر شده)
   if (formData.nationalCode && !/^\d{10}$/.test(formData.nationalCode)) {
-    errors.push(t('validation.nationalCodeInvalid'));
+    errors.push(t("validation.nationalCodeInvalid"));
   }
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 };
 
 const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
   const [formData, setFormData] = useState<FormData>({
-    firstName: '',
-    lastName: '',
-    nationalCode: '',
-    passportNumber: '',
-    address: ''
+    firstName: "",
+    lastName: "",
+    nationalCode: "",
+    passportNumber: "",
+    address: "",
   });
-  
+
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const { t } = useTranslation();
 
-  // پر کردن فرم با داده‌های کاربر - بهینه‌شده با useMemo
-  const initialFormData = useMemo((): FormData => ({
-    firstName: userData.firstName || '',
-    lastName: userData.lastName || '',
-    nationalCode: userData.nationalCode || '',
-    passportNumber: userData.passportNumber || '',
-    address: userData.address || ''
-  }), [userData]);
+  // تابع مدیریت Tab و Enter
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const form = e.currentTarget.form;
+        if (form) {
+          const inputs = Array.from(form.elements) as HTMLElement[];
+          const currentIndex = inputs.indexOf(e.currentTarget);
+          const nextInput = inputs[currentIndex + 1] as HTMLInputElement;
+          nextInput?.focus();
+        }
+      }
+    },
+    []
+  );
+
+  // پر کردن فرم با داده‌های کاربر
+  const initialFormData = useMemo(
+    (): FormData => ({
+      firstName: userData.firstName || "",
+      lastName: userData.lastName || "",
+      nationalCode: userData.nationalCode || "",
+      passportNumber: userData.passportNumber || "",
+      address: userData.address || "",
+    }),
+    [userData]
+  );
 
   useEffect(() => {
     setFormData(initialFormData);
   }, [initialFormData]);
 
-  // بررسی سطح کاربر - بهینه‌شده با useCallback
+  // بررسی سطح کاربر
   const checkUserLevel = useCallback(async () => {
     try {
-      console.log(t('profileForm.checkingUserLevel'));
-      
-      await new Promise(resolve => setTimeout(resolve, 500));
-      console.log(t('profileForm.userLevelChecked'));
-      
+      await new Promise((resolve) => setTimeout(resolve, 500));
     } catch (error) {
-      console.error(t('profileForm.userLevelError'), error);
+      console.error(t("profileForm.userLevelError"), error);
     }
   }, [t]);
 
-  // مدیریت تغییرات input - بهینه‌شده با useCallback
-  const handleInputChange = useCallback((
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    
-    // اعتبارسنجی بلادرنگ برای کد ملی
-    if (name === 'nationalCode' && value && !/^\d*$/.test(value)) {
-      return; // فقط اعداد مجاز هستند
-    }
+  // مدیریت تغییرات input
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target;
 
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+      // اعتبارسنجی بلادرنگ برای کد ملی
+      if (name === "nationalCode" && value && !/^\d*$/.test(value)) {
+        return;
+      }
 
-    // پاک کردن خطاها هنگام تایپ
-    if (validationErrors.length > 0) {
-      setValidationErrors([]);
-    }
-    if (message) {
-      setMessage(null);
-    }
-  }, [validationErrors.length, message]);
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
 
-  // مدیریت ارسال فرم - بهینه‌شده با useCallback
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // اعتبارسنجی فرم
-    const validation = validateForm(formData, t);
-    if (!validation.isValid) {
-      setValidationErrors(validation.errors);
-      setMessage({
-        type: 'error',
-        text: t('validation.formErrors')
-      });
-      return;
-    }
+      // پاک کردن خطاها هنگام تایپ
+      if (validationErrors.length > 0) {
+        setValidationErrors([]);
+      }
+      if (message) {
+        setMessage(null);
+      }
+    },
+    [validationErrors.length, message]
+  );
 
-    setLoading(true);
-    setMessage(null);
-    setValidationErrors([]);
-
-    try {
-      // شبیه‌سازی API call با رعایت امنیت
-      console.log(t('profileForm.sendingData'), {
-        ...formData,
-        // حذف فیلدهای حساس از لاگ در حالت production
-        nationalCode: process.env.NODE_ENV === 'development' ? formData.nationalCode : '***'
-      });
-      
-      // شبیه‌سازی تاخیر شبکه
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // فراخوانی callback والد
-      onUpdate(formData);
-      
-      // نمایش پیام موفقیت
-      setMessage({
-        type: 'success',
-        text: t('profileForm.saveSuccess')
-      });
-
-      // بررسی سطح کاربر
-      await checkUserLevel();
-
-    } catch (error) {
-      console.error('Profile update error:', error);
-      setMessage({
-        type: 'error',
-        text: t('profileForm.saveError')
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [formData, onUpdate, t, checkUserLevel]); // اضافه کردن checkUserLevel به dependencies
-
-  // مدیریت input های عددی
-  const handleNumericInput = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    // فقط اجازه ورود اعداد و کلیدهای کنترل
-    if (!/[\d\b\t\n]|Arrow|Delete|Home|End|Page/.test(e.key) && 
-        !(e.ctrlKey || e.metaKey) && 
-        e.key !== 'a' && e.key !== 'c' && e.key !== 'v' && e.key !== 'x') {
+  // مدیریت ارسال فرم
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
       e.preventDefault();
-    }
-  }, []);
 
-  // کلاس‌های شرطی برای تم - بهینه‌شده با useMemo
-  const inputClasses = useMemo(() => 
-    "w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200",
+      // اعتبارسنجی فرم
+      const validation = validateForm(formData, t);
+      if (!validation.isValid) {
+        setValidationErrors(validation.errors);
+        setMessage({
+          type: "error",
+          text: t("validation.formErrors"),
+        });
+        return;
+      }
+
+      setLoading(true);
+      setMessage(null);
+      setValidationErrors([]);
+
+      try {
+        console.log("📤 ارسال اطلاعات به بک‌اند...");
+
+        // ارسال به بک‌اند برای ذخیره در دیتابیس
+        const updateResponse = await fetch(
+          `http://localhost:8080/api/users/${userData.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              firstName: formData.firstName,
+              lastName: formData.lastName,
+              nationalCode: formData.nationalCode,
+              passportNumber: formData.passportNumber,
+              address: formData.address,
+            }),
+          }
+        );
+
+        console.log("📥 پاسخ آپدیت:", updateResponse);
+
+        if (!updateResponse.ok) {
+          throw new Error("خطا در ذخیره اطلاعات در سرور");
+        }
+
+        const updatedUser = await updateResponse.json();
+        console.log("✅ کاربر آپدیت شد:", updatedUser);
+
+        // فراخوانی callback والد با حفظ داده‌های موجود
+        const updatedData = {
+          ...userData,
+          ...formData,
+        };
+
+        onUpdate(updatedData);
+
+        // نمایش پیام موفقیت
+        setMessage({
+          type: "success",
+          text: t("profileForm.saveSuccess"),
+        });
+
+        // بررسی سطح کاربر
+        await checkUserLevel();
+      } catch (error) {
+        console.error("❌ خطا در آپدیت پروفایل:", error);
+        setMessage({
+          type: "error",
+          text: t("profileForm.saveError"),
+        });
+      } finally {
+        setLoading(false);
+      }
+    },
+    [formData, onUpdate, t, checkUserLevel, userData]
+  );
+
+  // کلاس‌های شرطی برای تم
+  const inputClasses = useMemo(
+    () =>
+      "w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200",
     []
   );
 
-  const labelClasses = useMemo(() => 
-    "block text-sm font-medium text-gray-700 mb-2",
+  const labelClasses = useMemo(
+    () => "block text-sm font-medium text-gray-700 mb-2",
     []
   );
 
   return (
-    <div 
+    <div
       className="bg-white rounded-2xl shadow-lg p-6"
       role="form"
       aria-labelledby="profile-form-title"
     >
-      <h3 
+      <h3
         id="profile-form-title"
         className="text-xl font-bold text-gray-800 mb-6"
       >
-        {t('profileForm.title')}
+        {t("profileForm.title")}
       </h3>
-      
+
       {/* نمایش پیام‌ها */}
       {message && (
-        <div 
+        <div
           className={`p-3 rounded-lg mb-4 ${
-            message.type === 'success' 
-              ? 'bg-green-100 text-green-700 border border-green-200' 
-              : 'bg-red-100 text-red-700 border border-red-200'
+            message.type === "success"
+              ? "bg-green-100 text-green-700 border border-green-200"
+              : "bg-red-100 text-red-700 border border-red-200"
           }`}
           role="alert"
           aria-live="polite"
@@ -225,7 +266,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
 
       {/* نمایش خطاهای اعتبارسنجی */}
       {validationErrors.length > 0 && (
-        <div 
+        <div
           className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4"
           role="alert"
           aria-live="assertive"
@@ -238,16 +279,12 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
         </div>
       )}
 
-      <form 
-        onSubmit={handleSubmit} 
-        className="space-y-4"
-        noValidate
-      >
+      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* نام */}
           <div>
             <label htmlFor="firstName" className={labelClasses}>
-              {t('profileForm.firstName')} *
+              {t("profileForm.firstName")} *
             </label>
             <input
               id="firstName"
@@ -255,8 +292,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
               name="firstName"
               value={formData.firstName}
               onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
               className={inputClasses}
-              placeholder={t('profileForm.firstNamePlaceholder')}
+              placeholder={t("profileForm.firstNamePlaceholder")}
               required
               aria-required="true"
               minLength={2}
@@ -267,7 +305,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
           {/* نام خانوادگی */}
           <div>
             <label htmlFor="lastName" className={labelClasses}>
-              {t('profileForm.lastName')} *
+              {t("profileForm.lastName")} *
             </label>
             <input
               id="lastName"
@@ -275,8 +313,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
               name="lastName"
               value={formData.lastName}
               onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
               className={inputClasses}
-              placeholder={t('profileForm.lastNamePlaceholder')}
+              placeholder={t("profileForm.lastNamePlaceholder")}
               required
               aria-required="true"
               minLength={2}
@@ -289,7 +328,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
           {/* کد ملی */}
           <div>
             <label htmlFor="nationalCode" className={labelClasses}>
-              {t('profileForm.nationalCode')}
+              {t("profileForm.nationalCode")}
             </label>
             <input
               id="nationalCode"
@@ -297,9 +336,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
               name="nationalCode"
               value={formData.nationalCode}
               onChange={handleInputChange}
-              onKeyDown={handleNumericInput}
+              onKeyDown={handleKeyDown}
               className={inputClasses}
-              placeholder={t('profileForm.nationalCodePlaceholder')}
+              placeholder={t("profileForm.nationalCodePlaceholder")}
               maxLength={10}
               pattern="\d{10}"
               inputMode="numeric"
@@ -309,7 +348,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
           {/* شماره پاسپورت */}
           <div>
             <label htmlFor="passportNumber" className={labelClasses}>
-              {t('profileForm.passportNumber')}
+              {t("profileForm.passportNumber")}
             </label>
             <input
               id="passportNumber"
@@ -317,8 +356,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
               name="passportNumber"
               value={formData.passportNumber}
               onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
               className={inputClasses}
-              placeholder={t('profileForm.passportPlaceholder')}
+              placeholder={t("profileForm.passportPlaceholder")}
               maxLength={20}
             />
           </div>
@@ -327,16 +367,17 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
         {/* آدرس */}
         <div>
           <label htmlFor="address" className={labelClasses}>
-            {t('profileForm.address')}
+            {t("profileForm.address")}
           </label>
           <textarea
             id="address"
             name="address"
             value={formData.address}
             onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
             rows={3}
             className={`${inputClasses} resize-none`}
-            placeholder={t('profileForm.addressPlaceholder')}
+            placeholder={t("profileForm.addressPlaceholder")}
             maxLength={500}
           />
         </div>
@@ -347,34 +388,36 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
             type="submit"
             disabled={loading}
             className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            aria-label={loading ? t('profileForm.saving') : t('profileForm.saveButton')}
+            aria-label={
+              loading ? t("profileForm.saving") : t("profileForm.saveButton")
+            }
           >
             {loading ? (
               <>
-                <svg 
-                  className="animate-spin h-5 w-5 text-white mr-2" 
-                  fill="none" 
+                <svg
+                  className="animate-spin h-5 w-5 text-white mr-2"
+                  fill="none"
                   viewBox="0 0 24 24"
                   aria-hidden="true"
                 >
-                  <circle 
-                    className="opacity-25" 
-                    cx="12" 
-                    cy="12" 
-                    r="10" 
-                    stroke="currentColor" 
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
                     strokeWidth="4"
                   ></circle>
-                  <path 
-                    className="opacity-75" 
-                    fill="currentColor" 
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                   ></path>
                 </svg>
-                {t('profileForm.saving')}
+                {t("profileForm.saving")}
               </>
             ) : (
-              t('profileForm.saveButton')
+              t("profileForm.saveButton")
             )}
           </button>
         </div>

@@ -26,6 +26,13 @@ public class UserController {
         return userRepository.findAll();
     }
 
+    // ✅ اضافه کردن این متد جدید
+    @GetMapping("/users/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    }
+
     @PostMapping("/users")
     public User createUser(@RequestBody User user) {
         return userRepository.save(user);
@@ -76,19 +83,16 @@ public class UserController {
     @GetMapping("/users/create-admin-simple")
     public String createAdminSimple() {
         try {
-            // بررسی وجود کاربر ادمین
             Optional<User> existingAdmin = userRepository.findByMobile("09123456789");
 
             if (existingAdmin.isPresent()) {
-                // حذف کاربر قدیمی
                 userRepository.delete(existingAdmin.get());
             }
 
-            // ایجاد کاربر ادمین جدید با رمز encode شده
             User adminUser = new User();
             adminUser.setMobile("09123456789");
             adminUser.setUsername("admin");
-            adminUser.setPassword(passwordEncoder.encode("admin123")); // رمز encode شده
+            adminUser.setPassword(passwordEncoder.encode("admin123"));
             adminUser.setRole("ADMIN");
             adminUser.setUserType("ADMIN");
             adminUser.setEmail("admin@turino.com");
@@ -125,7 +129,6 @@ public class UserController {
             User user = userRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            // encode کردن رمز جدید
             user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);
 
@@ -146,7 +149,6 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            // بررسی وجود کاربر ادمین
             Optional<User> existingAdmin = userRepository.findByMobile("09123456789");
 
             if (existingAdmin.isPresent()) {
@@ -155,7 +157,6 @@ public class UserController {
                 return response;
             }
 
-            // ایجاد کاربر ادمین جدید
             User adminUser = new User();
             adminUser.setMobile("09123456789");
             adminUser.setUsername("admin");

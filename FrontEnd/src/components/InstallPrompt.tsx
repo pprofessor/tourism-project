@@ -8,7 +8,6 @@ interface BeforeInstallPromptEvent extends Event {
 const InstallPrompt: React.FC = () => {
   const [showPrompt, setShowPrompt] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [showHelpModal, setShowHelpModal] = useState(false);
   const deferredPromptRef = useRef<BeforeInstallPromptEvent | null>(null);
   const autoCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
 

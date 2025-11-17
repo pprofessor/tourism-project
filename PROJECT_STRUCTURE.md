@@ -43,6 +43,7 @@ PROJECT_ROOT/
 |           |-- Register.tsx
 |           |-- reportWebVitals.ts
 |           |-- setupTests.ts
+|       |-- .env
 |       |-- .gitignore
 |       |-- Dockerfile
 |       |-- package-lock.json
@@ -55,9 +56,7 @@ PROJECT_ROOT/
 |               |-- maven-wrapper.properties
 |       |-- logs/
 |           |-- tourism-app.log
-|           |-- tourism-app.log.2025-10-28.0.gz
-|           |-- tourism-app.log.2025-10-29.0.gz
-|           |-- tourism-app.log.2025-11-01.0.gz
+|           |-- tourism-app.log.2025-11-05.0.gz
 |       |-- src/
 |           |-- main/
 |               |-- java/
@@ -142,6 +141,7 @@ PROJECT_ROOT/
 |           |-- logo512.png
 |           |-- manifest.json
 |           |-- robots.txt
+|           |-- sw.js
 |       |-- src/
 |           |-- components/
 |               |-- ContactSection.tsx
@@ -150,6 +150,7 @@ PROJECT_ROOT/
 |               |-- Footer.tsx
 |               |-- Header.tsx
 |               |-- HotelCard.tsx
+|               |-- InstallPrompt.tsx
 |               |-- LoginModal.tsx
 |               |-- PaymentGateway.tsx
 |               |-- PaymentHistory.tsx
@@ -182,19 +183,24 @@ PROJECT_ROOT/
 |           |-- reportWebVitals.ts
 |           |-- setupTests.ts
 |           |-- tailwind.config.js
+|       |-- .env
+|       |-- .env.development
+|       |-- .env.production
 |       |-- .gitignore
 |       |-- Dockerfile
+|       |-- index.html
 |       |-- nginx.conf
 |       |-- package-lock.json
 |       |-- package.json
-|       |-- postcss.config.js
+|       |-- postcss.config.cjs
 |       |-- README.md
 |       |-- tailwind.config.js
 |       |-- tsconfig.json
+|       |-- vite.config.ts
 |-- Media/
 |       |-- Audios/
 |       |-- Images/
-|           |-- 1762014791131_Screenshot_2025-10-24_215930.png
+|           |-- 1762887542699_Screenshot_2025-10-28_000529.png
 |           |-- 656.png
 |           |-- 821.png
 |           |-- ddddg30.png
@@ -214,8 +220,8 @@ PROJECT_ROOT/
 |-- .env
 |-- .gitignore
 |-- docker-compose.yml
-|-- new_structure.txt
+|-- PROJECT_STRTURE.md
 |-- README.md
 |-- Update-ProjectStructure.ps1
 
-*Last updated: 2025-11-02 16:46*
+*Last updated: 2025-11-16 19:13*

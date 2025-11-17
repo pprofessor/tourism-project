@@ -1,4 +1,4 @@
-// ProfileImageUpload.tsx - کد کامل اصلاح شده
+// ProfileImageUpload.tsx - نسخه نهایی بدون بخش وضعیت
 import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -30,12 +30,28 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    console.log("🔍 فایل انتخاب شد:", file.name);
+    // خواندن userId
+    let userId = userData.id;
+    if (!userId) {
+      try {
+        const savedUserData = localStorage.getItem("userData");
+        if (savedUserData) {
+          const parsedData = JSON.parse(savedUserData);
+          userId = parsedData.id;
+        }
+      } catch (error) {
+        // خطا لاگ نمیشه
+      }
+    }
 
-    // 1. اول پیش‌نمایش رو نمایش می‌دیم
+    if (!userId) {
+      setMessage("لطفاً ابتدا وارد حساب کاربری خود شوید");
+      return;
+    }
+
+    // پیش‌نمایش فایل
     const reader = new FileReader();
     reader.onloadend = () => {
-      console.log("🎯 پیش‌نمایش ایجاد شد");
       setTempPreview(reader.result as string);
     };
     reader.readAsDataURL(file);
@@ -46,9 +62,7 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("userId", userData.id?.toString() || "");
-
-      console.log("📤 شروع آپلود به سرور...");
+      formData.append("userId", userId.toString());
 
       const response = await fetch(
         "http://localhost:8080/api/upload/profile-image",
@@ -58,25 +72,21 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
         }
       );
 
-      console.log("📥 پاسخ سرور دریافت شد:", response.status);
-
       const result = await response.json();
-      console.log("📊 نتیجه آپلود:", result);
 
       if (result.success) {
-        console.log("✅ آپلود موفق، آدرس تصویر:", result.imageUrl);
         onImageUpdate(result.imageUrl);
         setMessage(t("profileImage.uploadSuccess"));
-        // پیش‌نمایش رو نگه می‌داریم تا کاربر نتیجه رو ببینه
+        // حذف پیش‌نمایش بعد از موفقیت
+        setTimeout(() => {
+          setTempPreview(null);
+          setMessage("");
+        }, 2000);
       } else {
-        console.log("❌ خطا در آپلود:", result.message);
         setMessage(result.message || t("profileImage.uploadError"));
-        // پیش‌نمایش رو نگه می‌داریم تا کاربر دوباره تلاش کنه
       }
     } catch (error) {
-      console.log("💥 خطای شبکه:", error);
       setMessage(t("profileImage.serverError"));
-      // پیش‌نمایش رو نگه می‌داریم
     } finally {
       setLoading(false);
     }
@@ -89,7 +99,7 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
           {tempPreview ? (
             <img
               src={tempPreview}
-              alt={t("profileImage.previewAlt")}
+              alt="پیش‌نمایش"
               className="w-full h-full object-cover"
             />
           ) : userData.profileImage ? (
@@ -99,7 +109,7 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
                   ? userData.profileImage
                   : `http://localhost:8080${userData.profileImage}`
               }
-              alt={t("profileImage.profileAlt")}
+              alt="پروفایل"
               className="w-full h-full object-cover"
             />
           ) : (
@@ -119,7 +129,6 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
           )}
         </div>
 
-        {/* loading indicator */}
         {loading && (
           <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
             <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -145,8 +154,9 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
 
       {message && (
         <div
-          className={`mt-2 text-xs ${
-            message.includes(t("profileImage.uploadSuccess"))
+          className={`mt-2 text-xs text-center ${
+            message.includes("موفقیت") ||
+            message === t("profileImage.uploadSuccess")
               ? "text-green-600"
               : "text-red-600"
           }`}
@@ -155,12 +165,6 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
         </div>
       )}
 
-      <div className="mt-1 text-xs text-gray-500">
-        {t("profileImage.status")}:{" "}
-        {tempPreview
-          ? t("profileImage.previewActive")
-          : t("profileImage.noPreview")}
-      </div>
     </div>
   );
 };

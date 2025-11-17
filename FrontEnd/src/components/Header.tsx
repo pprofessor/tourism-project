@@ -10,6 +10,7 @@ import LoginModal from "./LoginModal";
 import { useCart } from "../context/CartContext";
 import { useTheme } from "../context/ThemeContext";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { supportedLanguages } from "../i18n/config";
 import { Link, useLocation } from "react-router-dom";
 
@@ -30,7 +31,7 @@ const Header: React.FC<HeaderProps> = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const searchModalRef = useRef<HTMLDivElement>(null);
-
+  const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const { t, i18n } = useTranslation();
   const { state: cartState } = useCart();
@@ -110,31 +111,49 @@ const Header: React.FC<HeaderProps> = () => {
     };
   }, [isSearchOpen]);
 
-  // Event handlers با useCallback برای performance
-  const handleLoginSuccess = useCallback((userData: any) => {
-    setIsLoggedIn(true);
-    setUserData(userData);
-    setIsLoginModalOpen(false);
+  const handleLoginSuccess = useCallback(
+    (userData: any) => {
+      // پاکسازی اطلاعات قبلی قبل از ذخیره اطلاعات جدید
+      localStorage.removeItem("userData");
+      localStorage.removeItem("isLoggedIn");
 
-    // نمایش پیام خوش‌آمدگویی در وسط صفحه
-    setShowWelcome(true);
-    const timer = setTimeout(() => {
-      setShowWelcome(false);
-    }, 3000);
+      setIsLoggedIn(true);
+      setUserData(userData);
+      setIsLoginModalOpen(false);
 
-    // ذخیره ایمن داده‌های کاربر
-    try {
-      localStorage.setItem("userData", JSON.stringify(userData));
-      localStorage.setItem("isLoggedIn", "true");
-    } catch (error) {
-      console.error("Error saving user data:", error);
-    }
+      // بررسی اولین لاگین برای این کاربر خاص
+      const userFirstLoginKey = `hasLoggedInBefore_${userData.id}`;
+      const isFirstLogin = !localStorage.getItem(userFirstLoginKey);
 
-    return () => clearTimeout(timer);
-  }, []);
+      if (isFirstLogin) {
+        // علامتگذاری که این کاربر قبلاً لاگین کرده
+        localStorage.setItem(userFirstLoginKey, "true");
+        // هدایت به پروفایل فقط در اولین لاگین این کاربر
+        navigate("/profile");
+      }
+
+      // نمایش پیام خوش‌آمدگویی
+      setShowWelcome(true);
+      const timer = setTimeout(() => {
+        setShowWelcome(false);
+      }, 3000);
+
+      // ذخیره ایمن داده‌های کاربر جدید
+      try {
+        localStorage.setItem("userData", JSON.stringify(userData));
+        localStorage.setItem("isLoggedIn", "true");
+      } catch (error) {
+        console.error("Error saving user data:", error);
+      }
+
+      return () => clearTimeout(timer);
+    },
+    [navigate]
+  );
 
   const handleLogout = useCallback(() => {
     setShowGoodbye(true);
+
     const timer = setTimeout(() => {
       setIsLoggedIn(false);
       setUserData(null);
@@ -144,10 +163,15 @@ const Header: React.FC<HeaderProps> = () => {
       // پاکسازی ایمن localStorage
       localStorage.removeItem("userData");
       localStorage.removeItem("isLoggedIn");
-    }, 3000);
+
+      // هدایت به صفحه اصلی با React Router
+      if (location.pathname !== "/") {
+        navigate("/");
+      }
+    }, 1500);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [navigate, location.pathname]);
 
   const handleProfileMenuToggle = useCallback(() => {
     setIsProfileMenuOpen((prev) => !prev);
