@@ -28,7 +28,7 @@ public class HotelController {
     // دریافت هتل‌های فعال
     @GetMapping("/active")
     public List<Hotel> getActiveHotels() {
-        return hotelRepository.findByIsActive(true);
+        return hotelRepository.findByIsActiveTrue();
     }
 
     // دریافت هتل بر اساس ID
@@ -68,6 +68,9 @@ public class HotelController {
             hotel.setTotalRooms(hotelDetails.getTotalRooms());
             hotel.setAvailableRooms(hotelDetails.getAvailableRooms());
             hotel.setStarRating(hotelDetails.getStarRating());
+            hotel.setRating(hotelDetails.getRating());
+            hotel.setReviewCount(hotelDetails.getReviewCount());
+            hotel.setHasPool(hotelDetails.getHasPool());
             hotel.setAmenities(hotelDetails.getAmenities());
             hotel.setImageUrls(hotelDetails.getImageUrls());
             hotel.setMainImageUrl(hotelDetails.getMainImageUrl());
@@ -119,13 +122,13 @@ public class HotelController {
     // جستجوی هتل‌ها بر اساس شهر
     @GetMapping("/city/{city}")
     public List<Hotel> getHotelsByCity(@PathVariable String city) {
-        return hotelRepository.findByCity(city);
+        return hotelRepository.findByCityAndIsActiveTrue(city);
     }
 
     // جستجوی هتل‌ها بر اساس کشور
     @GetMapping("/country/{country}")
     public List<Hotel> getHotelsByCountry(@PathVariable String country) {
-        return hotelRepository.findByCountry(country);
+        return hotelRepository.findByCountryAndIsActiveTrue(country);
     }
 
     // جستجوی هتل‌ها با اتاق خالی
@@ -142,14 +145,16 @@ public class HotelController {
 
     // جستجوی پیشرفته هتل‌ها
     @GetMapping("/search")
-    public List<Hotel> searchHotels(
+    public ResponseEntity<List<Hotel>> searchHotels(
             @RequestParam(required = false) String city,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
-            @RequestParam(required = false) Integer minRating,
-            @RequestParam(required = false) Boolean hasAvailableRooms) {
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(required = false) Boolean hasPool) {
 
-        return hotelRepository.searchHotels(city, minPrice, maxPrice, minRating, hasAvailableRooms);
+        List<Hotel> hotels = hotelRepository.searchHotels(city, minPrice, maxPrice, sortBy, page, hasPool);
+        return ResponseEntity.ok(hotels);
     }
 
     // آپدیت تعداد اتاق‌های موجود

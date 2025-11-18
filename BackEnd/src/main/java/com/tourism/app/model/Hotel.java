@@ -2,6 +2,7 @@ package com.tourism.app.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,14 +35,23 @@ public class Hotel {
     private Integer availableRooms;
     private Integer starRating;
 
+    // فیلدهای جدید برای ریتینگ و بررسی
+    private Double rating = 0.0;
+    private Integer reviewCount = 0;
+    private Boolean hasPool = false;
+
     // امکانات هتل
     @ElementCollection
     private List<String> amenities;
 
-    // اطلاعات رسانه
+    // اطلاعات رسانه - حفظ compatibility با imageUrls موجود
     @ElementCollection
     private List<String> imageUrls;
     private String mainImageUrl;
+
+    // رابطه جدید با HotelImage برای JOIN FETCH
+    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<HotelImage> images = new ArrayList<>();
 
     // قابلیت‌های مدیریتی
     private Boolean isActive;
@@ -67,6 +77,9 @@ public class Hotel {
         this.totalRooms = 0;
         this.basePrice = 0.0;
         this.starRating = 3;
+        this.rating = 0.0;
+        this.reviewCount = 0;
+        this.hasPool = false;
     }
 
     public Hotel(String name, String description, String address, String city,
@@ -211,6 +224,30 @@ public class Hotel {
         this.starRating = starRating;
     }
 
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+
+    public Integer getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(Integer reviewCount) {
+        this.reviewCount = reviewCount;
+    }
+
+    public Boolean getHasPool() {
+        return hasPool;
+    }
+
+    public void setHasPool(Boolean hasPool) {
+        this.hasPool = hasPool;
+    }
+
     public List<String> getAmenities() {
         return amenities;
     }
@@ -233,6 +270,14 @@ public class Hotel {
 
     public void setMainImageUrl(String mainImageUrl) {
         this.mainImageUrl = mainImageUrl;
+    }
+
+    public List<HotelImage> getImages() {
+        return images;
+    }
+
+    public void setImages(List<HotelImage> images) {
+        this.images = images;
     }
 
     public Boolean getIsActive() {
@@ -321,6 +366,17 @@ public class Hotel {
 
     public Boolean isDiscountActive() {
         return discountExpiry != null && LocalDateTime.now().isBefore(discountExpiry);
+    }
+
+    // Helper methods برای مدیریت images
+    public void addImage(HotelImage image) {
+        images.add(image);
+        image.setHotel(this);
+    }
+
+    public void removeImage(HotelImage image) {
+        images.remove(image);
+        image.setHotel(null);
     }
 
     @PreUpdate
