@@ -1,4 +1,4 @@
-package com.tourism.app.Service;
+package com.tourism.app.service;
 
 import org.springframework.stereotype.Service;
 import java.util.Random;

@@ -2,11 +2,16 @@ package com.tourism.app.controller;
 
 import com.tourism.app.model.User;
 import com.tourism.app.repository.UserRepository;
+import com.tourism.app.service.RateLimitingService;
+import com.tourism.app.service.RateLimitingService.Plan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -21,6 +26,9 @@ public class AuthController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RateLimitingService rateLimitingService;
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private Random random = new Random();
@@ -60,7 +68,7 @@ public class AuthController {
     }
 
     @PostMapping("/init-login")
-    public Map<String, Object> initLogin(@RequestBody Map<String, String> request) {
+    public ResponseEntity<Map<String, Object>> initLogin(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
         try {
             String mobile = standardizeMobile(request.get("mobile"));
@@ -69,7 +77,7 @@ public class AuthController {
             if (mobile == null) {
                 response.put("success", false);
                 response.put("message", "شماره موبایل معتبر نیست");
-                return response;
+                return ResponseEntity.badRequest().body(response);
             }
 
             boolean userExists = userRepository.findByMobile(mobile).isPresent();
@@ -80,19 +88,35 @@ public class AuthController {
             response.put("userExists", userExists);
             response.put("message", userExists ? "کاربر موجود است" : "کاربر جدید");
 
+            return ResponseEntity.ok(response);
+
         } catch (Exception e) {
             logger.error("Error in initLogin for mobile {}: {}", request.get("mobile"), e.getMessage(), e);
             response.put("success", false);
             response.put("message", "خطا در سرور: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-        return response;
     }
 
     @PostMapping("/send-verification")
-    public Map<String, Object> sendVerificationCode(@RequestBody Map<String, String> request) {
+    public ResponseEntity<Map<String, Object>> sendVerificationCode(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
+
+        String originalMobile = request.get("mobile");
+        if (originalMobile == null) {
+            response.put("success", false);
+            response.put("message", "شماره موبایل الزامی است");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        // اعمال Rate Limiting برای OTP
+        if (!rateLimitingService.tryConsume(originalMobile, Plan.OTP)) {
+            response.put("success", false);
+            response.put("message", "تعداد درخواست‌های ارسال کد بیش از حد مجاز است. لطفاً ۱ دقیقه دیگر تلاش کنید.");
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(response);
+        }
+
         try {
-            String originalMobile = request.get("mobile");
             String mobile = standardizeMobile(originalMobile);
 
             logger.info("Original mobile received: '{}'", originalMobile);
@@ -102,7 +126,7 @@ public class AuthController {
                 logger.warn("Invalid mobile number: {}", originalMobile);
                 response.put("success", false);
                 response.put("message", "شماره موبایل معتبر نیست");
-                return response;
+                return ResponseEntity.badRequest().body(response);
             }
 
             String verificationCode = generateSimpleOTP();
@@ -135,30 +159,46 @@ public class AuthController {
 
             response.put("success", true);
             response.put("message", "کد تایید ارسال شد");
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            logger.error("Error sending verification code for mobile {}: {}", request.get("mobile"), e.getMessage(), e);
+            logger.error("Error sending verification code for mobile {}: {}", originalMobile, e.getMessage(), e);
             response.put("success", false);
             response.put("message", "خطا در ارسال کد تایید");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-        return response;
     }
 
     @PostMapping("/verify-code")
-    public Map<String, Object> verifyCode(@RequestBody Map<String, String> request) {
+    public ResponseEntity<Map<String, Object>> verifyCode(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
-        try {
-            String mobile = standardizeMobile(request.get("mobile"));
-            String code = request.get("code");
 
-            if (mobile == null || code == null) {
-                logger.warn("Incomplete data for verify-code - mobile: {}, code: {}", mobile, code);
+        String mobile = request.get("mobile");
+        String code = request.get("code");
+
+        if (mobile == null || code == null) {
+            response.put("success", false);
+            response.put("message", "شماره موبایل و کد تایید الزامی است");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        // اعمال Rate Limiting برای verify
+        if (!rateLimitingService.tryConsume(mobile, Plan.LOGIN)) {
+            response.put("success", false);
+            response.put("message", "تعداد درخواست‌های تأیید کد بیش از حد مجاز است. لطفاً ۱ دقیقه دیگر تلاش کنید.");
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(response);
+        }
+
+        try {
+            String standardizedMobile = standardizeMobile(mobile);
+
+            if (standardizedMobile == null) {
                 response.put("success", false);
-                response.put("message", "شماره موبایل و کد تایید الزامی است");
-                return response;
+                response.put("message", "شماره موبایل معتبر نیست");
+                return ResponseEntity.badRequest().body(response);
             }
 
-            Optional<User> userOpt = userRepository.findByMobileAndVerificationCode(mobile, code);
+            Optional<User> userOpt = userRepository.findByMobileAndVerificationCode(standardizedMobile, code);
             if (userOpt.isPresent()) {
                 User user = userOpt.get();
                 user.setVerificationCode(null);
@@ -171,27 +211,45 @@ public class AuthController {
                 response.put("message", "ورود موفقیت‌آمیز");
 
                 logger.info("User logged in successfully - ID: {}, Mobile: {}", user.getId(), user.getMobile());
+                return ResponseEntity.ok(response);
             } else {
-                logger.warn("Invalid verification code - mobile: {}, code: {}", mobile, code);
+                logger.warn("Invalid verification code - mobile: {}, code: {}", standardizedMobile, code);
                 response.put("success", false);
                 response.put("message", "کد تایید نامعتبر است");
+                return ResponseEntity.badRequest().body(response);
             }
         } catch (Exception e) {
-            logger.error("Error verifying code for mobile {}: {}", request.get("mobile"), e.getMessage(), e);
+            logger.error("Error verifying code for mobile {}: {}", mobile, e.getMessage(), e);
             response.put("success", false);
             response.put("message", "خطا در تایید کد: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-        return response;
     }
 
     @PostMapping("/login-password")
-    public Map<String, Object> loginWithPassword(@RequestBody Map<String, String> request) {
+    public ResponseEntity<Map<String, Object>> loginWithPassword(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
-        try {
-            String mobile = standardizeMobile(request.get("mobile"));
-            String password = request.get("password");
 
-            Optional<User> userOpt = userRepository.findByMobile(mobile);
+        String mobile = request.get("mobile");
+        String password = request.get("password");
+
+        if (mobile == null || password == null) {
+            response.put("success", false);
+            response.put("message", "شماره موبایل و رمز عبور الزامی است");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        // اعمال Rate Limiting برای login
+        if (!rateLimitingService.tryConsume(mobile, Plan.LOGIN)) {
+            response.put("success", false);
+            response.put("message", "تعداد درخواست‌های ورود بیش از حد مجاز است. لطفاً ۱ دقیقه دیگر تلاش کنید.");
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(response);
+        }
+
+        try {
+            String standardizedMobile = standardizeMobile(mobile);
+
+            Optional<User> userOpt = userRepository.findByMobile(standardizedMobile);
             if (userOpt.isPresent()) {
                 User user = userOpt.get();
 
@@ -203,34 +261,45 @@ public class AuthController {
                     response.put("message", "ورود موفقیت‌آمیز");
 
                     logger.info("Password login successful - ID: {}, Mobile: {}", user.getId(), user.getMobile());
+                    return ResponseEntity.ok(response);
                 } else {
-                    logger.warn("Invalid password for user: {}", mobile);
+                    logger.warn("Invalid password for user: {}", standardizedMobile);
                     response.put("success", false);
                     response.put("message", "رمز عبور نامعتبر است");
+                    return ResponseEntity.badRequest().body(response);
                 }
             } else {
-                logger.warn("User not found with mobile: {}", mobile);
+                logger.warn("User not found with mobile: {}", standardizedMobile);
                 response.put("success", false);
                 response.put("message", "کاربری با این شماره یافت نشد");
+                return ResponseEntity.badRequest().body(response);
             }
         } catch (Exception e) {
-            logger.error("Error in password login for mobile {}: {}", request.get("mobile"), e.getMessage(), e);
+            logger.error("Error in password login for mobile {}: {}", mobile, e.getMessage(), e);
             response.put("success", false);
             response.put("message", "خطا در ورود: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-        return response;
     }
 
     @PostMapping("/complete-registration")
-    public Map<String, Object> completeRegistration(@RequestBody Map<String, String> request) {
+    public ResponseEntity<Map<String, Object>> completeRegistration(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
+
+        String mobile = request.get("mobile");
+        if (mobile == null) {
+            response.put("success", false);
+            response.put("message", "شماره موبایل الزامی است");
+            return ResponseEntity.badRequest().body(response);
+        }
+
         try {
-            String mobile = standardizeMobile(request.get("mobile"));
+            String standardizedMobile = standardizeMobile(mobile);
             String username = request.get("username");
             String email = request.get("email");
             String password = request.get("password");
 
-            Optional<User> userOpt = userRepository.findByMobile(mobile);
+            Optional<User> userOpt = userRepository.findByMobile(standardizedMobile);
             if (userOpt.isPresent()) {
                 User user = userOpt.get();
 
@@ -242,19 +311,21 @@ public class AuthController {
                     user.setPassword(passwordEncoder.encode(password));
 
                 userRepository.save(user);
-                logger.info("Registration completed - Mobile: {}, Username: {}", mobile, username);
+                logger.info("Registration completed - Mobile: {}, Username: {}", standardizedMobile, username);
                 response.put("success", true);
                 response.put("message", "ثبت‌نام تکمیل شد");
+                return ResponseEntity.ok(response);
             } else {
-                logger.warn("User not found for completing registration - Mobile: {}", mobile);
+                logger.warn("User not found for completing registration - Mobile: {}", standardizedMobile);
                 response.put("success", false);
                 response.put("message", "کاربر یافت نشد");
+                return ResponseEntity.badRequest().body(response);
             }
         } catch (Exception e) {
-            logger.error("Error completing registration for mobile {}: {}", request.get("mobile"), e.getMessage(), e);
+            logger.error("Error completing registration for mobile {}: {}", mobile, e.getMessage(), e);
             response.put("success", false);
             response.put("message", "خطا در تکمیل ثبت‌نام: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-        return response;
     }
 }

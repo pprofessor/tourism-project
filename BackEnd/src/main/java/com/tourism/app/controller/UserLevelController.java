@@ -1,8 +1,9 @@
 package com.tourism.app.controller;
 
-import com.tourism.app.Service.UserLevelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import com.tourism.app.service.UserLevelService;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,7 +1,8 @@
 package com.tourism.app.controller;
 
-import com.tourism.app.Service.SlideService;
 import com.tourism.app.entity.Slide;
+import com.tourism.app.service.SlideService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

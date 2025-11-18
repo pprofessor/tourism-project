@@ -1,4 +1,4 @@
-package com.tourism.app.Service;
+package com.tourism.app.service;
 
 import com.tourism.app.entity.Slide;
 import com.tourism.app.repository.SlideRepository;
