@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -120,15 +119,6 @@ public class AuthController {
                 logger.info("Existing user found - ID: {}, Mobile: '{}'", user.getId(), user.getMobile());
             } else {
                 logger.info("No user found with mobile '{}' - creating new user", mobile);
-
-                // Debug: List all users (only in debug mode)
-                if (logger.isDebugEnabled()) {
-                    List<User> allUsers = userRepository.findAll();
-                    logger.debug("All users in database:");
-                    for (User u : allUsers) {
-                        logger.debug("User - ID: {}, Mobile: '{}'", u.getId(), u.getMobile());
-                    }
-                }
 
                 user = new User();
                 user.setMobile(mobile);
