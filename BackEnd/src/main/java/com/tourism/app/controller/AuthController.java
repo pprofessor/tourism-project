@@ -127,6 +127,7 @@ public class AuthController {
             } else {
                 user = new User();
                 user.setMobile(mobile);
+                user.setPhone(mobile);
                 user.setUsername(mobile);
                 user.setRole("USER");
                 user.setUserType("GUEST");

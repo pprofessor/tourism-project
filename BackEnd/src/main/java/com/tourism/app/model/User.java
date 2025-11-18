@@ -11,7 +11,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(unique = true)
     private String mobile;
 
     private String username;
@@ -39,9 +42,13 @@ public class User {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
 
-        // مطمئن شو موبایل null نیست
-        if (this.mobile == null) {
-            throw new IllegalStateException("شماره موبایل نمی‌تواند خالی باشد");
+        // منطق ایمن برای phone و mobile
+        if (this.phone == null && this.mobile != null) {
+            this.phone = this.mobile;
+        }
+
+        if (this.mobile == null && this.phone != null) {
+            this.mobile = this.phone;
         }
     }
 
@@ -59,19 +66,52 @@ public class User {
         this.id = id;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        // اگر phone null یا خالی هست، فقط null ست کن
+        if (phone == null || phone.trim().isEmpty()) {
+            this.phone = null;
+            return;
+        }
+
+        // فقط اگر مقدار معتبر داره، process کن
+        String cleanedPhone = phone.replaceAll("[^0-9]", "");
+
+        // استانداردسازی: همیشه بدون صفر ذخیره کن
+        if (cleanedPhone.startsWith("0")) {
+            cleanedPhone = cleanedPhone.substring(1);
+        }
+
+        this.phone = cleanedPhone;
+    }
+
     public String getMobile() {
         return mobile;
     }
 
     public void setMobile(String mobile) {
+        // اگر mobile null یا خالی هست، فقط null ست کن
         if (mobile == null || mobile.trim().isEmpty()) {
-            throw new IllegalArgumentException("شماره موبایل نمی‌تواند خالی باشد");
+            this.mobile = null;
+            return;
         }
-        this.mobile = mobile.replaceAll("[^0-9]", "");
+
+        // فقط اگر مقدار معتبر داره، process کن
+        String cleanedMobile = mobile.replaceAll("[^0-9]", "");
 
         // استانداردسازی: همیشه بدون صفر ذخیره کن
-        if (this.mobile.startsWith("0")) {
-            this.mobile = this.mobile.substring(1);
+        if (cleanedMobile.startsWith("0")) {
+            cleanedMobile = cleanedMobile.substring(1);
+        }
+
+        this.mobile = cleanedMobile;
+
+        // اگر phone null است، mobile رو برای phone هم ست کن
+        if (this.phone == null) {
+            this.phone = this.mobile;
         }
     }
 

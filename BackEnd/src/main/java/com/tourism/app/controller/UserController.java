@@ -45,7 +45,23 @@ public class UserController {
 
         user.setUsername(userDetails.getUsername());
         user.setEmail(userDetails.getEmail());
-        user.setMobile(userDetails.getMobile());
+
+        // مدیریت ایمن فیلد mobile
+        if (userDetails.getMobile() != null && !userDetails.getMobile().trim().isEmpty()) {
+            user.setMobile(userDetails.getMobile());
+        }
+
+        // تضمین اینکه phone هیچوقت null نباشه
+        if (userDetails.getPhone() != null && !userDetails.getPhone().trim().isEmpty()) {
+            user.setPhone(userDetails.getPhone());
+        } else if (user.getMobile() != null) {
+            // اگر phone null هست اما mobile داره، از mobile استفاده کن
+            user.setPhone(user.getMobile());
+        } else {
+            // اگر هر دو null هستند، یک مقدار پیش‌فرض ست کن
+            user.setPhone("unknown");
+        }
+
         user.setRole(userDetails.getRole());
         user.setUserType(userDetails.getUserType());
         user.setFirstName(userDetails.getFirstName());
