@@ -25,6 +25,10 @@ public class JwtUtil {
 
     // تولید SecretKey از string
     private SecretKey getSigningKey() {
+        // اطمینان از طول کافی برای کلید
+        if (SECRET_KEY.length() < 32) {
+            throw new IllegalArgumentException("JWT secret must be at least 32 characters long");
+        }
         byte[] keyBytes = SECRET_KEY.getBytes();
         return Keys.hmacShaKeyFor(keyBytes);
     }
@@ -59,6 +63,14 @@ public class JwtUtil {
         return createToken(claims, username);
     }
 
+    public String generateToken(String username, Map<String, Object> additionalClaims) {
+        Map<String, Object> claims = new HashMap<>();
+        if (additionalClaims != null) {
+            claims.putAll(additionalClaims);
+        }
+        return createToken(claims, username);
+    }
+
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .setClaims(claims)
@@ -90,7 +102,27 @@ public class JwtUtil {
 
     // متد برای refresh token
     public String refreshToken(String token) {
-        final String username = extractUsername(token);
-        return generateToken(username);
+        try {
+            final String username = extractUsername(token);
+            return generateToken(username);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid token cannot be refreshed");
+        }
+    }
+
+    // متد برای استخراج claimهای خاص
+    public <T> T getClaimFromToken(String token, String claimName, Class<T> requiredType) {
+        final Claims claims = extractAllClaims(token);
+        return claims.get(claimName, requiredType);
+    }
+
+    // متد برای بررسی باقی‌مانده زمان token
+    public long getRemainingTime(String token) {
+        try {
+            Date expiration = extractExpiration(token);
+            return expiration.getTime() - System.currentTimeMillis();
+        } catch (Exception e) {
+            return -1;
+        }
     }
 }

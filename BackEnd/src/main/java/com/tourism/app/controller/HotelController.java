@@ -1,7 +1,9 @@
 package com.tourism.app.controller;
 
+import com.tourism.app.dto.HotelRequest;
 import com.tourism.app.model.Hotel;
 import com.tourism.app.repository.HotelRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,50 +40,30 @@ public class HotelController {
         return hotel.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
-    // ایجاد هتل جدید
+    // ایجاد هتل جدید با validation
     @PostMapping
-    public Hotel createHotel(@RequestBody Hotel hotel) {
-        return hotelRepository.save(hotel);
+    public ResponseEntity<?> createHotel(@Valid @RequestBody HotelRequest hotelRequest) {
+        try {
+            Hotel hotel = new Hotel();
+            mapHotelRequestToEntity(hotelRequest, hotel);
+            Hotel savedHotel = hotelRepository.save(hotel);
+            return ResponseEntity.ok(savedHotel);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Failed to create hotel");
+            error.put("message", e.getMessage());
+            return ResponseEntity.status(500).body(error);
+        }
     }
 
-    // آپدیت کامل هتل
+    // آپدیت کامل هتل با validation
     @PutMapping("/{id}")
-    public ResponseEntity<Hotel> updateHotel(@PathVariable Long id, @RequestBody Hotel hotelDetails) {
+    public ResponseEntity<?> updateHotel(@PathVariable Long id, @Valid @RequestBody HotelRequest hotelDetails) {
         Optional<Hotel> hotelOptional = hotelRepository.findById(id);
 
         if (hotelOptional.isPresent()) {
             Hotel hotel = hotelOptional.get();
-
-            // آپدیت فیلدها
-            hotel.setName(hotelDetails.getName());
-            hotel.setDescription(hotelDetails.getDescription());
-            hotel.setAddress(hotelDetails.getAddress());
-            hotel.setCity(hotelDetails.getCity());
-            hotel.setCountry(hotelDetails.getCountry());
-            hotel.setPostalCode(hotelDetails.getPostalCode());
-            hotel.setLatitude(hotelDetails.getLatitude());
-            hotel.setLongitude(hotelDetails.getLongitude());
-            hotel.setPhone(hotelDetails.getPhone());
-            hotel.setEmail(hotelDetails.getEmail());
-            hotel.setWebsite(hotelDetails.getWebsite());
-            hotel.setBasePrice(hotelDetails.getBasePrice());
-            hotel.setTotalRooms(hotelDetails.getTotalRooms());
-            hotel.setAvailableRooms(hotelDetails.getAvailableRooms());
-            hotel.setStarRating(hotelDetails.getStarRating());
-            hotel.setRating(hotelDetails.getRating());
-            hotel.setReviewCount(hotelDetails.getReviewCount());
-            hotel.setHasPool(hotelDetails.getHasPool());
-            hotel.setAmenities(hotelDetails.getAmenities());
-            hotel.setImageUrls(hotelDetails.getImageUrls());
-            hotel.setMainImageUrl(hotelDetails.getMainImageUrl());
-            hotel.setIsActive(hotelDetails.getIsActive());
-            hotel.setDiscountPercentage(hotelDetails.getDiscountPercentage());
-            hotel.setDiscountCode(hotelDetails.getDiscountCode());
-            hotel.setDiscountExpiry(hotelDetails.getDiscountExpiry());
-            hotel.setSeoTitle(hotelDetails.getSeoTitle());
-            hotel.setSeoDescription(hotelDetails.getSeoDescription());
-            hotel.setSeoKeywords(hotelDetails.getSeoKeywords());
-
+            mapHotelRequestToEntity(hotelDetails, hotel);
             Hotel updatedHotel = hotelRepository.save(hotel);
             return ResponseEntity.ok(updatedHotel);
         } else {
@@ -186,7 +168,6 @@ public class HotelController {
             Hotel hotel = hotelOptional.get();
             hotel.setDiscountPercentage(discountPercentage);
             hotel.setDiscountCode(discountCode);
-            // در اینجا می‌توانید discountExpiry رو parse کنید
             Hotel updatedHotel = hotelRepository.save(hotel);
             return ResponseEntity.ok(updatedHotel);
         } else {
@@ -202,5 +183,19 @@ public class HotelController {
         stats.put("activeHotels", hotelRepository.countActiveHotels());
         stats.put("averagePrice", hotelRepository.getAveragePrice());
         return stats;
+    }
+
+    // متد helper برای مپ کردن DTO به Entity
+    private void mapHotelRequestToEntity(HotelRequest request, Hotel hotel) {
+        hotel.setName(request.getName());
+        hotel.setDescription(request.getDescription());
+        hotel.setAddress(request.getAddress());
+        hotel.setCity(request.getCity());
+        hotel.setCountry(request.getCountry());
+        hotel.setBasePrice(request.getBasePrice());
+        hotel.setTotalRooms(request.getTotalRooms());
+        hotel.setStarRating(request.getStarRating());
+        hotel.setEmail(request.getEmail());
+        hotel.setPhone(request.getPhone());
     }
 }

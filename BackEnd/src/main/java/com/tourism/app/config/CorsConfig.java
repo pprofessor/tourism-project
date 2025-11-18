@@ -13,43 +13,37 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
 
-    @Value("${ALLOWED_ORIGINS:http://localhost:3000,http://localhost:4000}")
+    @Value("${app.cors.allowed-origins}")
     private String allowedOrigins;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // تفکیک دامنه‌های مجاز
+        // فقط دامنه‌های مجاز از application.properties
         List<String> origins = Arrays.asList(allowedOrigins.split(","));
         configuration.setAllowedOrigins(origins);
 
         // متدهای مجاز
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
-        // هدرهای مجاز (محدودتر و امن‌تر)
+        // هدرهای مجاز
         configuration.setAllowedHeaders(Arrays.asList(
-                "Authorization", "Content-Type", "X-Requested-With", "Accept",
-                "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers",
-                "X-CSRF-Token"));
+                "Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin",
+                "Access-Control-Request-Method", "Access-Control-Request-Headers"));
 
         // هدرهای exposed
         configuration.setExposedHeaders(Arrays.asList(
-                "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials",
-                "Authorization"));
+                "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
 
         // اجازه ارسال credentials
         configuration.setAllowCredentials(true);
 
-        // Max age برای preflight requests (1 ساعت)
+        // حداکثر age برای preflight
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-        // محدود کردن به مسیرهای API (امن‌تر از /**)
-        source.registerCorsConfiguration("/api/**", configuration);
-        source.registerCorsConfiguration("/auth/**", configuration);
-
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }
