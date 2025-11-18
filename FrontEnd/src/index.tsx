@@ -13,21 +13,6 @@ const registerServiceWorker = async (): Promise<void> => {
       });
 
       console.log("✅ Service Worker ثبت شد:", registration);
-
-      // بررسی به‌روزرسانی‌ها
-      registration.addEventListener("updatefound", () => {
-        const newWorker = registration.installing;
-        if (newWorker) {
-          newWorker.addEventListener("statechange", () => {
-            if (
-              newWorker.state === "installed" &&
-              navigator.serviceWorker.controller
-            ) {
-              console.log("🔄 نسخه جدید آماده است!");
-            }
-          });
-        }
-      });
     } catch (error) {
       console.error("❌ خطا در ثبت Service Worker:", error);
     }
@@ -49,9 +34,6 @@ const setupErrorHandling = (): void => {
 
 // راه‌اندازی اولیه
 const initializeApp = async (): Promise<void> => {
-  // تنظیمات اولیه
-  console.log("🚀 راه‌اندازی اپلیکیشن تورینو...");
-
   // ثبت Service Worker فقط در production
   if (import.meta.env.PROD) {
     await registerServiceWorker();
@@ -69,16 +51,12 @@ const root = ReactDOM.createRoot(
 // راه‌اندازی و رندر
 initializeApp()
   .then(() => {
-    root.render(
-      <App />
-    );
+    root.render(<App />);
   })
   .catch((error) => {
     console.error("❌ خطا در راه‌اندازی اپلیکیشن:", error);
     // رندر حتی با خطا
-    root.render(
-      <App />
-    );
+    root.render(<App />);
   });
 
 // تایپ‌های اضافی برای Vite
@@ -86,7 +64,7 @@ declare global {
   interface Window {
     ENV: string;
   }
-  
+
   interface ImportMeta {
     readonly env: {
       readonly PROD: boolean;

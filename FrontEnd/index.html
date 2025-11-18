@@ -13,6 +13,8 @@
 
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#3B82F6" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <!-- این خط اضافه شد -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="تورینو" />
@@ -34,16 +36,22 @@
     <!-- PWA Service Worker -->
     <script>
       if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("/sw.js")
-            .then((registration) => {
-              console.log("SW registered: ", registration);
-            })
-            .catch((registrationError) => {
-              console.log("SW registration failed: ", registrationError);
-            });
-        });
+        // فقط در production ثبت شود (بر اساس hostname)
+        if (
+          !window.location.hostname.includes("localhost") &&
+          !window.location.hostname.includes("192.168.")
+        ) {
+          window.addEventListener("load", () => {
+            navigator.serviceWorker
+              .register("/sw.js")
+              .then((registration) => {
+                console.log("SW registered: ", registration);
+              })
+              .catch((registrationError) => {
+                console.log("SW registration failed: ", registrationError);
+              });
+          });
+        }
       }
     </script>
   </body>

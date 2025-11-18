@@ -138,7 +138,7 @@
       "default": "۵ تا ۱۵ رقم"
     },
     "checking": "در حال بررسی...",
-    "passwordPrompt": "برای شماره <1>{{dialCode}} {{mobile}}</1>",
+    "passwordPrompt": "برای شماره {{dialCode}} {{mobile}}",
     "enterYourPassword": "رمز عبور خود را وارد کنید",
     "password": "رمز عبور",
     "loggingIn": "در حال ورود...",
@@ -146,8 +146,8 @@
     "codeSentSuccess": "ارسال شد",
     "verificationCode": "کد تایید",
     "mobileNumber": "شماره موبایل",
-    "enterCodePrompt": "لطفا کد تاییدی که به شماره {{dialCode}}{{mobile}} ارسال کردیم رو وارد کنید",
-    "enterCodePrompt1": "لطفا کد تاییدی که به شماره",
+    "enterCodePrompt": "لطفا کد ورودی که به شماره {{mobile}}{{dialCode}} ارسال کردیم رو وارد کنید",
+    "enterCodePrompt1": "لطفا کد ورودی که به شماره",
     "enterCodePrompt2": "ارسال کردیم رو وارد کنید"
   },
   "errors": {

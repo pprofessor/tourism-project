@@ -1,3 +1,4 @@
+// FrontEnd/src/services/authService.ts
 const API_BASE_URL = "http://localhost:8080/api/auth";
 
 export interface AuthResponse {
@@ -9,110 +10,71 @@ export interface AuthResponse {
     id: number;
     mobile: string;
     role: string;
+    firstName?: string;
+    lastName?: string;
+    profileImage?: string;
+    nationalCode?: string;
+    passportNumber?: string;
+    address?: string;
+    userType?: string;
   };
 }
 
-export const authService = {
-  // مرحله ۱: بررسی شماره موبایل
-  async initLogin(mobile: string): Promise<AuthResponse> {
+class AuthService {
+  private async fetchAPI(endpoint: string, body: any): Promise<AuthResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/init-login`, {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ mobile }),
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
-        throw new Error("خطا در ارتباط با سرور");
+        throw new Error(`خطا در ارتباط با سرور: ${response.status}`);
       }
 
       return await response.json();
     } catch (error) {
-      console.error("Error in initLogin:", error);
+      console.error(`API Error at ${endpoint}:`, error);
       return {
         success: false,
         message: "خطا در ارتباط با سرور",
       };
     }
-  },
+  }
 
-  // مرحله ۲: ارسال کد تایید
+  async initLogin(mobile: string): Promise<AuthResponse> {
+    return this.fetchAPI("/init-login", { mobile });
+  }
+
   async sendVerificationCode(mobile: string): Promise<AuthResponse> {
-    try {
-      const response = await fetch(`${API_BASE_URL}/send-verification`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ mobile }),
-      });
+    return this.fetchAPI("/send-verification", { mobile });
+  }
 
-      if (!response.ok) {
-        throw new Error("خطا در ارسال کد تایید");
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error in sendVerificationCode:", error);
-      return {
-        success: false,
-        message: "خطا در ارسال کد تایید",
-      };
-    }
-  },
-
-  // مرحله ۳: تأیید کد
   async verifyCode(mobile: string, code: string): Promise<AuthResponse> {
-    try {
-      const response = await fetch(`${API_BASE_URL}/verify-code`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ mobile, code }),
-      });
+    return this.fetchAPI("/verify-code", { mobile, code });
+  }
 
-      if (!response.ok) {
-        throw new Error("خطا در تأیید کد");
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error in verifyCode:", error);
-      return {
-        success: false,
-        message: "خطا در تأیید کد",
-      };
-    }
-  },
-
-  // مرحله ۴: ورود با رمز عبور
   async loginWithPassword(
     mobile: string,
     password: string
   ): Promise<AuthResponse> {
-    try {
-      const response = await fetch(`${API_BASE_URL}/login-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ mobile, password }),
-      });
+    return this.fetchAPI("/login-password", { mobile, password });
+  }
 
-      if (!response.ok) {
-        throw new Error("خطا در ورود");
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error in loginWithPassword:", error);
-      return {
-        success: false,
-        message: "خطا در ورود",
-      };
+  async completeRegistration(
+    mobile: string,
+    userData: {
+      username?: string;
+      email?: string;
+      password?: string;
     }
-  },
-};
+  ): Promise<AuthResponse> {
+    return this.fetchAPI("/complete-registration", { mobile, ...userData });
+  }
+}
+
+export const authService = new AuthService();
+export default authService;
