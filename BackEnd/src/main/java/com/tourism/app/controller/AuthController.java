@@ -282,6 +282,7 @@ public class AuthController {
         }
     }
 
+    // در متد completeRegistration این تغییر را انجام دهید:
     @PostMapping("/complete-registration")
     public ResponseEntity<Map<String, Object>> completeRegistration(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
@@ -308,7 +309,7 @@ public class AuthController {
                 if (email != null)
                     user.setEmail(email);
                 if (password != null)
-                    user.setPassword(passwordEncoder.encode(password));
+                    user.setPassword(password); // حالا hashing در setter انجام می‌شود
 
                 userRepository.save(user);
                 logger.info("Registration completed - Mobile: {}, Username: {}", standardizedMobile, username);

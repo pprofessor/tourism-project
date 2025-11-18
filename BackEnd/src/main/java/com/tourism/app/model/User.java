@@ -1,6 +1,8 @@
 package com.tourism.app.model;
 
 import jakarta.persistence.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,44 +13,55 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "phone")
     private String phone;
-
-    @Column(unique = true)
     private String mobile;
-
     private String username;
     private String email;
-    private String password;
-    private String role = "USER";
-    private String userType = "GUEST";
-    private String verificationCode;
-    private String ambassadorCode;
-    private Integer referredCount = 0;
-    private String profileImage;
 
+    // فیلد password با hashing خودکار
+    private String password;
+
+    private String role;
     private String firstName;
     private String lastName;
+
+    @Column(length = 1000)
+    private String profileImage;
+
     private String nationalCode;
     private String passportNumber;
+
+    @Column(length = 2000)
     private String address;
 
+    private String userType;
+    private String verificationCode;
+
+    // فیلدهای جدید
+    private Boolean emailVerified = false;
+    private Boolean mobileVerified = false;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private boolean emailVerified = false;
+    private String ambassadorCode;
+    private Integer referredCount = 0; // فیلد جدید
 
+    // متد setter برای password با hashing خودکار
+    public void setPassword(String password) {
+        if (password != null && !password.startsWith("$2a$")) { // بررسی که قبلاً hash نشده
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            this.password = encoder.encode(password);
+        } else {
+            this.password = password;
+        }
+    }
+
+    // Lifecycle callbacks
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
-
-        // منطق ایمن برای phone و mobile
-        if (this.phone == null && this.mobile != null) {
-            this.phone = this.mobile;
-        }
-
-        if (this.mobile == null && this.phone != null) {
-            this.mobile = this.phone;
+        if (referredCount == null) {
+            referredCount = 0;
         }
     }
 
@@ -57,7 +70,7 @@ public class User {
         updatedAt = LocalDateTime.now();
     }
 
-    // Getter and Setter methods
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -71,21 +84,7 @@ public class User {
     }
 
     public void setPhone(String phone) {
-        // اگر phone null یا خالی هست، فقط null ست کن
-        if (phone == null || phone.trim().isEmpty()) {
-            this.phone = null;
-            return;
-        }
-
-        // فقط اگر مقدار معتبر داره، process کن
-        String cleanedPhone = phone.replaceAll("[^0-9]", "");
-
-        // استانداردسازی: همیشه بدون صفر ذخیره کن
-        if (cleanedPhone.startsWith("0")) {
-            cleanedPhone = cleanedPhone.substring(1);
-        }
-
-        this.phone = cleanedPhone;
+        this.phone = phone;
     }
 
     public String getMobile() {
@@ -93,26 +92,7 @@ public class User {
     }
 
     public void setMobile(String mobile) {
-        // اگر mobile null یا خالی هست، فقط null ست کن
-        if (mobile == null || mobile.trim().isEmpty()) {
-            this.mobile = null;
-            return;
-        }
-
-        // فقط اگر مقدار معتبر داره، process کن
-        String cleanedMobile = mobile.replaceAll("[^0-9]", "");
-
-        // استانداردسازی: همیشه بدون صفر ذخیره کن
-        if (cleanedMobile.startsWith("0")) {
-            cleanedMobile = cleanedMobile.substring(1);
-        }
-
-        this.mobile = cleanedMobile;
-
-        // اگر phone null است، mobile رو برای phone هم ست کن
-        if (this.phone == null) {
-            this.phone = this.mobile;
-        }
+        this.mobile = mobile;
     }
 
     public String getUsername() {
@@ -135,56 +115,12 @@ public class User {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getRole() {
         return role;
     }
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    public String getUserType() {
-        return userType;
-    }
-
-    public void setUserType(String userType) {
-        this.userType = userType;
-    }
-
-    public String getVerificationCode() {
-        return verificationCode;
-    }
-
-    public void setVerificationCode(String verificationCode) {
-        this.verificationCode = verificationCode;
-    }
-
-    public String getAmbassadorCode() {
-        return ambassadorCode;
-    }
-
-    public void setAmbassadorCode(String ambassadorCode) {
-        this.ambassadorCode = ambassadorCode;
-    }
-
-    public Integer getReferredCount() {
-        return referredCount;
-    }
-
-    public void setReferredCount(Integer referredCount) {
-        this.referredCount = referredCount;
-    }
-
-    public String getProfileImage() {
-        return profileImage;
-    }
-
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
     }
 
     public String getFirstName() {
@@ -201,6 +137,14 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 
     public String getNationalCode() {
@@ -227,6 +171,38 @@ public class User {
         this.address = address;
     }
 
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public Boolean getEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    public Boolean getMobileVerified() {
+        return mobileVerified;
+    }
+
+    public void setMobileVerified(Boolean mobileVerified) {
+        this.mobileVerified = mobileVerified;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -243,11 +219,28 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    public boolean isEmailVerified() {
-        return emailVerified;
+    public String getAmbassadorCode() {
+        return ambassadorCode;
     }
 
-    public void setEmailVerified(boolean emailVerified) {
-        this.emailVerified = emailVerified;
+    public void setAmbassadorCode(String ambassadorCode) {
+        this.ambassadorCode = ambassadorCode;
+    }
+
+    public Integer getReferredCount() {
+        return referredCount != null ? referredCount : 0;
+    }
+
+    public void setReferredCount(Integer referredCount) {
+        this.referredCount = referredCount;
+    }
+
+    // Compatibility methods
+    public Boolean isEmailVerified() {
+        return emailVerified != null ? emailVerified : false;
+    }
+
+    public Boolean isMobileVerified() {
+        return mobileVerified != null ? mobileVerified : false;
     }
 }
