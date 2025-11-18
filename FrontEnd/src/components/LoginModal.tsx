@@ -70,7 +70,6 @@ const formatPhoneNumber = (phone: string, countryCode: string) => {
 
   // برای سایر کشورها
 
-  
   return `+\u200E${countryCode} \u200E${cleanPhone}`;
 };
 
@@ -242,6 +241,10 @@ const LoginModal: React.FC<LoginModalProps> = ({
       );
 
       if (result.success && result.token && result.user) {
+        // ذخیره توکن در localStorage
+        localStorage.setItem("token", result.token);
+        console.log("✅ توکن در localStorage ذخیره شد");
+
         onLoginSuccess(result.user);
         handleClose();
       } else {
@@ -274,6 +277,10 @@ const LoginModal: React.FC<LoginModalProps> = ({
       );
 
       if (result.success && result.token && result.user) {
+        // ذخیره توکن در localStorage
+        localStorage.setItem("token", result.token);
+        console.log("✅ توکن در localStorage ذخیره شد");
+
         onLoginSuccess(result.user);
         handleClose();
       } else {
@@ -537,28 +544,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
           {currentStep === "password" && userExists && (
             <div>
-              {/* <p
-                className={`mb-6 text-center ${
-                  theme === "dark" ? "text-gray-300" : "text-gray-600"
-                }`}
-              >
-                {t("login.passwordPrompt", {
-                  dialCode: selectedCountry.dialCode,
-                  
-                })}
-                <br />
-                {t("login.enterYourPassword")}
-              </p> */}
               <form onSubmit={handlePasswordSubmit} noValidate>
                 <div className="mb-6">
-                  {/* <label
-                    htmlFor="password-input"
-                    className={`block text-sm font-medium mb-3 ${
-                      theme === "dark" ? "text-gray-300" : "text-gray-700"
-                    }`}
-                  >
-                    {t("login.password")}
-                  </label> */}
                   <input
                     id="password-input"
                     type="password"

@@ -68,6 +68,9 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
         "http://localhost:8080/api/upload/profile-image",
         {
           method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
           body: formData,
         }
       );
@@ -164,7 +167,6 @@ const ProfileImageUpload: React.FC<ProfileImageUploadProps> = ({
           {message}
         </div>
       )}
-
     </div>
   );
 };

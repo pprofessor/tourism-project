@@ -32,14 +32,18 @@ public class SecurityConfig {
 
                 // تنظیم مجوزهای دسترسی
                 .authorizeHttpRequests(authz -> authz
-                        // endpointهای عمومی
+                        // endpointهای عمومی و استاتیک
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/api/hotels/**",
                                 "/api/slides/**",
                                 "/api/media/**",
                                 "/uploads/**",
-                                "/error")
+                                "/media/**",
+                                "/error",
+                                "/static/**",
+                                "/resources/**",
+                                "/webjars/**")
                         .permitAll()
 
                         // endpointهای مدیریتی - نیاز به احراز هویت

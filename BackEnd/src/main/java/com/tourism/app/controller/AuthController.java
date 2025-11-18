@@ -1,5 +1,6 @@
 package com.tourism.app.controller;
 
+import com.tourism.app.config.JwtUtil;
 import com.tourism.app.model.User;
 import com.tourism.app.repository.UserRepository;
 import com.tourism.app.service.RateLimitingService;
@@ -23,6 +24,9 @@ import java.util.Random;
 public class AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Autowired
     private UserRepository userRepository;
@@ -204,9 +208,12 @@ public class AuthController {
                 user.setVerificationCode(null);
                 userRepository.save(user);
 
+                // تولید توکن JWT واقعی
+                String token = jwtUtil.generateToken(user.getMobile());
+
                 Map<String, Object> userResponse = createUserResponse(user);
                 response.put("success", true);
-                response.put("token", "auth-token-" + System.currentTimeMillis());
+                response.put("token", token); // استفاده از توکن واقعی
                 response.put("user", userResponse);
                 response.put("message", "ورود موفقیت‌آمیز");
 
@@ -254,9 +261,12 @@ public class AuthController {
                 User user = userOpt.get();
 
                 if (user.getPassword() != null && passwordEncoder.matches(password, user.getPassword())) {
+                    // تولید توکن JWT واقعی
+                    String token = jwtUtil.generateToken(user.getMobile());
+
                     Map<String, Object> userResponse = createUserResponse(user);
                     response.put("success", true);
-                    response.put("token", "auth-token-" + System.currentTimeMillis());
+                    response.put("token", token); // استفاده از توکن واقعی
                     response.put("user", userResponse);
                     response.put("message", "ورود موفقیت‌آمیز");
 

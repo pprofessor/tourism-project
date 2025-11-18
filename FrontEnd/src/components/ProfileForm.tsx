@@ -175,6 +175,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
             body: JSON.stringify({
               firstName: formData.firstName,
