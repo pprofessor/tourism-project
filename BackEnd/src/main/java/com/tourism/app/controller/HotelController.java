@@ -2,6 +2,7 @@ package com.tourism.app.controller;
 
 import com.tourism.app.dto.HotelRequest;
 import com.tourism.app.model.Hotel;
+import com.tourism.app.service.HotelService;
 import com.tourism.app.repository.HotelRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,24 +20,27 @@ import java.util.Optional;
 public class HotelController {
 
     @Autowired
+    private HotelService hotelService;
+
+    @Autowired
     private HotelRepository hotelRepository;
 
     // دریافت همه هتل‌ها
     @GetMapping
     public List<Hotel> getAllHotels() {
-        return hotelRepository.findAll();
+        return hotelService.getAllHotels();
     }
 
     // دریافت هتل‌های فعال
     @GetMapping("/active")
     public List<Hotel> getActiveHotels() {
-        return hotelRepository.findByIsActiveTrue();
+        return hotelService.getActiveHotels();
     }
 
     // دریافت هتل بر اساس ID
     @GetMapping("/{id}")
     public ResponseEntity<Hotel> getHotelById(@PathVariable Long id) {
-        Optional<Hotel> hotel = hotelRepository.findById(id);
+        Optional<Hotel> hotel = hotelService.getHotelById(id);
         return hotel.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
@@ -44,9 +48,7 @@ public class HotelController {
     @PostMapping
     public ResponseEntity<?> createHotel(@Valid @RequestBody HotelRequest hotelRequest) {
         try {
-            Hotel hotel = new Hotel();
-            mapHotelRequestToEntity(hotelRequest, hotel);
-            Hotel savedHotel = hotelRepository.save(hotel);
+            Hotel savedHotel = hotelService.createHotel(hotelRequest);
             return ResponseEntity.ok(savedHotel);
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
@@ -59,46 +61,26 @@ public class HotelController {
     // آپدیت کامل هتل با validation
     @PutMapping("/{id}")
     public ResponseEntity<?> updateHotel(@PathVariable Long id, @Valid @RequestBody HotelRequest hotelDetails) {
-        Optional<Hotel> hotelOptional = hotelRepository.findById(id);
-
-        if (hotelOptional.isPresent()) {
-            Hotel hotel = hotelOptional.get();
-            mapHotelRequestToEntity(hotelDetails, hotel);
-            Hotel updatedHotel = hotelRepository.save(hotel);
-            return ResponseEntity.ok(updatedHotel);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        Optional<Hotel> updatedHotel = hotelService.updateHotel(id, hotelDetails);
+        return updatedHotel.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // حذف هتل
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Boolean>> deleteHotel(@PathVariable Long id) {
-        Optional<Hotel> hotel = hotelRepository.findById(id);
-
-        if (hotel.isPresent()) {
-            hotelRepository.deleteById(id);
-            Map<String, Boolean> response = new HashMap<>();
-            response.put("deleted", true);
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        boolean deleted = hotelService.deleteHotel(id);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted", deleted);
+        return deleted ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
     }
 
     // غیرفعال کردن هتل (Soft Delete)
     @PutMapping("/{id}/deactivate")
     public ResponseEntity<Hotel> deactivateHotel(@PathVariable Long id) {
-        Optional<Hotel> hotelOptional = hotelRepository.findById(id);
-
-        if (hotelOptional.isPresent()) {
-            Hotel hotel = hotelOptional.get();
-            hotel.setIsActive(false);
-            Hotel updatedHotel = hotelRepository.save(hotel);
-            return ResponseEntity.ok(updatedHotel);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        Optional<Hotel> updatedHotel = hotelService.deactivateHotel(id);
+        return updatedHotel.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // جستجوی هتل‌ها بر اساس شهر
@@ -135,15 +117,14 @@ public class HotelController {
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(required = false) Boolean hasPool) {
 
-        List<Hotel> hotels = hotelRepository.searchHotels(city, minPrice, maxPrice, sortBy, page, hasPool);
+        List<Hotel> hotels = hotelService.searchHotels(city, minPrice, maxPrice, sortBy, page, hasPool);
         return ResponseEntity.ok(hotels);
     }
 
     // آپدیت تعداد اتاق‌های موجود
     @PutMapping("/{id}/rooms")
     public ResponseEntity<Hotel> updateAvailableRooms(@PathVariable Long id, @RequestParam Integer availableRooms) {
-        Optional<Hotel> hotelOptional = hotelRepository.findById(id);
-
+        Optional<Hotel> hotelOptional = hotelService.getHotelById(id);
         if (hotelOptional.isPresent()) {
             Hotel hotel = hotelOptional.get();
             hotel.setAvailableRooms(availableRooms);
@@ -162,8 +143,7 @@ public class HotelController {
             @RequestParam(required = false) String discountCode,
             @RequestParam(required = false) String discountExpiry) {
 
-        Optional<Hotel> hotelOptional = hotelRepository.findById(id);
-
+        Optional<Hotel> hotelOptional = hotelService.getHotelById(id);
         if (hotelOptional.isPresent()) {
             Hotel hotel = hotelOptional.get();
             hotel.setDiscountPercentage(discountPercentage);
@@ -183,19 +163,5 @@ public class HotelController {
         stats.put("activeHotels", hotelRepository.countActiveHotels());
         stats.put("averagePrice", hotelRepository.getAveragePrice());
         return stats;
-    }
-
-    // متد helper برای مپ کردن DTO به Entity
-    private void mapHotelRequestToEntity(HotelRequest request, Hotel hotel) {
-        hotel.setName(request.getName());
-        hotel.setDescription(request.getDescription());
-        hotel.setAddress(request.getAddress());
-        hotel.setCity(request.getCity());
-        hotel.setCountry(request.getCountry());
-        hotel.setBasePrice(request.getBasePrice());
-        hotel.setTotalRooms(request.getTotalRooms());
-        hotel.setStarRating(request.getStarRating());
-        hotel.setEmail(request.getEmail());
-        hotel.setPhone(request.getPhone());
     }
 }
