@@ -243,9 +243,14 @@ const LoginModal: React.FC<LoginModalProps> = ({
       if (result.success && result.token && result.user) {
         // ذخیره توکن در localStorage
         localStorage.setItem("token", result.token);
-        console.log("✅ توکن در localStorage ذخیره شد");
-
         onLoginSuccess(result.user);
+        console.log("✅ Login successful, checking password status...");
+        // بررسی اینکه کاربر رمز عبور دارد یا نه
+        setTimeout(() => {
+          localStorage.setItem("needsPasswordSetup", "true");
+          localStorage.setItem("userMobileForPassword", mobile);
+          console.log("🔐 Password setup flagged for user:", mobile);
+        }, 1000);
         handleClose();
       } else {
         setError(result.message || t("errors.invalidVerificationCode"));
@@ -279,7 +284,14 @@ const LoginModal: React.FC<LoginModalProps> = ({
       if (result.success && result.token && result.user) {
         // ذخیره توکن در localStorage
         localStorage.setItem("token", result.token);
-        console.log("✅ توکن در localStorage ذخیره شد");
+
+        // این خط اضافه شود: ذخیره اطلاعات کاربر
+        localStorage.setItem("userData", JSON.stringify(result.user));
+
+        console.log("✅ Password login successful - no setup needed");
+
+        // این خط اضافه شود: کاربر با رمز وارد شده، نیاز به تعریف رمز ندارد
+        localStorage.setItem("needsPasswordSetup", "false");
 
         onLoginSuccess(result.user);
         handleClose();
@@ -293,7 +305,6 @@ const LoginModal: React.FC<LoginModalProps> = ({
       setLoading(false);
     }
   };
-
   const handleSendVerificationCode = async () => {
     setLoading(true);
     setError("");
