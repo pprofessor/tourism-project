@@ -292,7 +292,56 @@ public class AuthController {
         }
     }
 
-    // در متد completeRegistration این تغییر را انجام دهید:
+    @PostMapping("/set-initial-password")
+    public ResponseEntity<Map<String, Object>> setInitialPassword(@RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+
+        String mobile = request.get("mobile");
+        String newPassword = request.get("newPassword");
+
+        if (mobile == null || newPassword == null) {
+            response.put("success", false);
+            response.put("message", "شماره موبایل و رمز عبور جدید الزامی است");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        try {
+            String standardizedMobile = standardizeMobile(mobile);
+
+            Optional<User> userOpt = userRepository.findByMobile(standardizedMobile);
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
+
+                // بررسی اینکه کاربر قبلاً رمز عبور دارد یا نه
+                if (user.getPassword() != null) {
+                    response.put("success", false);
+                    response.put("message", "رمز عبور قبلاً تعریف شده است");
+                    return ResponseEntity.badRequest().body(response);
+                }
+
+                // تنظیم رمز عبور جدید (hashing خودکار در setter انجام می‌شود)
+                user.setPassword(newPassword);
+                userRepository.save(user);
+
+                response.put("success", true);
+                response.put("message", "رمز عبور با موفقیت تعریف شد");
+
+                logger.info("Initial password set successfully - Mobile: {}", standardizedMobile);
+                return ResponseEntity.ok(response);
+            } else {
+                logger.warn("User not found for setting initial password - Mobile: {}", standardizedMobile);
+                response.put("success", false);
+                response.put("message", "کاربر یافت نشد");
+                return ResponseEntity.badRequest().body(response);
+            }
+        } catch (Exception e) {
+            logger.error("Error setting initial password for mobile {}: {}", mobile, e.getMessage(), e);
+            response.put("success", false);
+            response.put("message", "خطا در تعریف رمز عبور: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
     @PostMapping("/complete-registration")
     public ResponseEntity<Map<String, Object>> completeRegistration(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();

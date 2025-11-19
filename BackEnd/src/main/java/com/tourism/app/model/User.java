@@ -2,7 +2,6 @@ package com.tourism.app.model;
 
 import jakarta.persistence.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -235,7 +234,6 @@ public class User {
         this.referredCount = referredCount;
     }
 
-    // Compatibility methods
     public Boolean isEmailVerified() {
         return emailVerified != null ? emailVerified : false;
     }
