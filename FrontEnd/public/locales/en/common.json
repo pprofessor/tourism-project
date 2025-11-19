@@ -372,5 +372,16 @@
       "createTicket": "Create Support Ticket",
       "callSupport": "Call Support"
     }
+  },
+
+  "changePassword": {
+    "title": "Change Password",
+    "currentPassword": "Current Password *",
+    "currentPasswordPlaceholder": "Enter your current password",
+    "newPassword": "New Password *",
+    "newPasswordPlaceholder": "Enter your new password",
+    "confirmPassword": "Confirm Password *",
+    "confirmPasswordPlaceholder": "Repeat your new password",
+    "changeButton": "Change Password"
   }
 }

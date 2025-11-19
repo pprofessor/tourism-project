@@ -374,5 +374,22 @@
       "createTicket": "ایجاد تیکت پشتیبانی",
       "callSupport": "تماس تلفنی"
     }
+  },
+  "changePassword": {
+    "title": "تغییر رمز عبور",
+    "currentPassword": "رمز عبور فعلی",
+    "currentPasswordPlaceholder": "رمز عبور فعلی خود را وارد کنید",
+    "newPassword": "رمز عبور جدید",
+    "newPasswordPlaceholder": "رمز عبور جدید را وارد کنید",
+    "confirmPassword": "تکرار رمز عبور جدید",
+    "confirmPasswordPlaceholder": "رمز عبور جدید را تکرار کنید",
+    "changeButton": "تغییر رمز عبور",
+    "changing": "در حال تغییر...",
+    "success": "رمز عبور با موفقیت تغییر کرد",
+    "error": "خطا در تغییر رمز عبور",
+    "serverError": "خطا در ارتباط با سرور",
+    "allFieldsRequired": "تمام فیلدها الزامی هستند",
+    "passwordMinLength": "رمز عبور باید حداقل ۶ کاراکتر باشد",
+    "passwordsNotMatch": "رمزهای عبور مطابقت ندارند"
   }
 }

@@ -8,6 +8,7 @@ import ProfileImageUpload from "../components/ProfileImageUpload";
 import PaymentHistory from "../components/PaymentHistory";
 import UserServices from "../components/UserServices";
 import { useTheme } from "../context/ThemeContext";
+import ChangePassword from "../components/ChangePassword";
 
 // انواع داده‌ها برای type safety
 interface UserData {
@@ -408,8 +409,11 @@ const Profile: React.FC = () => {
                 id="tab-profile"
               >
                 {/* ستون سمت راست - فرم اطلاعات هویتی */}
-                <div className="lg:col-span-2">
+                <div className="lg:col-span-2 space-y-6">
                   <ProfileForm userData={user} onUpdate={handleProfileUpdate} />
+
+                  {/* اضافه کردن بخش تغییر رمز عبور */}
+                  <ChangePassword userId={user.id} />
                 </div>
 
                 {/* ستون سمت چپ - آمار و اطلاعات */}

@@ -128,23 +128,32 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
 
         try {
+            String currentPassword = request.get("currentPassword");
             String newPassword = request.get("newPassword");
 
-            if (newPassword == null || newPassword.trim().isEmpty()) {
+            if (currentPassword == null || newPassword == null) {
                 response.put("success", false);
-                response.put("message", "رمز عبور جدید الزامی است");
+                response.put("message", "رمز عبور فعلی و جدید الزامی است");
                 return response;
             }
 
             if (newPassword.length() < 6) {
                 response.put("success", false);
-                response.put("message", "رمز عبور باید حداقل ۶ کاراکتر باشد");
+                response.put("message", "رمز عبور جدید باید حداقل ۶ کاراکتر باشد");
                 return response;
             }
 
             User user = userRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
+            // بررسی رمز عبور فعلی
+            if (user.getPassword() == null || !passwordEncoder.matches(currentPassword, user.getPassword())) {
+                response.put("success", false);
+                response.put("message", "رمز عبور فعلی نادرست است");
+                return response;
+            }
+
+            // تغییر رمز عبور
             user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);
 

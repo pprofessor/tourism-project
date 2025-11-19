@@ -372,5 +372,15 @@
       "createTicket": "Destek Talebi Oluştur",
       "callSupport": "Destek Hattını Ara"
     }
+  },
+  "changePassword": {
+    "title": "Şifre Değiştir",
+    "currentPassword": "Mevcut Şifre *",
+    "currentPasswordPlaceholder": "Mevcut şifrenizi girin",
+    "newPassword": "Yeni Şifre *",
+    "newPasswordPlaceholder": "Yeni şifrenizi girin",
+    "confirmPassword": "Şifreyi Onayla *",
+    "confirmPasswordPlaceholder": "Yeni şifrenizi tekrar girin",
+    "changeButton": "Şifreyi Değiştir"
   }
 }
