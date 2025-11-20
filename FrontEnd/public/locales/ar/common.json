@@ -175,6 +175,7 @@
   },
   "profile": {
     "pageTitle": "ملف المستخدم",
+    "completeProfile": "يرجى إكمال معلومات ملفك الشخصي",
     "guestUser": "مستخدم ضيف",
     "mobileNumber": "رقم الهاتف المحمول",
     "loading": "جاري تحميل الملف...",

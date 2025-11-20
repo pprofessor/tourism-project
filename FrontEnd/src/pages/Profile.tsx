@@ -145,8 +145,8 @@ const Profile: React.FC = () => {
     () =>
       user.firstName && user.lastName
         ? `${user.firstName} ${user.lastName}`
-        : user.mobile || t("profile.guestUser"),
-    [user.firstName, user.lastName, user.mobile, t]
+        : t("profile.completeProfile"),
+    [user.firstName, user.lastName, t]
   );
 
   // Effects

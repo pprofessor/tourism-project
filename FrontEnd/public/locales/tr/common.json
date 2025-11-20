@@ -175,6 +175,7 @@
   },
   "profile": {
     "pageTitle": "Kullanıcı Profili",
+    "completeProfile": "Lütfen profil bilgilerinizi tamamlayın",
     "guestUser": "Misafir Kullanıcı",
     "mobileNumber": "Cep Telefonu Numarası",
     "loading": "Profil yükleniyor...",

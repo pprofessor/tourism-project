@@ -170,6 +170,7 @@
   },
   "profile": {
     "pageTitle": "User Profile",
+    "completeProfile": "Please complete your profile information",
     "guestUser": "Guest User",
     "mobileNumber": "Mobile Number",
     "loading": "Loading profile...",
