@@ -382,6 +382,7 @@
     "newPasswordPlaceholder": "Enter your new password",
     "confirmPassword": "Confirm Password *",
     "confirmPasswordPlaceholder": "Repeat your new password",
-    "changeButton": "Change Password"
+    "changeButton": "Change Password",
+    "sameAsOld": "New password must be different from current password"
   }
 }

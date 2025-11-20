@@ -15,51 +15,75 @@ function App() {
   const [showPasswordSetup, setShowPasswordSetup] = useState(false);
   const [userMobileForPassword, setUserMobileForPassword] = useState("");
   const [userData, setUserData] = useState<any>(null);
+  const [hasCheckedAfterLogin, setHasCheckedAfterLogin] = useState(false);
 
   // تابع برای مدیریت موفقیت‌آمیز لاگین
   const handleLoginSuccess = useCallback((userData: any) => {
-    console.log("✅ Login successful in App.tsx:", userData);
     setUserData(userData);
     setShowLoginModal(false);
-    
-    // بررسی نیاز به تعریف رمز عبور
+    setHasCheckedAfterLogin(false); // ریست کردن برای چک جدید
+
+    // بررسی نیاز به تعریف رمز عبور بعد از لاگین
     setTimeout(() => {
-      handlePasswordSetupCheck();
+      handlePasswordSetupCheck(true);
     }, 1000);
   }, []);
 
   // تابع برای بررسی نیاز به تعریف رمز عبور
-  const handlePasswordSetupCheck = useCallback(() => {
-    const needsSetup = localStorage.getItem('needsPasswordSetup');
-    const mobile = localStorage.getItem('userMobileForPassword');
-    
-    console.log("🔍 Checking password setup:", { needsSetup, mobile });
-    
-    if (needsSetup === 'true' && mobile) {
-      console.log("🔄 Showing password setup modal for:", mobile);
-      setShowPasswordSetup(true);
-      setUserMobileForPassword(mobile);
-    }
-  }, []);
+  const handlePasswordSetupCheck = useCallback(
+    (isAfterLogin = false) => {
+      // اگر قبلاً مودال نمایش داده شده، دیگر چک نکن
+      if (showPasswordSetup) {
+        return;
+      }
+      if (!isAfterLogin && hasCheckedAfterLogin) {
+        return;
+      }
+
+      const needsSetup = localStorage.getItem("needsPasswordSetup");
+      const mobile = localStorage.getItem("userMobileForPassword");
+
+      if (needsSetup === "true" && mobile && !showPasswordSetup) {
+        setShowPasswordSetup(true);
+        setUserMobileForPassword(mobile);
+
+        if (isAfterLogin) {
+          setHasCheckedAfterLogin(true);
+        }
+      }
+    },
+    [showPasswordSetup, hasCheckedAfterLogin]
+  );
 
   // تابع برای مدیریت موفقیت‌آمیز تعریف رمز عبور
   const handlePasswordSetupSuccess = useCallback(() => {
-    console.log("✅ Password setup completed successfully");
     setShowPasswordSetup(false);
     setUserMobileForPassword("");
-    
+
     // پاک کردن flag از localStorage
-    localStorage.removeItem('needsPasswordSetup');
-    localStorage.removeItem('userMobileForPassword');
-    
+    localStorage.removeItem("needsPasswordSetup");
+    localStorage.removeItem("userMobileForPassword");
+
     // می‌توانید یک پیام موفقیت نشان دهید
     alert("رمز عبور با موفقیت تعریف شد!");
   }, []);
 
-  // useEffect برای بررسی اولیه نیاز به تعریف رمز عبور
+  // تابع برای مدیریت بستن مودال
+  const handlePasswordSetupClose = useCallback(() => {
+    setShowPasswordSetup(false);
+    // پاک کردن localStorage تا با ریفرش دوباره نمایش داده نشود
+    localStorage.removeItem("needsPasswordSetup");
+    localStorage.removeItem("userMobileForPassword");
+  }, []);
+
+  // useEffect برای بررسی اولیه - فقط یک بار
   useEffect(() => {
-    // بررسی هنگام لود اولیه اپ
-    handlePasswordSetupCheck();
+    // فقط یک بار پس از لود اولیه چک کن (برای مواردی که کاربر قبلاً لاگین کرده)
+    const timer = setTimeout(() => {
+      handlePasswordSetupCheck(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
   }, [handlePasswordSetupCheck]);
 
   return (
@@ -68,8 +92,8 @@ function App() {
         <Router>
           <div className="App">
             <InstallPrompt />
-            
-            {/* Routes اصلی - بدون prop اضافی */}
+
+            {/* Routes اصلی */}
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/profile" element={<Profile />} />
@@ -81,17 +105,6 @@ function App() {
               isOpen={showLoginModal}
               onClose={() => setShowLoginModal(false)}
               onLoginSuccess={handleLoginSuccess}
-            />
-
-            {/* مودال تعریف رمز عبور اولیه */}
-            <SetInitialPassword
-              isOpen={showPasswordSetup}
-              onClose={() => {
-                setShowPasswordSetup(false);
-                // اگر کاربر مودال را بست، flag را پاک نکنیم تا دفعه بعد دوباره نمایش داده شود
-              }}
-              onSuccess={handlePasswordSetupSuccess}
-              userMobile={userMobileForPassword}
             />
           </div>
         </Router>

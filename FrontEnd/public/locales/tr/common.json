@@ -381,6 +381,7 @@
     "newPasswordPlaceholder": "Yeni şifrenizi girin",
     "confirmPassword": "Şifreyi Onayla *",
     "confirmPasswordPlaceholder": "Yeni şifrenizi tekrar girin",
-    "changeButton": "Şifreyi Değiştir"
+    "changeButton": "Şifreyi Değiştir",
+    "sameAsOld": "Yeni şifre mevcut şifreden farklı olmalıdır"
   }
 }

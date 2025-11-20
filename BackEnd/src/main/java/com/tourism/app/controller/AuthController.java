@@ -77,19 +77,26 @@ public class AuthController {
         try {
             String mobile = standardizeMobile(request.get("mobile"));
 
-            // Check for valid 10-digit number without zero
             if (mobile == null) {
                 response.put("success", false);
                 response.put("message", "شماره موبایل معتبر نیست");
                 return ResponseEntity.badRequest().body(response);
             }
 
-            boolean userExists = userRepository.findByMobile(mobile).isPresent();
+            Optional<User> userOpt = userRepository.findByMobile(mobile);
+            boolean userExists = userOpt.isPresent();
+            boolean hasPassword = false;
 
-            logger.debug("User existence check - Mobile: {}, Exists: {}", mobile, userExists);
+            if (userExists) {
+                User user = userOpt.get();
+                hasPassword = user.getPassword() != null; // بررسی وجود رمز عبور
+            }
+
+            logger.debug("User check - Mobile: {}, Exists: {}, HasPassword: {}", mobile, userExists, hasPassword);
 
             response.put("success", true);
             response.put("userExists", userExists);
+            response.put("hasPassword", hasPassword); // اضافه کردن این خط
             response.put("message", userExists ? "کاربر موجود است" : "کاربر جدید");
 
             return ResponseEntity.ok(response);
@@ -123,9 +130,6 @@ public class AuthController {
         try {
             String mobile = standardizeMobile(originalMobile);
 
-            logger.info("Original mobile received: '{}'", originalMobile);
-            logger.info("Standardized mobile: '{}'", mobile);
-
             if (mobile == null) {
                 logger.warn("Invalid mobile number: {}", originalMobile);
                 response.put("success", false);
@@ -137,9 +141,7 @@ public class AuthController {
             logger.info("OTP code generated: {}", verificationCode);
 
             // Search for user
-            logger.info("Searching for user with mobile: '{}'", mobile);
             Optional<User> userOpt = userRepository.findByMobile(mobile);
-            logger.info("Search result: {}", userOpt.isPresent());
 
             User user;
             if (userOpt.isPresent()) {
@@ -154,12 +156,10 @@ public class AuthController {
                 user.setUsername(mobile);
                 user.setRole("USER");
                 user.setUserType("GUEST");
-                logger.info("New user created for mobile: {}", mobile);
             }
 
             user.setVerificationCode(verificationCode);
-            User savedUser = userRepository.save(user);
-            logger.info("User saved - ID: {}, Mobile: '{}'", savedUser.getId(), savedUser.getMobile());
+            userRepository.save(user);
 
             response.put("success", true);
             response.put("message", "کد تایید ارسال شد");
@@ -196,6 +196,9 @@ public class AuthController {
         try {
             String standardizedMobile = standardizeMobile(mobile);
 
+            logger.info("🔍 Verifying code - Mobile: {}, Code: {}", standardizedMobile, code);
+            logger.info("📊 Searching for user with mobile: {} and code: {}", standardizedMobile, code);
+
             if (standardizedMobile == null) {
                 response.put("success", false);
                 response.put("message", "شماره موبایل معتبر نیست");
@@ -212,12 +215,12 @@ public class AuthController {
                 String token = jwtUtil.generateToken(user.getMobile());
 
                 Map<String, Object> userResponse = createUserResponse(user);
+                userResponse.put("hasPassword", user.getPassword() != null);
                 response.put("success", true);
                 response.put("token", token); // استفاده از توکن واقعی
                 response.put("user", userResponse);
                 response.put("message", "ورود موفقیت‌آمیز");
 
-                logger.info("User logged in successfully - ID: {}, Mobile: {}", user.getId(), user.getMobile());
                 return ResponseEntity.ok(response);
             } else {
                 logger.warn("Invalid verification code - mobile: {}, code: {}", standardizedMobile, code);
@@ -270,7 +273,6 @@ public class AuthController {
                     response.put("user", userResponse);
                     response.put("message", "ورود موفقیت‌آمیز");
 
-                    logger.info("Password login successful - ID: {}, Mobile: {}", user.getId(), user.getMobile());
                     return ResponseEntity.ok(response);
                 } else {
                     logger.warn("Invalid password for user: {}", standardizedMobile);
@@ -326,7 +328,6 @@ public class AuthController {
                 response.put("success", true);
                 response.put("message", "رمز عبور با موفقیت تعریف شد");
 
-                logger.info("Initial password set successfully - Mobile: {}", standardizedMobile);
                 return ResponseEntity.ok(response);
             } else {
                 logger.warn("User not found for setting initial password - Mobile: {}", standardizedMobile);
@@ -371,7 +372,6 @@ public class AuthController {
                     user.setPassword(password); // حالا hashing در setter انجام می‌شود
 
                 userRepository.save(user);
-                logger.info("Registration completed - Mobile: {}, Username: {}", standardizedMobile, username);
                 response.put("success", true);
                 response.put("message", "ثبت‌نام تکمیل شد");
                 return ResponseEntity.ok(response);

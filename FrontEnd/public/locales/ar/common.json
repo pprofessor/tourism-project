@@ -381,6 +381,7 @@
     "newPasswordPlaceholder": "أدخل كلمة المرور الجديدة",
     "confirmPassword": "تأكيد كلمة المرور *",
     "confirmPasswordPlaceholder": "كرر كلمة المرور الجديدة",
-    "changeButton": "تغيير كلمة المرور"
+    "changeButton": "تغيير كلمة المرور",
+    "sameAsOld": "كلمة المرور الجديدة يجب أن تختلف عن كلمة المرور الحالية"
   }
 }

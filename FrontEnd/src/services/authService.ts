@@ -5,6 +5,7 @@ export interface AuthResponse {
   success: boolean;
   message: string;
   userExists?: boolean;
+  hasPassword?: boolean;
   token?: string;
   user?: {
     id: number;

@@ -390,6 +390,7 @@
     "serverError": "خطا در ارتباط با سرور",
     "allFieldsRequired": "تمام فیلدها الزامی هستند",
     "passwordMinLength": "رمز عبور باید حداقل ۶ کاراکتر باشد",
-    "passwordsNotMatch": "رمزهای عبور مطابقت ندارند"
+    "passwordsNotMatch": "رمزهای عبور مطابقت ندارند",
+    "sameAsOld": "رمز عبور جدید باید با رمز عبور فعلی متفاوت باشد"
   }
 }

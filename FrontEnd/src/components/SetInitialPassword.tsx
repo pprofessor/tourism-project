@@ -69,8 +69,6 @@ const SetInitialPassword: React.FC<SetInitialPasswordProps> = ({
       const result = await response.json();
 
       if (result.success) {
-        console.log("✅ Password set successfully");
-        // حذف flag از localStorage
         localStorage.removeItem("needsPasswordSetup");
         localStorage.removeItem("userMobileForPassword");
         onSuccess();

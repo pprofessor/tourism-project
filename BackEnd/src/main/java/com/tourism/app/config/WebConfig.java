@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
 import jakarta.annotation.PostConstruct;
 import java.io.File;
 
@@ -16,19 +15,25 @@ public class WebConfig implements WebMvcConfigurer {
 
     private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
 
-    @Value("${app.media.upload-dir:D:/Project/Media}")
+    @Value("${app.media.upload-dir:./uploads}")
     private String mediaUploadDir;
+
+    @Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:4000}")
+    private String corsAllowedOrigins;
 
     @PostConstruct
     public void init() {
         logger.info("🎯 WebConfig initialized");
         logger.info("📁 Media upload directory: {}", mediaUploadDir);
+        System.out.println("✅ Tourism Application started successfully on port 8080!");
+        System.out.println("📁 Media upload directory: " + mediaUploadDir);
+        System.out.println("🌐 CORS allowed origins: " + corsAllowedOrigins);
 
         File mediaDir = new File(mediaUploadDir);
         if (mediaDir.exists()) {
             logger.info("✅ Media directory exists: {}", mediaDir.getAbsolutePath());
         } else {
-            logger.error("❌ Media directory does NOT exist: {}", mediaDir.getAbsolutePath());
+            logger.warn("⚠️ Media directory does NOT exist: {}", mediaDir.getAbsolutePath());
         }
     }
 
@@ -36,19 +41,16 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
         logger.info("🔄 Configuring static resource handlers...");
 
-        // ✅ راه حل قطعی: استفاده از مسیر مستقیم
         String mediaPath = "file:" + mediaUploadDir + "/";
 
         logger.info("📁 Registering media path: {}", mediaPath);
 
-        // ✅ روش ۱: دسترسی مستقیم به تمام فایل‌ها
         registry.addResourceHandler("/media/**")
                 .addResourceLocations(mediaPath)
                 .setCachePeriod(3600);
 
         logger.info("✅ Media resources registered for: /media/** -> {}", mediaPath);
 
-        // ✅ روش ۲: دسترسی به هر category جداگانه (برای compatibility)
         registry.addResourceHandler("/media/images/**")
                 .addResourceLocations(mediaPath + "Images/")
                 .setCachePeriod(3600);

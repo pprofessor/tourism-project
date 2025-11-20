@@ -44,6 +44,14 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ userId }) => {
       return;
     }
 
+    if (currentPassword === newPassword) {
+      setMessage({
+        type: "error",
+        text: t("changePassword.sameAsOld"),
+      });
+      return;
+    }
+
     setLoading(true);
     setMessage(null);
 

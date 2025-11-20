@@ -9,6 +9,7 @@ import PaymentHistory from "../components/PaymentHistory";
 import UserServices from "../components/UserServices";
 import { useTheme } from "../context/ThemeContext";
 import ChangePassword from "../components/ChangePassword";
+import SetInitialPassword from "../components/SetInitialPassword";
 
 // انواع داده‌ها برای type safety
 interface UserData {
@@ -22,6 +23,7 @@ interface UserData {
   passportNumber?: string;
   address?: string;
   userType?: string;
+  hasPassword?: boolean;
 }
 
 interface TabConfig {
@@ -44,6 +46,7 @@ const Profile: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { theme } = useTheme();
   const { t } = useTranslation();
+  const [showPasswordSetup, setShowPasswordSetup] = useState(false);
 
   // Hooks
   const location = useLocation();
@@ -117,6 +120,8 @@ const Profile: React.FC = () => {
       userType: ["GUEST", "VERIFIED", "AMBASSADOR"].includes(data.userType)
         ? data.userType
         : "GUEST",
+      hasPassword:
+        typeof data.hasPassword === "boolean" ? data.hasPassword : false, // اضافه کردن این خط
     };
   }, []);
 
@@ -198,8 +203,6 @@ const Profile: React.FC = () => {
 
   const handleImageUpdate = useCallback(
     (imageUrl: string) => {
-      console.log("🖼️ آدرس تصویر جدید:", imageUrl);
-
       setUser((prevUser) => {
         // ساخت آدرس کامل برای ذخیره‌سازی با اعتبارسنجی
         const fullImageUrl = imageUrl.startsWith("http")
@@ -408,12 +411,37 @@ const Profile: React.FC = () => {
                 className="grid grid-cols-1 lg:grid-cols-3 gap-6"
                 id="tab-profile"
               >
-                {/* ستون سمت راست - فرم اطلاعات هویتی */}
                 <div className="lg:col-span-2 space-y-6">
                   <ProfileForm userData={user} onUpdate={handleProfileUpdate} />
 
-                  {/* اضافه کردن بخش تغییر رمز عبور */}
-                  <ChangePassword userId={user.id} />
+                  {/* هشدار تعریف رمز عبور */}
+                  {!user.hasPassword && (
+                    <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3 space-x-reverse">
+                          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                          <div>
+                            <h4 className="font-semibold text-red-800">
+                              توجه: رمز عبور تعریف نشده است
+                            </h4>
+                            <p className="text-red-600 text-sm mt-1">
+                              برای امنیت بیشتر حساب کاربری، لطفاً یک رمز عبور
+                              تعریف کنید.
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => setShowPasswordSetup(true)}
+                          className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition font-medium text-sm"
+                        >
+                          تعریف رمز عبور
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* بخش تغییر رمز عبور (فقط برای کاربران با رمز) */}
+                  {user.hasPassword && <ChangePassword userId={user.id} />}
                 </div>
 
                 {/* ستون سمت چپ - آمار و اطلاعات */}
@@ -543,6 +571,20 @@ const Profile: React.FC = () => {
       </main>
 
       <Footer />
+      <SetInitialPassword
+        isOpen={showPasswordSetup}
+        onClose={() => setShowPasswordSetup(false)}
+        onSuccess={() => {
+          setShowPasswordSetup(false);
+          // به‌روزرسانی وضعیت کاربر در state
+          setUser((prev) => ({ ...prev, hasPassword: true }));
+          // به‌روزرسانی localStorage
+          const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+          userData.hasPassword = true;
+          localStorage.setItem("userData", JSON.stringify(userData));
+        }}
+        userMobile={user.mobile || ""}
+      />
     </div>
   );
 };
