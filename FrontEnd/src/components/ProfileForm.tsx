@@ -1,6 +1,7 @@
 // ProfileForm.tsx - نسخه نهایی اصلاح شده
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "../context/ThemeContext";
 
 interface UserData {
   id?: number;
@@ -13,6 +14,7 @@ interface UserData {
   passportNumber?: string;
   address?: string;
   userType?: string;
+  email?: string;
 }
 
 interface ProfileFormProps {
@@ -26,6 +28,7 @@ interface FormData {
   nationalCode: string;
   passportNumber: string;
   address: string;
+  email: string;
 }
 
 // اعتبارسنجی فرم
@@ -35,17 +38,15 @@ const validateForm = (
 ): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
 
-  // اعتبارسنجی نام
+  // اعتبارسنجی نام (اجباری)
   if (!formData.firstName.trim()) {
     errors.push(t("validation.firstNameRequired"));
   } else if (formData.firstName.length < 2) {
     errors.push(t("validation.firstNameMinLength"));
   }
 
-  // اعتبارسنجی نام خانوادگی
-  if (!formData.lastName.trim()) {
-    errors.push(t("validation.lastNameRequired"));
-  } else if (formData.lastName.length < 2) {
+  // اعتبارسنجی نام خانوادگی (غیراجباری)
+  if (formData.lastName && formData.lastName.length < 2) {
     errors.push(t("validation.lastNameMinLength"));
   }
 
@@ -59,7 +60,6 @@ const validateForm = (
     errors,
   };
 };
-
 const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
@@ -67,6 +67,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
     nationalCode: "",
     passportNumber: "",
     address: "",
+    email: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -76,6 +77,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
   } | null>(null);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const { t } = useTranslation();
+  const { theme } = useTheme();
 
   // تابع مدیریت Tab و Enter
   const handleKeyDown = useCallback(
@@ -102,6 +104,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
       nationalCode: userData.nationalCode || "",
       passportNumber: userData.passportNumber || "",
       address: userData.address || "",
+      email: userData.email || "",
     }),
     [userData]
   );
@@ -224,28 +227,37 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
   // کلاس‌های شرطی برای تم
   const inputClasses = useMemo(
     () =>
-      "w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200",
-    []
+      `w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ${
+        theme === "dark"
+          ? "bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+          : "border-gray-300 text-gray-800 bg-white"
+      }`,
+    [theme]
   );
 
   const labelClasses = useMemo(
-    () => "block text-sm font-medium text-gray-700 mb-2",
-    []
+    () =>
+      `block text-sm font-medium mb-2 ${
+        theme === "dark" ? "text-gray-200" : "text-gray-700"
+      }`,
+    [theme]
   );
-
   return (
     <div
-      className="bg-white rounded-2xl shadow-lg p-6"
+      className={`rounded-2xl shadow-lg p-6 transition-colors duration-300 ${
+        theme === "dark" ? "bg-gray-800" : "bg-white"
+      }`}
       role="form"
       aria-labelledby="profile-form-title"
     >
       <h3
         id="profile-form-title"
-        className="text-xl font-bold text-gray-800 mb-6"
+        className={`text-xl font-bold mb-6 ${
+          theme === "dark" ? "text-white" : "text-gray-800"
+        }`}
       >
         {t("profileForm.title")}
       </h3>
-
       {/* نمایش پیام‌ها */}
       {message && (
         <div
@@ -302,7 +314,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
           {/* نام خانوادگی */}
           <div>
             <label htmlFor="lastName" className={labelClasses}>
-              {t("profileForm.lastName")} *
+              {t("profileForm.lastName")}
             </label>
             <input
               id="lastName"
@@ -319,6 +331,24 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
               maxLength={50}
             />
           </div>
+        </div>
+
+        {/* فیلد ایمیل */}
+        <div>
+          <label htmlFor="email" className={labelClasses}>
+            ایمیل
+          </label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            className={inputClasses}
+            placeholder="email@example.com"
+            maxLength={100}
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

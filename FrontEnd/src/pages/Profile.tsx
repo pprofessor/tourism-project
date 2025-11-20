@@ -16,6 +16,7 @@ interface UserData {
   id?: number;
   mobile?: string;
   role?: string;
+  email?: string;
   profileImage?: string;
   firstName?: string;
   lastName?: string;
