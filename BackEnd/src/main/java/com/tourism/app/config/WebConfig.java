@@ -23,7 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @PostConstruct
     public void init() {
-        System.out.println(" Application started successfully on port 8080   ");
+        System.out.println("          Application started successfully on port 8080   ");
 
         File mediaDir = new File(mediaUploadDir);
         if (mediaDir.exists()) {

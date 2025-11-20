@@ -11,38 +11,32 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String phone;
     private String mobile;
     private String username;
     private String email;
-
-    // فیلد password با hashing خودکار
     private String password;
-
     private String role;
     private String firstName;
     private String lastName;
 
     @Column(length = 1000)
     private String profileImage;
-
     private String nationalCode;
     private String passportNumber;
 
     @Column(length = 2000)
     private String address;
-
     private String userType;
     private String verificationCode;
-
-    // فیلدهای جدید
     private Boolean emailVerified = false;
     private Boolean mobileVerified = false;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String ambassadorCode;
-    private Integer referredCount = 0; // فیلد جدید
+    private Integer referredCount = 0;
+    private String countryCode;
+    private String mobileNumber;
 
     // متد setter برای password با hashing خودکار
     public void setPassword(String password) {
@@ -70,6 +64,22 @@ public class User {
     }
 
     // Getters and Setters
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
     public Long getId() {
         return id;
     }

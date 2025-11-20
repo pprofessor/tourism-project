@@ -58,21 +58,66 @@ const COUNTRIES: Country[] = [
 const formatPhoneNumber = (phone: string, countryCode: string) => {
   const cleanPhone = phone.replace(/[^\d]/g, "");
 
-  if (countryCode === "98") {
-    // فرمت ایران
-    if (cleanPhone.length === 10) {
-      return `\u200E${countryCode} \u200E${cleanPhone.slice(
-        0,
-        3
-      )} ${cleanPhone.slice(3, 6)} ${cleanPhone.slice(6)}+`;
-    }
+  // فرمت‌بندی بر اساس کد کشور
+  switch (countryCode) {
+    case "98": // ایران
+      if (cleanPhone.length === 10) {
+        return `+${countryCode} ${cleanPhone.slice(0, 3)} ${cleanPhone.slice(
+          3,
+          6
+        )} ${cleanPhone.slice(6)}`;
+      }
+      break;
+
+    case "964": // عراق
+      if (cleanPhone.length === 10) {
+        return `+${countryCode} ${cleanPhone.slice(0, 3)} ${cleanPhone.slice(
+          3,
+          6
+        )} ${cleanPhone.slice(6)}`;
+      }
+      break;
+
+    case "93": // افغانستان
+      if (cleanPhone.length === 9) {
+        return `+${countryCode} ${cleanPhone.slice(0, 2)} ${cleanPhone.slice(
+          2,
+          5
+        )} ${cleanPhone.slice(5)}`;
+      }
+      break;
+
+    case "90": // ترکیه
+      if (cleanPhone.length === 10) {
+        return `+${countryCode} ${cleanPhone.slice(0, 3)} ${cleanPhone.slice(
+          3,
+          6
+        )} ${cleanPhone.slice(6)}`;
+      }
+      break;
+
+    case "971": // امارات
+      if (cleanPhone.length === 9) {
+        return `+${countryCode} ${cleanPhone.slice(0, 3)} ${cleanPhone.slice(
+          3,
+          6
+        )} ${cleanPhone.slice(6)}`;
+      }
+      break;
+
+    case "966": // عربستان
+      if (cleanPhone.length === 9) {
+        return `+${countryCode} ${cleanPhone.slice(0, 2)} ${cleanPhone.slice(
+          2,
+          5
+        )} ${cleanPhone.slice(5)}`;
+      }
+      break;
   }
 
-  // برای سایر کشورها
-
-  return `+\u200E${countryCode} \u200E${cleanPhone}`;
+  // فرمت پیش‌فرض برای سایر کشورها - با فاصله بین کد کشور و شماره
+  return `+${countryCode} ${cleanPhone}`;
 };
-
 const LoginModal: React.FC<LoginModalProps> = ({
   isOpen,
   onClose,

@@ -37,6 +37,43 @@ public class AuthController {
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private Random random = new Random();
 
+    // متد جدید برای جداسازی کد کشور و شماره
+    private Map<String, String> parseMobile(String mobile) {
+        Map<String, String> result = new HashMap<>();
+
+        if (mobile == null) {
+            return null;
+        }
+
+        String cleaned = mobile.replaceAll("[^0-9]", "");
+
+        // Remove leading zero (منطق موجود)
+        if (cleaned.startsWith("0")) {
+            cleaned = cleaned.substring(1);
+        }
+
+        // تشخیص کد کشور و شماره
+        if (cleaned.startsWith("98") && cleaned.length() == 10) { // ایران
+            result.put("countryCode", "98");
+            result.put("mobileNumber", cleaned.substring(2));
+        } else if (cleaned.startsWith("964") && cleaned.length() == 11) { // عراق
+            result.put("countryCode", "964");
+            result.put("mobileNumber", cleaned.substring(3));
+        } else if (cleaned.startsWith("93") && cleaned.length() == 9) { // افغانستان
+            result.put("countryCode", "93");
+            result.put("mobileNumber", cleaned.substring(2));
+        } else if (cleaned.startsWith("90") && cleaned.length() == 10) { // ترکیه
+            result.put("countryCode", "90");
+            result.put("mobileNumber", cleaned.substring(2));
+        } else {
+            // فرمت پیش‌فرض
+            result.put("countryCode", "98");
+            result.put("mobileNumber", cleaned);
+        }
+
+        return result;
+    }
+
     private String standardizeMobile(String mobile) {
         if (mobile == null)
             return null;
@@ -130,6 +167,10 @@ public class AuthController {
         try {
             String mobile = standardizeMobile(originalMobile);
 
+            Map<String, String> parsedMobile = parseMobile(originalMobile);
+            String countryCode = parsedMobile.get("countryCode");
+            String mobileNumber = parsedMobile.get("mobileNumber");
+
             if (mobile == null) {
                 response.put("success", false);
                 response.put("message", "شماره موبایل معتبر نیست");
@@ -155,6 +196,8 @@ public class AuthController {
                 user.setUsername(mobile);
                 user.setRole("USER");
                 user.setUserType("GUEST");
+                user.setCountryCode(countryCode);
+                user.setMobileNumber(mobileNumber);
             }
 
             user.setVerificationCode(verificationCode);
@@ -194,9 +237,12 @@ public class AuthController {
 
         try {
             String standardizedMobile = standardizeMobile(mobile);
+            Map<String, String> parsedMobile = parseMobile(mobile);
+            String countryCode = parsedMobile.get("countryCode");
+            String mobileNumber = parsedMobile.get("mobileNumber");
 
-            logger.info("🔍 Verifying code - Mobile: {}, Code: {}", standardizedMobile, code);
-            logger.info("📊 Searching for user with mobile: {} and code: {}", standardizedMobile, code);
+            logger.info("       Verifying code - Mobile: {}, Code: {}", standardizedMobile, code);
+            logger.info("       Searching for user with mobile: {} and code: {}", standardizedMobile, code);
 
             if (standardizedMobile == null) {
                 response.put("success", false);
@@ -215,8 +261,10 @@ public class AuthController {
 
                 Map<String, Object> userResponse = createUserResponse(user);
                 userResponse.put("hasPassword", user.getPassword() != null);
+                userResponse.put("countryCode", user.getCountryCode());
+                userResponse.put("mobileNumber", user.getMobileNumber());
                 response.put("success", true);
-                response.put("token", token); // استفاده از توکن واقعی
+                response.put("token", token);
                 response.put("user", userResponse);
                 response.put("message", "ورود موفقیت‌آمیز");
 

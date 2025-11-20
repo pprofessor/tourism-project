@@ -24,6 +24,8 @@ interface UserData {
   address?: string;
   userType?: string;
   hasPassword?: boolean;
+  countryCode?: string; // اضافه کردن این خط
+  mobileNumber?: string;
 }
 
 interface TabConfig {
@@ -369,7 +371,11 @@ const Profile: React.FC = () => {
                     theme === "dark" ? "text-white" : "text-gray-800"
                   }`}
                 >
-                  {user.mobile ? ` ${user.mobile} 98+` : "-"}
+                  {user.countryCode && user.mobileNumber
+                    ? `+${user.countryCode} ${user.mobileNumber}`
+                    : user.mobile
+                    ? `${user.mobile.slice(2)} ${user.mobile.slice(0, 2)}+`
+                    : " "}
                 </p>
               </div>
             </div>
