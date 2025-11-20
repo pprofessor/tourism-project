@@ -23,33 +23,22 @@ public class WebConfig implements WebMvcConfigurer {
 
     @PostConstruct
     public void init() {
-        logger.info("🎯 WebConfig initialized");
-        logger.info("📁 Media upload directory: {}", mediaUploadDir);
-        System.out.println("✅ Tourism Application started successfully on port 8080!");
-        System.out.println("📁 Media upload directory: " + mediaUploadDir);
-        System.out.println("🌐 CORS allowed origins: " + corsAllowedOrigins);
+        System.out.println(" Application started successfully on port 8080   ");
 
         File mediaDir = new File(mediaUploadDir);
         if (mediaDir.exists()) {
-            logger.info("✅ Media directory exists: {}", mediaDir.getAbsolutePath());
         } else {
-            logger.warn("⚠️ Media directory does NOT exist: {}", mediaDir.getAbsolutePath());
         }
     }
 
     @Override
     public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
-        logger.info("🔄 Configuring static resource handlers...");
 
         String mediaPath = "file:" + mediaUploadDir + "/";
-
-        logger.info("📁 Registering media path: {}", mediaPath);
 
         registry.addResourceHandler("/media/**")
                 .addResourceLocations(mediaPath)
                 .setCachePeriod(3600);
-
-        logger.info("✅ Media resources registered for: /media/** -> {}", mediaPath);
 
         registry.addResourceHandler("/media/images/**")
                 .addResourceLocations(mediaPath + "Images/")
@@ -67,6 +56,5 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations(mediaPath + "Others/")
                 .setCachePeriod(3600);
 
-        logger.info("🎉 All static resource handlers configured successfully");
     }
 }

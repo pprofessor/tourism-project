@@ -131,7 +131,6 @@ public class AuthController {
             String mobile = standardizeMobile(originalMobile);
 
             if (mobile == null) {
-                logger.warn("Invalid mobile number: {}", originalMobile);
                 response.put("success", false);
                 response.put("message", "شماره موبایل معتبر نیست");
                 return ResponseEntity.badRequest().body(response);
@@ -281,7 +280,6 @@ public class AuthController {
                     return ResponseEntity.badRequest().body(response);
                 }
             } else {
-                logger.warn("User not found with mobile: {}", standardizedMobile);
                 response.put("success", false);
                 response.put("message", "کاربری با این شماره یافت نشد");
                 return ResponseEntity.badRequest().body(response);
@@ -330,7 +328,6 @@ public class AuthController {
 
                 return ResponseEntity.ok(response);
             } else {
-                logger.warn("User not found for setting initial password - Mobile: {}", standardizedMobile);
                 response.put("success", false);
                 response.put("message", "کاربر یافت نشد");
                 return ResponseEntity.badRequest().body(response);

@@ -68,7 +68,6 @@ public class FileUploadController {
                 response.put("success", true);
                 response.put("message", "عکس پروفایل با موفقیت آپلود شد");
                 response.put("imageUrl", fileUrl);
-                System.out.println("✅ عکس پروفایل ذخیره شد: " + fileUrl);
             } else {
                 response.put("success", false);
                 response.put("message", "کاربر یافت نشد");

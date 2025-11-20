@@ -42,8 +42,6 @@ public class MediaController {
     @PostConstruct
     public void init() {
         try {
-            logger.info("[MEDIA] Initializing Media Controller");
-            logger.info("[PATH] Upload directory: {}", mediaProperties.getUploadDir());
             
             File mainDir = new File(mediaProperties.getUploadDir());
             if (!mainDir.exists()) {
@@ -66,7 +64,6 @@ public class MediaController {
                 }
             }
             
-            logger.info("[SUCCESS] Media controller initialized successfully");
             
         } catch (Exception e) {
             logger.error("[ERROR] Error initializing media controller: {}", e.getMessage());
@@ -75,11 +72,9 @@ public class MediaController {
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
-        logger.info("[UPLOAD] File upload request received: {}", file.getOriginalFilename());
-        
+      
         try {
             if (file.isEmpty()) {
-                logger.warn("[WARNING] Empty file received");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(Map.of("success", false, "message", "File is empty"));
             }
@@ -144,9 +139,7 @@ public class MediaController {
     }
 
    @GetMapping("/files")
-public ResponseEntity<?> getFiles() {
-    logger.info("[REQUEST] Get files list request");
-    
+public ResponseEntity<?> getFiles() {   
     try {
         List<Map<String, Object>> files = new ArrayList<>();
         String[] categories = {"Images", "Videos", "Audios", "Others"};
@@ -179,9 +172,7 @@ public ResponseEntity<?> getFiles() {
                 }
             }
         }
-        
-        logger.info("[SUCCESS] Returning {} files to frontend", totalFiles);
-        
+               
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
         response.put("data", files);
@@ -198,7 +189,6 @@ public ResponseEntity<?> getFiles() {
 
     @PutMapping("/rename/{fileName}")
 public ResponseEntity<?> renameFile(@PathVariable String fileName, @RequestBody Map<String, String> request) {
-    logger.info("[RENAME] Rename file request: {} -> {}", fileName, request.get("newFileName"));
     
     try {
         String newFileName = request.get("newFileName");
@@ -226,7 +216,6 @@ public ResponseEntity<?> renameFile(@PathVariable String fileName, @RequestBody 
                 renamed = true;
                 fileCategory = category;
                 oldFileName = fileName;
-                logger.info("[SUCCESS] File renamed: {} -> {} in {}", fileName, safeNewFileName, category);
                 break;
             }
         }
@@ -257,7 +246,6 @@ public ResponseEntity<?> renameFile(@PathVariable String fileName, @RequestBody 
 
     @DeleteMapping("/delete/{fileName}")
     public ResponseEntity<?> deleteFile(@PathVariable String fileName) {
-        logger.info("[DELETE] Delete file request: {}", fileName);
         
         try {
             String[] categories = {"Images", "Videos", "Audios", "Others"};

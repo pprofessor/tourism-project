@@ -58,7 +58,6 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({ amount, serviceName, on
     };
 
     // در حالت واقعی: window.location.href = bankUrl
-    console.log('انتقال به درگاه بانک:', paymentData);
     
     // شبیه‌سازی پرداخت موفق
     setTimeout(() => {

@@ -12,7 +12,6 @@ const registerServiceWorker = async (): Promise<void> => {
         scope: "/",
       });
 
-      console.log("✅ Service Worker ثبت شد:", registration);
     } catch (error) {
       console.error("❌ خطا در ثبت Service Worker:", error);
     }

@@ -165,10 +165,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
       setMessage(null);
       setValidationErrors([]);
 
-      try {
-        console.log("📤 ارسال اطلاعات به بک‌اند...");
+      // ارسال به بک‌اند برای ذخیره در دیتابیس
 
-        // ارسال به بک‌اند برای ذخیره در دیتابیس
+      try {
         const updateResponse = await fetch(
           `http://localhost:8080/api/users/${userData.id}`,
           {
@@ -187,14 +186,11 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
           }
         );
 
-        console.log("📥 پاسخ آپدیت:", updateResponse);
-
         if (!updateResponse.ok) {
           throw new Error("خطا در ذخیره اطلاعات در سرور");
         }
 
         const updatedUser = await updateResponse.json();
-        console.log("✅ کاربر آپدیت شد:", updatedUser);
 
         // فراخوانی callback والد با حفظ داده‌های موجود
         const updatedData = {

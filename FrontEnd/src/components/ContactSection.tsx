@@ -73,7 +73,6 @@ const ContactSection: React.FC = () => {
       return;
     }
     // TODO: ارسال به API
-    console.log('پیام سریع:', message);
     alert(t('support.contact.quickReport.success'));
     setMessage('');
   };

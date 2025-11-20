@@ -115,7 +115,6 @@ const SupportTickets: React.FC = () => {
     if (!newMessage.trim() || !selectedTicket) return;
 
     // TODO: ارسال به API
-    console.log('ارسال پاسخ:', newMessage);
     setNewMessage('');
     alert('پاسخ شما ارسال شد');
   };

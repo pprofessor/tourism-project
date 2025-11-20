@@ -14,10 +14,8 @@ const urlsToCache = [
 
 // نصب Service Worker
 self.addEventListener("install", (event) => {
-  console.log("🚀 Service Worker installed");
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log("📦 Caching app shell");
       return cache.addAll(urlsToCache);
     })
   );
@@ -25,13 +23,11 @@ self.addEventListener("install", (event) => {
 
 // فعال‌سازی Service Worker
 self.addEventListener("activate", (event) => {
-  console.log("✅ Service Worker activated");
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
-            console.log("🗑️ Removing old cache:", cacheName);
             return caches.delete(cacheName);
           }
           return null;
