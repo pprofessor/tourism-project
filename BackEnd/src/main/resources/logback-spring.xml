@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOG_PATTERN" value="%d{HH:mm:ss.SSS} [%thread] %-5level - %msg%n"/>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+    <!-- فقط خطاها برای کتابخانه‌ها -->
+    <logger name="org.springframework" level="ERROR"/>
+    <logger name="org.hibernate" level="ERROR"/>
+    <logger name="org.apache" level="ERROR"/>
+    <logger name="io.netty" level="ERROR"/>
+    <!-- اطلاعات لاگین و OTP برای AuthController -->
+    <logger name="com.tourism.app.controller.AuthController" level="INFO"/>
+    <!-- خطاها برای بقیه اپلیکیشن -->
+    <logger name="com.tourism.app" level="ERROR"/>
+    <root level="ERROR">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

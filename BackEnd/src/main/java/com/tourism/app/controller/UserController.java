@@ -1,0 +1,208 @@
+package com.tourism.app.controller;
+
+import com.tourism.app.model.User;
+import com.tourism.app.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api")
+@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:4000" })
+public class UserController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @GetMapping("/users")
+    public List<User> getUsers() {
+        return userRepository.findAll();
+    }
+
+    // ✅ اضافه کردن این متد جدید
+    @GetMapping("/users/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    }
+
+    @PostMapping("/users")
+    public User createUser(@RequestBody User user) {
+        return userRepository.save(user);
+    }
+
+    @PutMapping("/users/{id}")
+    public User updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setUsername(userDetails.getUsername());
+        user.setEmail(userDetails.getEmail());
+
+        // مدیریت ایمن فیلد mobile
+        if (userDetails.getMobile() != null && !userDetails.getMobile().trim().isEmpty()) {
+            user.setMobile(userDetails.getMobile());
+        }
+
+        // تضمین اینکه phone هیچوقت null نباشه
+        if (userDetails.getPhone() != null && !userDetails.getPhone().trim().isEmpty()) {
+            user.setPhone(userDetails.getPhone());
+        } else if (user.getMobile() != null) {
+            // اگر phone null هست اما mobile داره، از mobile استفاده کن
+            user.setPhone(user.getMobile());
+        } else {
+            // اگر هر دو null هستند، یک مقدار پیش‌فرض ست کن
+            user.setPhone("unknown");
+        }
+
+        user.setRole(userDetails.getRole());
+        user.setUserType(userDetails.getUserType());
+        user.setFirstName(userDetails.getFirstName());
+        user.setLastName(userDetails.getLastName());
+        user.setNationalCode(userDetails.getNationalCode());
+        user.setPassportNumber(userDetails.getPassportNumber());
+        user.setAddress(userDetails.getAddress());
+        user.setEmailVerified(userDetails.isEmailVerified());
+
+        return userRepository.save(user);
+    }
+
+    @DeleteMapping("/users/{id}")
+    public Map<String, Object> deleteUser(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            userRepository.delete(user);
+
+            response.put("success", true);
+            response.put("message", "کاربر با موفقیت حذف شد");
+
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "خطا در حذف کاربر: " + e.getMessage());
+        }
+
+        return response;
+    }
+
+    // ایجاد کاربر ادمین - نسخه GET (برای تست آسان)
+    @GetMapping("/users/create-admin-simple")
+    public String createAdminSimple() {
+        try {
+            Optional<User> existingAdmin = userRepository.findByMobile("09123456789");
+
+            if (existingAdmin.isPresent()) {
+                userRepository.delete(existingAdmin.get());
+            }
+
+            User adminUser = new User();
+            adminUser.setMobile("09123456789");
+            adminUser.setUsername("admin");
+            adminUser.setPassword(passwordEncoder.encode("admin123"));
+            adminUser.setRole("ADMIN");
+            adminUser.setUserType("ADMIN");
+            adminUser.setEmail("admin@turino.com");
+
+            userRepository.save(adminUser);
+
+            return "کاربر ادمین ایجاد شد ✓ - موبایل: 09123456789 - رمز: admin123 (رمز encode شده)";
+
+        } catch (Exception e) {
+            return "خطا در ایجاد کاربر ادمین: " + e.getMessage();
+        }
+    }
+
+    // تغییر رمز عبور کاربر
+    @PostMapping("/users/{id}/change-password")
+    public Map<String, Object> changePassword(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String currentPassword = request.get("currentPassword");
+            String newPassword = request.get("newPassword");
+
+            if (currentPassword == null || newPassword == null) {
+                response.put("success", false);
+                response.put("message", "رمز عبور فعلی و جدید الزامی است");
+                return response;
+            }
+
+            if (newPassword.length() < 6) {
+                response.put("success", false);
+                response.put("message", "رمز عبور جدید باید حداقل ۶ کاراکتر باشد");
+                return response;
+            }
+
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // بررسی رمز عبور فعلی
+            if (user.getPassword() == null || !passwordEncoder.matches(currentPassword, user.getPassword())) {
+                response.put("success", false);
+                response.put("message", "رمز عبور فعلی نادرست است");
+                return response;
+            }
+
+            // تغییر رمز عبور
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+
+            response.put("success", true);
+            response.put("message", "رمز عبور با موفقیت تغییر کرد");
+
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "خطا در تغییر رمز عبور: " + e.getMessage());
+        }
+
+        return response;
+    }
+
+    // ایجاد کاربر ادمین - نسخه POST
+    @PostMapping("/users/create-admin")
+    public Map<String, Object> createAdminUser() {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Optional<User> existingAdmin = userRepository.findByMobile("09123456789");
+
+            if (existingAdmin.isPresent()) {
+                response.put("success", false);
+                response.put("message", "کاربر ادمین از قبل وجود دارد");
+                return response;
+            }
+
+            User adminUser = new User();
+            adminUser.setMobile("09123456789");
+            adminUser.setUsername("admin");
+            adminUser.setPassword("admin123");
+            adminUser.setRole("ADMIN");
+            adminUser.setUserType("ADMIN");
+            adminUser.setEmail("admin@turino.com");
+
+            userRepository.save(adminUser);
+
+            response.put("success", true);
+            response.put("message", "کاربر ادمین ایجاد شد");
+            response.put("credentials", Map.of(
+                    "mobile", "09123456789",
+                    "password", "admin123"));
+
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "خطا در ایجاد کاربر ادمین: " + e.getMessage());
+        }
+
+        return response;
+    }
+}

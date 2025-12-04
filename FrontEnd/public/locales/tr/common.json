@@ -1,0 +1,388 @@
+{
+  "header": {
+    "tours": "Tur Rezervasyonu",
+    "hotels": "Otel Rezervasyonu",
+    "tickets": "Biletler",
+    "services": "Seyahat Hizmetleri",
+    "login": "Giriş Yap",
+    "profile": "Profil",
+    "logout": "Çıkış Yap",
+    "myServices": "Hizmetlerim",
+    "support": "Destek",
+    "yourPoints": "Puanlarınız"
+  },
+  "footer": {
+    "phone": "021-12345678",
+    "copyright": "© 2024 Turino. Tüm hakları saklıdır."
+  },
+  "common": {
+    "currency": "Tümen",
+    "cancel": "İptal",
+    "close": "Kapat",
+    "later": "Sonra",
+    "seeYouSoon": "Yakında görüşmek üzere"
+  },
+  "installPrompt": {
+    "title": "Turino Uygulamasını Yükle",
+    "description": "Daha hızlı erişim ve daha iyi deneyim",
+    "install": "Yükle"
+  },
+  "hotel": {
+    "bookNow": "Rezervasyon Yap",
+    "special": "Özel"
+  },
+  "payment": {
+    "selectGateway": "Ödeme Ağ Geçidi Seçin",
+    "selectGatewayPrompt": "Tercih ettiğiniz ödeme ağ geçidini seçin:",
+    "amount": "Ödenecek Tutar",
+    "proceedToBank": "Banka Ağ Geçidine İlerle",
+    "security": "Tüm ödemeler Shaparak standartlarına uygundur",
+    "saman": "Saman Ağ Geçidi",
+    "samanDesc": "Shetab kartları ile güvenli ödeme",
+    "mellat": "Mellat Ağ Geçidi",
+    "mellatDesc": "Tüm banka kartları desteklenir",
+    "parsian": "Parsian Ağ Geçidi",
+    "parsianDesc": "Yüksek güvenlik ve hızlı işlem"
+  },
+  "paymentHistory": {
+    "title": "Ödeme Geçmişi",
+    "noPayments": "Kayıtlı ödeme bulunamadı",
+    "totalTransactions": "Toplam İşlem",
+    "transactions": "işlem"
+  },
+  "paymentStatus": {
+    "completed": "Tamamlandı",
+    "pending": "Beklemede",
+    "failed": "Başarısız",
+    "refunded": "İade Edildi"
+  },
+  "paymentMethod": {
+    "card": "Banka Kartı",
+    "wallet": "Cüzdan",
+    "bankTransfer": "Banka Transferi"
+  },
+  "services": {
+    "title": "Hizmetlerim",
+    "noServices": "Hiç hizmet bulunamadı",
+    "filter": {
+      "all": "Tümü",
+      "hotels": "Otel",
+      "tours": "Turlar",
+      "tickets": "Biletler"
+    },
+    "type": {
+      "hotel": "Otel Rezervasyonu",
+      "tour": "Seyahat Turu",
+      "ticket": "Uçuş Bileti"
+    },
+    "status": {
+      "confirmed": "Onaylandı",
+      "completed": "Tamamlandı",
+      "pending": "Beklemede",
+      "cancelled": "İptal Edildi"
+    },
+    "stats": {
+      "total": "Toplam Hizmet",
+      "active": "Aktif",
+      "completed": "Tamamlandı",
+      "cancelled": "İptal Edildi"
+    }
+  },
+  "profileImage": {
+    "uploading": "Yükleniyor...",
+    "uploadSuccess": "Profil resmi başarıyla yüklendi",
+    "uploadError": "Resim yükleme hatası",
+    "serverError": "Sunucu bağlantı hatası",
+    "changePhoto": "Profil Fotoğrafını Değiştir",
+    "previewAlt": "Önizleme",
+    "profileAlt": "Profil",
+    "status": "Durum",
+    "previewActive": "Önizleme Aktif ✅",
+    "noPreview": "Önizleme Yok ❌"
+  },
+  "profileForm": {
+    "title": "Kimlik Bilgileri",
+    "firstName": "Ad",
+    "lastName": "Soyad",
+    "nationalCode": "Kimlik Numarası",
+    "passportNumber": "Pasaport Numarası",
+    "address": "Adres",
+    "firstNamePlaceholder": "Adınızı girin",
+    "lastNamePlaceholder": "Soyadınızı girin",
+    "nationalCodePlaceholder": "10 haneli kimlik numarası",
+    "passportPlaceholder": "Pasaport numarası",
+    "addressPlaceholder": "Tam adresinizi girin",
+    "saveButton": "Bilgileri Kaydet",
+    "saving": "Kaydediliyor...",
+    "saveSuccess": "Bilgiler başarıyla kaydedildi",
+    "saveError": "Bilgiler kaydedilirken hata oluştu",
+    "sendingData": "Veri gönderiliyor:",
+    "checkingUserLevel": "Kullanıcı seviyesi kontrol ediliyor...",
+    "userLevelChecked": "Kullanıcı seviyesi kontrol edildi - VERIFIED'a yükseltilebilir",
+    "userLevelError": "Kullanıcı seviyesi kontrol hatası:"
+  },
+  "login": {
+    "enterMobile": "Lütfen telefon numaranızı girin!",
+    "passwordLogin": "Şifre ile Giriş",
+    "verifyMobile": "Telefon Numarasını Doğrula",
+    "mobilePlaceholder": "Telefon Numarası (sıfırsız)",
+    "passwordPlaceholder": "Şifre",
+    "verificationPlaceholder": "Doğrulama Kodu",
+    "continue": "Devam Et",
+    "login": "Giriş Yap",
+    "verify": "Doğrula",
+    "sendCode": "Doğrulama Kodu ile Giriş",
+    "back": "Geri",
+    "mobileHint": {
+      "ir": "10 hane, sıfırsız, 9 ile başlar",
+      "iq": "10 hane, sıfır ile başlar",
+      "af": "9 hane, sıfır ile başlar",
+      "tr": "10 hane, 5 ile başlar",
+      "default": "5 ila 15 hane"
+    },
+    "checking": "Kontrol ediliyor...",
+    "passwordPrompt": "<1>{{dialCode}} {{mobile}}</1> numarası için",
+    "enterYourPassword": "Şifrenizi girin",
+    "password": "Şifre",
+    "loggingIn": "Giriş yapılıyor...",
+    "codeSent": "Doğrulama kodu şu numaraya gönderildi",
+    "codeSentSuccess": "gönderildi",
+    "verificationCode": "Doğrulama Kodu",
+    "mobileNumber": "Telefon Numarası",
+    "enterCodePrompt": "Lütfen {{dialCode}}{{mobile}} numarasına gönderilen doğrulama kodunu girin",
+    "enterCodePrompt1": "Lütfen doğrulama kodunu girin",
+    "enterCodePrompt2": "numarasına gönderilen"
+  },
+  "errors": {
+    "invalidIranMobile": "İran telefon numarası 10 haneli, sıfırsız ve 9 ile başlamalıdır",
+    "invalidInternationalMobile": "Telefon numarası 5 ila 15 hane arasında olmalıdır",
+    "verificationCodeLength": "Doğrulama kodu 6 haneli olmalıdır",
+    "invalidVerificationCode": "Geçersiz doğrulama kodu",
+    "verificationError": "Kod doğrulama hatası",
+    "sendCodeError": "Doğrulama kodu gönderme hatası",
+    "serverConnection": "Sunucu bağlantı hatası",
+    "enterPassword": "Lütfen şifrenizi girin",
+    "invalidPassword": "Geçersiz şifre",
+    "loginError": "Giriş hatası"
+  },
+  "validation": {
+    "firstNameRequired": "Ad zorunludur",
+    "firstNameMinLength": "Ad en az 2 karakter olmalıdır",
+    "lastNameRequired": "Soyad zorunludur",
+    "lastNameMinLength": "Soyad en az 2 karakter olmalıdır",
+    "nationalCodeInvalid": "Ulusal kod 10 haneli olmalıdır",
+    "formErrors": "Lütfen form hatalarını düzeltin"
+  },
+  "profile": {
+    "pageTitle": "Kullanıcı Profili",
+    "completeProfile": "Lütfen profil bilgilerinizi tamamlayın",
+    "guestUser": "Misafir Kullanıcı",
+    "mobileNumber": "Cep Telefonu Numarası",
+    "loading": "Profil yükleniyor...",
+    "tabs": {
+      "navigation": "Profil Sekmeleri",
+      "profile": "👤 Profil Bilgileri",
+      "payments": "💳 Ödeme Geçmişi",
+      "services": "🛎️ Hizmetlerim"
+    },
+    "stats": {
+      "title": "İstatistikleriniz",
+      "bookings": "Rezervasyon Sayısı",
+      "referrals": "Yönlendirilen Kullanıcılar",
+      "points": "Puan"
+    },
+    "userLevel": {
+      "title": "Kullanıcı Seviyesi"
+    },
+    "userTypes": {
+      "GUEST": {
+        "label": "Misafir Kullanıcı",
+        "description": "Lütfen kimlik bilgilerinizi tamamlayın"
+      },
+      "VERIFIED": {
+        "label": "Doğrulanmış Kullanıcı",
+        "description": "Bilgileriniz başarıyla doğrulandı"
+      },
+      "AMBASSADOR": {
+        "label": "Elçi",
+        "description": "Bir elçi olarak seçildiniz"
+      }
+    },
+    "errors": {
+      "loadData": "Kullanıcı verileri yüklenirken hata:",
+      "saveData": "Veri kaydedilirken hata:",
+      "saveImage": "Resim kaydedilirken hata:",
+      "invalidImageUrl": "Geçersiz resim URL'si"
+    }
+  },
+  "home": {
+    "meta": {
+      "title": "Turino - Tur ve Otel Rezervasyon Sistemi",
+      "description": "En iyi fiyat ve kalite ile turlar, oteller ve biletler için çevrimiçi rezervasyon"
+    },
+    "hero": {
+      "title": "Endişesiz bir yolculuk...",
+      "subtitle": "Turino ile seyahatinizi kolayca planlayın"
+    },
+    "search": {
+      "ariaLabel": "Seyahat hizmetleri arama",
+      "placeholder": "Ne arıyorsunuz?",
+      "inputLabel": "Seyahat hizmetleri için arama terimi",
+      "resultsFound": "{{count}} sonuç bulundu",
+      "noResults": "Hiç sonuç bulunamadı",
+      "buttonLabel": "Ara",
+      "logging": "Aranıyor:",
+      "validation": {
+        "minLength": "Arama terimi en az 2 karakter olmalıdır"
+      }
+    },
+    "services": {
+      "title": "Özel Hizmetlerimiz",
+      "detailsButton": "Detayları Görüntüle",
+      "tours": {
+        "title": "Tur Rezervasyonu",
+        "description": "En iyi fiyat ve kalite ile yurt içi ve yurt dışı turlar"
+      },
+      "hotels": {
+        "title": "Otel Rezervasyonu",
+        "description": "İran ve dünya genelinde lüks ve ekonomik oteller"
+      },
+      "tickets": {
+        "title": "Biletler",
+        "description": "En iyi fiyat garantisi ile uçuş, tren ve otobüs biletleri"
+      },
+      "travelServices": {
+        "title": "Seyahat Hizmetleri",
+        "description": "Vize, sigorta ve profesyonel seyahat rehberi"
+      }
+    }
+  },
+  "support": {
+    "meta": {
+      "title": "Turino Destek",
+      "description": "Turino çevrimiçi destek sistemi - soruları yanıtlama ve problemleri çözme"
+    },
+    "title": "Çevrimiçi Destek",
+    "subtitle": "Size yardım etmek için buradayız",
+    "tabs": {
+      "navigation": "Destek Sekmeleri",
+      "tickets": "🎫 Destek Taleplerim",
+      "faq": "❓ SSS",
+      "contact": "📞 İletişim"
+    },
+    "status": {
+      "online": "Destek Çevrimiçi",
+      "offline": "Destek Çevrimdışı",
+      "responseTime": "2 saat içinde yanıt"
+    },
+    "contact": {
+      "title": "İletişim",
+      "channels": "İletişim Kanalları",
+      "companyInfo": "Şirket Bilgileri",
+      "quickReport": "Hızlı Problem Bildirimi",
+      "quickReportTitle": "Hızlı Problem Bildirimi",
+      "quickReportPlaceholder": "Sorununuzu veya sorunuzu kısaca açıklayın...",
+      "quickReportSubmit": "Raporu Gönder",
+      "charCount": "karakter",
+      "companyAddress": "Adres",
+      "companyAddressValue": "Tahran, Valiasr Cad., No: 1234",
+      "workingHours": "Çalışma Saatleri",
+      "workingHoursValue": "7/24",
+      "responseTime": "Yanıt Süresi",
+      "responseTimeValue": "2 saatten az",
+      "validation": {
+        "minLength": "Lütfen daha kapsamlı bir mesaj girin"
+      },
+      "quickReportSuccess": "Mesajınız kaydedildi. Yakında sizinle iletişime geçeceğiz.",
+      "supportStatus": {
+        "online": "🟢 Destek Çevrimiçi",
+        "offline": "🔴 Destek Çevrimdışı",
+        "onlineMessage": "Şu anda müsaitiz",
+        "offlineMessage": "En kısa sürede yanıt vereceğiz"
+      },
+      "channelsList": {
+        "phone": {
+          "label": "Telefon Desteği",
+          "value": "+982112345678"
+        },
+        "email": {
+          "label": "Destek E-postası",
+          "value": "support@turino.com"
+        },
+        "telegram": {
+          "label": "Telegram",
+          "value": "https://t.me/turino_support"
+        },
+        "whatsapp": {
+          "label": "WhatsApp",
+          "value": "https://wa.me/989123456789"
+        },
+        "instagram": {
+          "label": "Instagram",
+          "value": "https://instagram.com/turino.official"
+        }
+      }
+    },
+    "tickets": {
+      "title": "Destek Talepleri",
+      "yourTickets": "Talepleriniz",
+      "noTicketSelected": "Talep Seçilmedi",
+      "noTicketSelectedMessage": "Görüşmeleri görüntülemek için listeden bir talep seçin",
+      "newMessage": "Yeni Mesaj",
+      "sendReply": "Yanıt Gönder",
+      "replyPlaceholder": "Yanıtınızı girin...",
+      "messageSent": "Yanıtınız gönderildi",
+      "status": {
+        "open": "Açık",
+        "in_progress": "İşlemde",
+        "resolved": "Çözüldü",
+        "closed": "Kapalı"
+      },
+      "priority": {
+        "low": "Düşük",
+        "medium": "Orta",
+        "high": "Yüksek",
+        "urgent": "Acil"
+      },
+      "category": {
+        "technical": "Teknik",
+        "payment": "Ödeme",
+        "reservation": "Rezervasyon",
+        "general": "Genel",
+        "suggestion": "Öneri"
+      }
+    },
+    "faq": {
+      "title": "Sıkça Sorulan Sorular",
+      "searchPlaceholder": "Sorularda ara...",
+      "categories": "Kategoriler",
+      "allCategories": "Tüm Kategoriler",
+      "reservation": "Rezervasyon",
+      "payment": "Ödeme",
+      "account": "Hesap",
+      "technical": "Teknik",
+      "general": "Genel",
+      "resultsCount": "soru bulundu",
+      "noResults": "Hiç soru bulunamadı",
+      "noResultsMessage": "Lütfen arama teriminizi veya kategoriyi değiştirin",
+      "helpful": "Bu yanıt yararlı oldu mu?",
+      "yes": "Evet",
+      "no": "Hayır",
+      "needMoreHelp": "Yanıtınızı bulamadınız mı?",
+      "needMoreHelpMessage": "Sorularınızı yanıtlamak için her zaman hazırız",
+      "createTicket": "Destek Talebi Oluştur",
+      "callSupport": "Destek Hattını Ara"
+    }
+  },
+  "changePassword": {
+    "title": "Şifre Değiştir",
+    "currentPassword": "Mevcut Şifre *",
+    "currentPasswordPlaceholder": "Mevcut şifrenizi girin",
+    "newPassword": "Yeni Şifre *",
+    "newPasswordPlaceholder": "Yeni şifrenizi girin",
+    "confirmPassword": "Şifreyi Onayla *",
+    "confirmPasswordPlaceholder": "Yeni şifrenizi tekrar girin",
+    "changeButton": "Şifreyi Değiştir",
+    "sameAsOld": "Yeni şifre mevcut şifreden farklı olmalıdır"
+  }
+}

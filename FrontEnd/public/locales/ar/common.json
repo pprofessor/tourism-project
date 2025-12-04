@@ -1,0 +1,388 @@
+{
+  "header": {
+    "tours": "حجز الجولات",
+    "hotels": "حجز الفنادق",
+    "tickets": "تذاكر",
+    "services": "خدمات السفر",
+    "login": "تسجيل الدخول",
+    "profile": "الملف الشخصي",
+    "logout": "تسجيل الخروج",
+    "myServices": "خدماتي",
+    "support": "الدعم",
+    "yourPoints": "نقاطك"
+  },
+  "footer": {
+    "phone": "۰۲۱-۱۲۳۴۵۶۷۸",
+    "copyright": "© ۲۰۲۴ تورینو. جميع الحقوق محفوظة."
+  },
+  "common": {
+    "currency": "تومان",
+    "cancel": "إلغاء",
+    "close": "إغلاق",
+    "later": "لاحقاً",
+    "seeYouSoon": "أتمنى أن أراك قريبًا"
+  },
+  "installPrompt": {
+    "title": "ثبّت تطبيق تورينو",
+    "description": "وصول أسرع وتجربة أفضل",
+    "install": "تثبيت"
+  },
+  "hotel": {
+    "bookNow": "احجز الآن",
+    "special": "مميز"
+  },
+  "payment": {
+    "selectGateway": "اختيار بوابة الدفع",
+    "selectGatewayPrompt": "اختر بوابة الدفع المفضلة لديك:",
+    "amount": "المبلغ المطلوب دفعه",
+    "proceedToBank": "الانتقال إلى بوابة البنك",
+    "security": "جميع المدفوعات متوافقة مع معايير شاپرک",
+    "saman": "بوابة سامان",
+    "samanDesc": "دفع آمن ببطاقات شتاب",
+    "mellat": "بوابة ملت",
+    "mellatDesc": "دعم جميع البطاقات المصرفية",
+    "parsian": "بوابة بارسيان",
+    "parsianDesc": "أمان عالي وسرعة مناسبة"
+  },
+  "paymentHistory": {
+    "title": "سجل المدفوعات",
+    "noPayments": "لا توجد مدفوعات مسجلة",
+    "totalTransactions": "إجمالي المعاملات",
+    "transactions": "معاملة"
+  },
+  "paymentStatus": {
+    "completed": "مكتمل",
+    "pending": "قيد الانتظار",
+    "failed": "فاشل",
+    "refunded": "تم الاسترداد"
+  },
+  "paymentMethod": {
+    "card": "بطاقة بنكية",
+    "wallet": "محفظة",
+    "bankTransfer": "تحويل بنكي"
+  },
+  "services": {
+    "title": "خدماتي",
+    "noServices": "لم يتم العثور على خدمات",
+    "filter": {
+      "all": "الكل",
+      "hotels": "الفنادق",
+      "tours": "الجولات",
+      "tickets": "التذاكر"
+    },
+    "type": {
+      "hotel": "حجز الفندق",
+      "tour": "جولة سياحية",
+      "ticket": "تذكرة طيران"
+    },
+    "status": {
+      "confirmed": "تم التأكيد",
+      "completed": "مكتمل",
+      "pending": "قيد الانتظار",
+      "cancelled": "ملغى"
+    },
+    "stats": {
+      "total": "إجمالي الخدمات",
+      "active": "نشط",
+      "completed": "مكتمل",
+      "cancelled": "ملغى"
+    }
+  },
+  "profileImage": {
+    "uploading": "جاري الرفع...",
+    "uploadSuccess": "تم رفع صورة الملف الشخصي بنجاح",
+    "uploadError": "خطأ في رفع الصورة",
+    "serverError": "خطأ في الاتصال بالخادم",
+    "changePhoto": "تغيير صورة الملف الشخصي",
+    "previewAlt": "معاينة",
+    "profileAlt": "الملف الشخصي",
+    "status": "الحالة",
+    "previewActive": "المعاينة نشطة ✅",
+    "noPreview": "لا توجد معاينة ❌"
+  },
+  "profileForm": {
+    "title": "المعلومات الشخصية",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "nationalCode": "الرمز الوطني",
+    "passportNumber": "رقم الجواز",
+    "address": "العنوان",
+    "firstNamePlaceholder": "أدخل اسمك الأول",
+    "lastNamePlaceholder": "أدخل اسم عائلتك",
+    "nationalCodePlaceholder": "الرمز الوطني 10 أرقام",
+    "passportPlaceholder": "رقم الجواز",
+    "addressPlaceholder": "أدخل عنوانك الكامل",
+    "saveButton": "حفظ المعلومات",
+    "saving": "جاري الحفظ...",
+    "saveSuccess": "تم حفظ المعلومات بنجاح",
+    "saveError": "خطأ في حفظ المعلومات",
+    "sendingData": "إرسال البيانات:",
+    "checkingUserLevel": "جاري فحص مستوى المستخدم...",
+    "userLevelChecked": "تم فحص مستوى المستخدم - إمكانية الترقية إلى VERIFIED",
+    "userLevelError": "خطأ في فحص مستوى المستخدم:"
+  },
+  "login": {
+    "enterMobile": "يرجي إدخال رقم هاتفك!",
+    "passwordLogin": "تسجيل الدخول بكلمة المرور",
+    "verifyMobile": "تأكيد رقم الهاتف",
+    "mobilePlaceholder": "رقم الهاتف (بدون صفر)",
+    "passwordPlaceholder": "كلمة المرور",
+    "verificationPlaceholder": "رمز التحقق",
+    "continue": "متابعة",
+    "login": "تسجيل الدخول",
+    "verify": "تأكيد",
+    "sendCode": "تسجيل الدخول برمز التحقق",
+    "back": "رجوع",
+    "mobileHint": {
+      "ir": "۱۰ أرقام، بدون صفر، تبدأ بالرقم ۹",
+      "iq": "۱۰ أرقام، تبدأ بالصفر",
+      "af": "۹ أرقام، تبدأ بالصفر",
+      "tr": "۱۰ أرقام، تبدأ بالرقم ۵",
+      "default": "٥ إلى ١٥ رقمًا"
+    },
+    "checking": "جاري الفحص...",
+    "passwordPrompt": "للرقم <1>{{dialCode}} {{mobile}}</1>",
+    "enterYourPassword": "أدخل كلمة المرور الخاصة بك",
+    "password": "كلمة المرور",
+    "loggingIn": "جاري تسجيل الدخول...",
+    "codeSent": "تم إرسال رمز التحقق إلى الرقم",
+    "codeSentSuccess": "تم الإرسال",
+    "verificationCode": "رمز التحقق",
+    "mobileNumber": "رقم الهاتف",
+    "enterCodePrompt": "يرجي إدخال رمز التحقق المرسل إلى الرقم {{dialCode}}{{mobile}}",
+    "enterCodePrompt1": "يرجي إدخال رمز التحقق",
+    "enterCodePrompt2": "المرسل إلى الرقم"
+  },
+  "errors": {
+    "invalidIranMobile": "يجب أن يكون رقم الهاتف الإيراني 10 أرقام، بدون صفر ويبدأ بالرقم 9",
+    "invalidInternationalMobile": "يجب أن يكون رقم الهاتف بين 5 إلى 15 رقمًا",
+    "verificationCodeLength": "يجب أن يكون رمز التحقق ٦ أرقام",
+    "invalidVerificationCode": "رمز تحقق غير صالح",
+    "verificationError": "خطأ في تأكيد الرمز",
+    "sendCodeError": "خطأ في إرسال رمز التحقق",
+    "serverConnection": "خطأ في الاتصال بالخادم",
+    "enterPassword": "يرجي إدخال كلمة المرور",
+    "invalidPassword": "كلمة مرور غير صالحة",
+    "loginError": "خطأ في تسجيل الدخول"
+  },
+  "validation": {
+    "firstNameRequired": "الاسم الأول مطلوب",
+    "firstNameMinLength": "الاسم الأول يجب أن يكون على الأقل حرفين",
+    "lastNameRequired": "اسم العائلة مطلوب",
+    "lastNameMinLength": "اسم العائلة يجب أن يكون على الأقل حرفين",
+    "nationalCodeInvalid": "الرمز الوطني يجب أن يكون 10 أرقام",
+    "formErrors": "يرجى تصحيح الأخطاء في النموذج"
+  },
+  "profile": {
+    "pageTitle": "ملف المستخدم",
+    "completeProfile": "يرجى إكمال معلومات ملفك الشخصي",
+    "guestUser": "مستخدم ضيف",
+    "mobileNumber": "رقم الهاتف المحمول",
+    "loading": "جاري تحميل الملف...",
+    "tabs": {
+      "navigation": "تبوات الملف",
+      "profile": "👤 معلومات الملف",
+      "payments": "💳 سجل المدفوعات",
+      "services": "🛎️ خدماتي"
+    },
+    "stats": {
+      "title": "إحصائياتك",
+      "bookings": "عدد الحجوزات",
+      "referrals": "المستخدمين المُشار إليهم",
+      "points": "نقاط"
+    },
+    "userLevel": {
+      "title": "مستوى المستخدم"
+    },
+    "userTypes": {
+      "GUEST": {
+        "label": "مستخدم ضيف",
+        "description": "يرجى إكمال معلومات هويتك"
+      },
+      "VERIFIED": {
+        "label": "مستخدم موثق",
+        "description": "تم التحقق من معلوماتك بنجاح"
+      },
+      "AMBASSADOR": {
+        "label": "سفير",
+        "description": "تم اختيارك كسفير"
+      }
+    },
+    "errors": {
+      "loadData": "خطأ في تحميل بيانات المستخدم:",
+      "saveData": "خطأ في حفظ البيانات:",
+      "saveImage": "خطأ في حفظ الصورة:",
+      "invalidImageUrl": "رابط الصورة غير صالح"
+    }
+  },
+  "home": {
+    "meta": {
+      "title": "تورینو - نظام حجز الجولات والفنادق",
+      "description": "حجز الجولات والفنادق والتذاكر عبر الإنترنت بأفضل سعر وجودة"
+    },
+    "hero": {
+      "title": "رحلة بلا قلق...",
+      "subtitle": "خطط لرحلتك بسهولة مع تورینو"
+    },
+    "search": {
+      "ariaLabel": "بحث خدمات السفر",
+      "placeholder": "ماذا تبحث عن؟",
+      "inputLabel": "كلمة البحث لخدمات السفر",
+      "buttonLabel": "بحث",
+      "resultsFound": "تم العثور على {{count}} نتيجة",
+      "noResults": "لم يتم العثور على نتائج",
+      "logging": "البحث عن:",
+      "validation": {
+        "minLength": "يجب أن تكون كلمة البحث على الأقل حرفين"
+      }
+    },
+    "services": {
+      "title": "خدماتنا المميزة",
+      "detailsButton": "عرض التفاصيل",
+      "tours": {
+        "title": "حجز الجولات",
+        "description": "جولات محلية ودولية بأفضل سعر وجودة"
+      },
+      "hotels": {
+        "title": "حجز الفنادق",
+        "description": "فنادق فاخرة واقتصادية في جميع أنحاء إيران والعالم"
+      },
+      "tickets": {
+        "title": "تذاكر",
+        "description": "طيران، قطار وحافلات مع ضمان أفضل سعر"
+      },
+      "travelServices": {
+        "title": "خدمات السفر",
+        "description": "تأشيرة، تأمين ودليل سفر محترف"
+      }
+    }
+  },
+  "support": {
+    "meta": {
+      "title": "دعم تورینو",
+      "description": "نظام الدعم الإلكتروني لتورینو - الإجابة على الأسئلة وحل المشاكل"
+    },
+    "title": "الدعم الإلكتروني",
+    "subtitle": "نحن هنا لمساعدتك",
+    "tabs": {
+      "navigation": "تبوات الدعم",
+      "tickets": "🎫 تذاكري",
+      "faq": "❓ الأسئلة الشائعة",
+      "contact": "📞 اتصل بنا"
+    },
+    "status": {
+      "online": "الدعم متصل",
+      "offline": "الدعم غير متصل",
+      "responseTime": "الرد في أقل من ساعتين"
+    },
+    "contact": {
+      "title": "اتصل بنا",
+      "channels": "قنوات الاتصال",
+      "companyInfo": "معلومات الشركة",
+      "quickReport": "إبلاغ سريع عن المشكلة",
+      "quickReportTitle": "إبلاغ سريع عن المشكلة",
+      "quickReportPlaceholder": "صف مشكلتك أو سؤالك بإيجاز...",
+      "quickReportSubmit": "إرسال التقرير",
+      "charCount": "حرف",
+      "companyAddress": "العنوان",
+      "companyAddressValue": "طهران، شارع وليعصر، الرقم ۱۲۳٤",
+      "workingHours": "ساعات العمل",
+      "workingHoursValue": "۲۴ ساعة، ۷ أيام في الأسبوع",
+      "responseTime": "وقت الاستجابة",
+      "responseTimeValue": "أقل من ساعتين",
+      "validation": {
+        "minLength": "يرجى إدخال رسالة أكثر اكتمالاً"
+      },
+      "quickReportSuccess": "تم تسجيل رسالتك. سنتواصل معك قريبًا.",
+      "supportStatus": {
+        "online": "🟢 الدعم متصل",
+        "offline": "🔴 الدعم غير متصل",
+        "onlineMessage": "نحن متاحون الآن",
+        "offlineMessage": "سوف نرد في أقرب وقت ممكن"
+      },
+      "channelsList": {
+        "phone": {
+          "label": "الدعم الهاتفي",
+          "value": "+982112345678"
+        },
+        "email": {
+          "label": "البريد الإلكتروني للدعم",
+          "value": "support@turino.com"
+        },
+        "telegram": {
+          "label": "تيليجرام",
+          "value": "https://t.me/turino_support"
+        },
+        "whatsapp": {
+          "label": "واتساب",
+          "value": "https://wa.me/989123456789"
+        },
+        "instagram": {
+          "label": "إنستجرام",
+          "value": "https://instagram.com/turino.official"
+        }
+      }
+    },
+    "tickets": {
+      "title": "تذاكر الدعم",
+      "yourTickets": "تذاكرك",
+      "noTicketSelected": "لم يتم اختيار تذكرة",
+      "noTicketSelectedMessage": "حدد تذكرة من القائمة لعرض المحادثات",
+      "newMessage": "رسالة جديدة",
+      "sendReply": "إرسال رد",
+      "replyPlaceholder": "أدخل ردك...",
+      "messageSent": "تم إرسال ردك",
+      "status": {
+        "open": "مفتوحة",
+        "in_progress": "قيد المعالجة",
+        "resolved": "تم الحل",
+        "closed": "مغلقة"
+      },
+      "priority": {
+        "low": "منخفض",
+        "medium": "متوسط",
+        "high": "مرتفع",
+        "urgent": "عاجل"
+      },
+      "category": {
+        "technical": "فني",
+        "payment": "دفع",
+        "reservation": "حجز",
+        "general": "عام",
+        "suggestion": "اقتراح"
+      }
+    },
+    "faq": {
+      "title": "الأسئلة الشائعة",
+      "searchPlaceholder": "البحث في الأسئلة...",
+      "categories": "الفئات",
+      "allCategories": "جميع الفئات",
+      "reservation": "حجز",
+      "payment": "دفع",
+      "account": "حساب",
+      "technical": "فني",
+      "general": "عام",
+      "resultsCount": "سؤال وجد",
+      "noResults": "لم يتم العثور على أسئلة",
+      "noResultsMessage": "يرجى تغيير مصطلح البحث أو الفئة",
+      "helpful": "هل كانت هذه الإجابة مفيدة؟",
+      "yes": "نعم",
+      "no": "لا",
+      "needMoreHelp": "لم تجد إجابتك؟",
+      "needMoreHelpMessage": "نحن دائمًا على استعداد للإجابة على أسئلتك",
+      "createTicket": "إنشاء تذكرة دعم",
+      "callSupport": "الاتصال بالدعم"
+    }
+  },
+  "changePassword": {
+    "title": "تغيير كلمة المرور",
+    "currentPassword": "كلمة المرور الحالية *",
+    "currentPasswordPlaceholder": "أدخل كلمة المرور الحالية",
+    "newPassword": "كلمة المرور الجديدة *",
+    "newPasswordPlaceholder": "أدخل كلمة المرور الجديدة",
+    "confirmPassword": "تأكيد كلمة المرور *",
+    "confirmPasswordPlaceholder": "كرر كلمة المرور الجديدة",
+    "changeButton": "تغيير كلمة المرور",
+    "sameAsOld": "كلمة المرور الجديدة يجب أن تختلف عن كلمة المرور الحالية"
+  }
+}

@@ -1,0 +1,456 @@
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useTheme } from "../context/ThemeContext";
+
+interface UserData {
+  id?: number;
+  mobile?: string;
+  role?: string;
+  profileImage?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  nationalCode?: string;
+  passportNumber?: string;
+  address?: string;
+  userType?: string;
+}
+
+interface ProfileFormProps {
+  userData: UserData;
+  onUpdate: (data: any) => void;
+}
+
+interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  nationalCode: string;
+  passportNumber: string;
+  address: string;
+}
+
+// اعتبارسنجی فرم
+const validateForm = (
+  formData: FormData,
+  t: any
+): { isValid: boolean; errors: string[] } => {
+  const errors: string[] = [];
+
+  // اعتبارسنجی نام (اجباری)
+  if (!formData.firstName.trim()) {
+    errors.push(t("validation.firstNameRequired"));
+  } else if (formData.firstName.length < 2) {
+    errors.push(t("validation.firstNameMinLength"));
+  }
+
+  // اعتبارسنجی نام خانوادگی (غیراجباری)
+  if (formData.lastName && formData.lastName.length < 2) {
+    errors.push(t("validation.lastNameMinLength"));
+  }
+
+  // اعتبارسنجی کد ملی (اگر پر شده)
+  if (formData.nationalCode && !/^\d{10}$/.test(formData.nationalCode)) {
+    errors.push(t("validation.nationalCodeInvalid"));
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+};
+
+const ProfileForm: React.FC<ProfileFormProps> = ({ userData, onUpdate }) => {
+  const [formData, setFormData] = useState<FormData>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    nationalCode: "",
+    passportNumber: "",
+    address: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const { t } = useTranslation();
+  const { theme } = useTheme();
+
+  // کلاس‌های شرطی برای تم
+  const containerClasses = `rounded-2xl shadow-lg p-6 transition-colors duration-300 ${
+    theme === "dark" ? "bg-gray-800" : "bg-white"
+  }`;
+
+  const textPrimaryClasses = theme === "dark" ? "text-white" : "text-gray-800";
+  const textSecondaryClasses =
+    theme === "dark" ? "text-gray-300" : "text-gray-600";
+  const inputClasses = `w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 ${
+    theme === "dark"
+      ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+      : "border-gray-300 text-gray-800 bg-white"
+  }`;
+
+  const labelClasses = `block text-sm font-medium mb-2 ${
+    theme === "dark" ? "text-gray-200" : "text-gray-700"
+  }`;
+
+  // پر کردن فرم با داده‌های کاربر
+  const initialFormData = useMemo(
+    (): FormData => ({
+      firstName: userData.firstName || "",
+      lastName: userData.lastName || "",
+      email: userData.email || "",
+      nationalCode: userData.nationalCode || "",
+      passportNumber: userData.passportNumber || "",
+      address: userData.address || "",
+    }),
+    [userData]
+  );
+
+  useEffect(() => {
+    setFormData(initialFormData);
+  }, [initialFormData]);
+
+  // تابع مدیریت Tab و Enter
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const form = e.currentTarget.form;
+        if (form) {
+          const inputs = Array.from(form.elements) as HTMLElement[];
+          const currentIndex = inputs.indexOf(e.currentTarget);
+          const nextInput = inputs[currentIndex + 1] as HTMLInputElement;
+          nextInput?.focus();
+        }
+      }
+    },
+    []
+  );
+
+  // مدیریت تغییرات input
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target;
+
+      // اعتبارسنجی بلادرنگ برای کد ملی
+      if (name === "nationalCode" && value && !/^\d*$/.test(value)) {
+        return;
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+
+      // پاک کردن خطاها هنگام تایپ
+      if (validationErrors.length > 0) {
+        setValidationErrors([]);
+      }
+      if (message) {
+        setMessage(null);
+      }
+    },
+    [validationErrors.length, message]
+  );
+
+  // بررسی سطح کاربر
+  const checkUserLevel = useCallback(async () => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    } catch (error) {
+      console.error(t("profileForm.userLevelError"), error);
+    }
+  }, [t]);
+
+  // مدیریت ارسال فرم
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+
+      // اعتبارسنجی فرم
+      const validation = validateForm(formData, t);
+      if (!validation.isValid) {
+        setValidationErrors(validation.errors);
+        setMessage({
+          type: "error",
+          text: t("validation.formErrors"),
+        });
+        return;
+      }
+
+      setLoading(true);
+      setMessage(null);
+      setValidationErrors([]);
+
+      try {
+        // ارسال به بک‌اند برای ذخیره در دیتابیس
+        const updateResponse = await fetch(
+          `http://localhost:8080/api/users/${userData.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({
+              firstName: formData.firstName,
+              lastName: formData.lastName,
+              email: formData.email,
+              nationalCode: formData.nationalCode,
+              passportNumber: formData.passportNumber,
+              address: formData.address,
+            }),
+          }
+        );
+
+        if (!updateResponse.ok) {
+          throw new Error("خطا در ذخیره اطلاعات در سرور");
+        }
+
+        const updatedUser = await updateResponse.json();
+        console.log("✅ کاربر آپدیت شد:", updatedUser);
+
+        // فراخوانی callback والد با حفظ داده‌های موجود
+        const updatedData = {
+          ...userData,
+          ...formData,
+        };
+
+        onUpdate(updatedData);
+
+        // نمایش پیام موفقیت
+        setMessage({
+          type: "success",
+          text: t("profileForm.saveSuccess"),
+        });
+
+        // بررسی سطح کاربر
+        await checkUserLevel();
+      } catch (error) {
+        console.error("❌ خطا در آپدیت پروفایل:", error);
+        setMessage({
+          type: "error",
+          text: t("profileForm.saveError"),
+        });
+      } finally {
+        setLoading(false);
+      }
+    },
+    [formData, onUpdate, t, checkUserLevel, userData]
+  );
+
+  // استایل‌های پیام
+  const messageClasses = useMemo(
+    () =>
+      message?.type === "success"
+        ? "bg-green-100 text-green-700 border border-green-200"
+        : "bg-red-100 text-red-700 border border-red-200",
+    [message?.type]
+  );
+
+  return (
+    <div
+      className={containerClasses}
+      role="form"
+      aria-labelledby="profile-form-title"
+    >
+      <h3
+        id="profile-form-title"
+        className={`text-xl font-bold mb-6 ${textPrimaryClasses}`}
+      >
+        {t("profileForm.title")}
+      </h3>
+
+      {/* نمایش پیام‌ها */}
+      {message && (
+        <div
+          className={`p-3 rounded-lg mb-4 ${messageClasses}`}
+          role="alert"
+          aria-live="polite"
+        >
+          {message.text}
+        </div>
+      )}
+
+      {/* نمایش خطاهای اعتبارسنجی */}
+      {validationErrors.length > 0 && (
+        <div
+          className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4"
+          role="alert"
+          aria-live="assertive"
+        >
+          <ul className="list-disc list-inside space-y-1 text-sm text-red-700">
+            {validationErrors.map((error, index) => (
+              <li key={index}>{error}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        {/* ردیف اول: نام و نام خانوادگی */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="firstName" className={labelClasses}>
+              {t("profileForm.firstName")} *
+            </label>
+            <input
+              id="firstName"
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              className={inputClasses}
+              placeholder={t("profileForm.firstNamePlaceholder")}
+              required
+              aria-required="true"
+              minLength={2}
+              maxLength={50}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="lastName" className={labelClasses}>
+              {t("profileForm.lastName")}
+            </label>
+            <input
+              id="lastName"
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              className={inputClasses}
+              placeholder={t("profileForm.lastNamePlaceholder")}
+              minLength={2}
+              maxLength={50}
+            />
+          </div>
+        </div>
+
+        {/* فیلد ایمیل */}
+        <div>
+          <label htmlFor="email" className={labelClasses}>
+            ایمیل
+          </label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            className={inputClasses}
+            placeholder="email@example.com"
+            maxLength={100}
+          />
+        </div>
+
+        {/* ردیف دوم: کد ملی و شماره پاسپورت */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="nationalCode" className={labelClasses}>
+              {t("profileForm.nationalCode")}
+            </label>
+            <input
+              id="nationalCode"
+              type="text"
+              name="nationalCode"
+              value={formData.nationalCode}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              className={inputClasses}
+              placeholder={t("profileForm.nationalCodePlaceholder")}
+              maxLength={10}
+              pattern="\d{10}"
+              inputMode="numeric"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="passportNumber" className={labelClasses}>
+              {t("profileForm.passportNumber")}
+            </label>
+            <input
+              id="passportNumber"
+              type="text"
+              name="passportNumber"
+              value={formData.passportNumber}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              className={inputClasses}
+              placeholder={t("profileForm.passportPlaceholder")}
+              maxLength={20}
+            />
+          </div>
+        </div>
+
+        {/* آدرس */}
+        <div>
+          <label htmlFor="address" className={labelClasses}>
+            {t("profileForm.address")}
+          </label>
+          <textarea
+            id="address"
+            name="address"
+            value={formData.address}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            rows={3}
+            className={`${inputClasses} resize-none`}
+            placeholder={t("profileForm.addressPlaceholder")}
+            maxLength={500}
+          />
+        </div>
+
+        {/* دکمه ذخیره */}
+        <div className="flex justify-end pt-4">
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            aria-label={
+              loading ? t("profileForm.saving") : t("profileForm.saveButton")
+            }
+          >
+            {loading ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5 text-white mr-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  ></path>
+                </svg>
+                {t("profileForm.saving")}
+              </>
+            ) : (
+              t("profileForm.saveButton")
+            )}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default React.memo(ProfileForm);

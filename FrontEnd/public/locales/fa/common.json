@@ -1,0 +1,397 @@
+{
+  "header": {
+    "tours": "رزرو تور",
+    "hotels": "رزرو هتل",
+    "tickets": "بلیط",
+    "services": "خدمات سفر",
+    "login": "ورود",
+    "profile": "پروفایل",
+    "logout": "خروج",
+    "myServices": "سرویس‌های من",
+    "support": "پشتیبانی",
+    "yourPoints": "امتیاز شما",
+    "search": "جستجو"
+  },
+  "footer": {
+    "phone": "۰۲۱-۱۲۳۴۵۶۷۸",
+    "copyright": "© ۲۰۲۴ تورینو. تمام حقوق محفوظ است.",
+    "contact": "تماس با ما: 3001 120 999 98+"
+  },
+  "common": {
+    "currency": "تومان",
+    "cancel": "انصراف",
+    "close": "بستن",
+    "seeYouSoon": "امیدوارم به زودی برگردی",
+    "later": "بعداً"
+  },
+  "hotel": {
+    "bookNow": "رزرو کنید",
+    "special": "ویژه"
+  },
+  "payment": {
+    "selectGateway": "انتخاب درگاه پرداخت",
+    "selectGatewayPrompt": "درگاه پرداخت مورد نظر را انتخاب کنید:",
+    "amount": "مبلغ قابل پرداخت",
+    "proceedToBank": "انتقال به درگاه بانک",
+    "security": "کلیه پرداخت‌ها مطابق با استانداردهای شاپرک",
+    "saman": "درگاه سامان",
+    "samanDesc": "پرداخت امن با کارت‌های عضو شتاب",
+    "mellat": "درگاه ملت",
+    "mellatDesc": "پشتیبانی از تمامی کارت‌های بانکی",
+    "parsian": "درگاه پارسیان",
+    "parsianDesc": "امنیت بالا و سرعت مناسب"
+  },
+  "paymentHistory": {
+    "title": "تاریخچه پرداخت‌ها",
+    "noPayments": "هیچ پرداختی ثبت نشده است",
+    "totalTransactions": "تعداد کل تراکنش‌ها",
+    "transactions": "تراکنش"
+  },
+  "paymentStatus": {
+    "completed": "موفق",
+    "pending": "در انتظار",
+    "failed": "ناموفق",
+    "refunded": "عودت داده شده"
+  },
+  "paymentMethod": {
+    "card": "کارت بانکی",
+    "wallet": "کیف پول",
+    "bankTransfer": "انتقال بانکی"
+  },
+  "services": {
+    "title": "سرویس‌های من",
+    "noServices": "هیچ سرویسی یافت نشد",
+    "filter": {
+      "all": "همه",
+      "hotels": "هتل‌ها",
+      "tours": "تورها",
+      "tickets": "بلیط‌ها"
+    },
+    "type": {
+      "hotel": "رزرو هتل",
+      "tour": "تور مسافرتی",
+      "ticket": "بلیط پرواز"
+    },
+    "status": {
+      "confirmed": "تأیید شده",
+      "completed": "تکمیل شده",
+      "pending": "در انتظار",
+      "cancelled": "لغو شده"
+    },
+    "stats": {
+      "total": "کل سرویس‌ها",
+      "active": "فعال",
+      "completed": "تکمیل شده",
+      "cancelled": "لغو شده"
+    }
+  },
+  "profileImage": {
+    "uploading": "در حال آپلود...",
+    "uploadSuccess": "عکس پروفایل با موفقیت آپلود شد",
+    "uploadError": "خطا در آپلود عکس",
+    "serverError": "خطا در ارتباط با سرور",
+    "changePhoto": "تغییر عکس پروفایل",
+    "previewAlt": "پیش‌نمایش",
+    "profileAlt": "پروفایل",
+    "status": "وضعیت",
+    "previewActive": "پیش‌نمایش فعال ✅",
+    "noPreview": "بدون پیش‌نمایش ❌"
+  },
+  "profileForm": {
+    "title": "اطلاعات هویتی",
+    "firstName": "نام",
+    "lastName": "نام خانوادگی",
+    "nationalCode": "کد ملی",
+    "passportNumber": "شماره پاسپورت",
+    "address": "آدرس",
+    "firstNamePlaceholder": "نام خود را وارد کنید",
+    "lastNamePlaceholder": "نام خانوادگی خود را وارد کنید",
+    "nationalCodePlaceholder": "کد ملی ۱۰ رقمی",
+    "passportPlaceholder": "شماره پاسپورت",
+    "addressPlaceholder": "آدرس کامل خود را وارد کنید",
+    "saveButton": "ذخیره اطلاعات",
+    "saving": "در حال ذخیره...",
+    "saveSuccess": "اطلاعات با موفقیت ذخیره شد",
+    "saveError": "خطا در ذخیره اطلاعات",
+    "sendingData": "اطلاعات ارسالی:",
+    "checkingUserLevel": "بررسی سطح کاربر...",
+    "userLevelChecked": "سطح کاربر بررسی شد - امکان ارتقاء به VERIFIED",
+    "userLevelError": "خطا در بررسی سطح کاربر:"
+  },
+  "login": {
+    "enterMobile": "لطفا شماره بدید !",
+    "passwordLogin": "ورود با رمز عبور",
+    "verifyMobile": "تایید شماره موبایل",
+    "mobilePlaceholder": "شماره موبایل (بدون صفر)",
+    "passwordPlaceholder": "رمز عبور",
+    "verificationPlaceholder": "کد تایید",
+    "continue": "ادامه",
+    "login": "ورود",
+    "verify": "تأیید",
+    "sendCode": "ورود با کد تایید",
+    "back": "بازگشت",
+    "mobileHint": {
+      "ir": "۱۰ رقم، بدون صفر، با ۹ شروع شود",
+      "iq": "۱۰ رقم، با صفر شروع شود",
+      "af": "۹ رقم، با صفر شروع شود",
+      "tr": "۱۰ رقم، با ۵ شروع شود",
+      "default": "۵ تا ۱۵ رقم"
+    },
+    "checking": "در حال بررسی...",
+    "passwordPrompt": "برای شماره {{dialCode}} {{mobile}}",
+    "enterYourPassword": "رمز عبور خود را وارد کنید",
+    "password": "رمز عبور",
+    "loggingIn": "در حال ورود...",
+    "codeSent": "کد تایید به شماره",
+    "codeSentSuccess": "ارسال شد",
+    "verificationCode": "کد تایید",
+    "mobileNumber": "شماره موبایل",
+    "enterCodePrompt": "لطفا کد ورودی که به شماره {{mobile}}{{dialCode}} ارسال کردیم رو وارد کنید",
+    "enterCodePrompt1": "لطفا کد ورودی که به شماره",
+    "enterCodePrompt2": "ارسال کردیم رو وارد کنید"
+  },
+  "errors": {
+    "invalidIranMobile": "شماره موبایل ایران باید 10 رقمی، بدون صفر و با عدد 9 شروع شود",
+    "invalidInternationalMobile": "شماره موبایل باید بین ۵ تا ۱۵ رقم باشد",
+    "verificationCodeLength": "کد تایید باید ۶ رقم باشد",
+    "invalidVerificationCode": "کد تایید نامعتبر است",
+    "verificationError": "خطا در تأیید کد",
+    "sendCodeError": "خطا در ارسال کد تایید",
+    "serverConnection": "خطا در ارتباط با سرور",
+    "enterPassword": "لطفا رمز عبور را وارد کنید",
+    "invalidPassword": "رمز عبور نامعتبر است",
+    "loginError": "خطا در ورود"
+  },
+  "validation": {
+    "firstNameRequired": "نام الزامی است",
+    "firstNameMinLength": "نام باید حداقل ۲ کاراکتر باشد",
+    "lastNameRequired": "نام خانوادگی الزامی است",
+    "lastNameMinLength": "نام خانوادگی باید حداقل ۲ کاراکتر باشد",
+    "nationalCodeInvalid": "کد ملی باید ۱۰ رقم باشد",
+    "formErrors": "لطفا خطاهای فرم را برطرف کنید"
+  },
+  "profile": {
+    "pageTitle": "پروفایل کاربر",
+    "completeProfile": "لطفا اطلاعات کاربری خودتون رو تکمیل کنید",
+    "guestUser": "کاربر مهمان",
+    "mobileNumber": "شماره موبایل",
+    "loading": "در حال بارگذاری پروفایل...",
+    "tabs": {
+      "navigation": "تب‌های پروفایل",
+      "profile": "👤 اطلاعات پروفایل",
+      "payments": "💳 تاریخچه پرداخت‌ها",
+      "services": "🛎️ سرویس‌های من"
+    },
+    "stats": {
+      "title": "آمار شما",
+      "bookings": "تعداد رزروها",
+      "referrals": "کاربران معرفی شده",
+      "points": "امتیاز"
+    },
+    "userLevel": {
+      "title": "سطح کاربری"
+    },
+    "userTypes": {
+      "GUEST": {
+        "label": "کاربر مهمان",
+        "description": "لطفا اطلاعات هویتی خود را تکمیل کنید"
+      },
+      "VERIFIED": {
+        "label": "کاربر احراز هویت شده",
+        "description": "اطلاعات شما با موفقیت تایید شد"
+      },
+      "AMBASSADOR": {
+        "label": "سفیر",
+        "description": "شما به عنوان سفیر انتخاب شده‌اید"
+      }
+    },
+    "errors": {
+      "loadData": "خطا در بارگذاری داده‌های کاربر:",
+      "saveData": "خطا در ذخیره‌سازی داده‌ها:",
+      "saveImage": "خطا در ذخیره‌سازی تصویر:",
+      "invalidImageUrl": "آدرس تصویر نامعتبر است"
+    }
+  },
+  "home": {
+    "meta": {
+      "title": "تورینو - سامانه رزرو تور و هتل",
+      "description": "رزرو آنلاین تور، هتل و بلیط با بهترین قیمت و کیفیت"
+    },
+    "hero": {
+      "title": "یه سفر بدون نگرانی ...",
+      "subtitle": "با تورینو به راحتی سفرت رو برنامه‌ریزی کن"
+    },
+    "search": {
+      "ariaLabel": "جستجوی خدمات سفر",
+      "placeholder": "دنبال چی میگردی ؟",
+      "inputLabel": "عبارت جستجو برای خدمات سفر",
+      "buttonLabel": "انجام جستجو",
+      "resultsFound": "{{count}} نتیجه یافت شد",
+      "noResults": "نتیجه‌ای یافت نشد",
+      "logging": "جستجو برای:",
+      "validation": {
+        "minLength": "عبارت جستجو باید حداقل ۲ کاراکتر باشد"
+      }
+    },
+    "services": {
+      "title": "خدمات ویژه ما",
+      "detailsButton": "مشاهده جزئیات",
+      "tours": {
+        "title": "رزرو تور",
+        "description": "تورهای داخلی و خارجی با بهترین قیمت و کیفیت"
+      },
+      "hotels": {
+        "title": "رزرو هتل",
+        "description": "هتل‌های لوکس و اقتصادی در سراسر ایران و جهان"
+      },
+      "tickets": {
+        "title": "بلیط",
+        "description": "پرواز، قطار و اتوبوس با تضمین بهترین قیمت"
+      },
+      "travelServices": {
+        "title": "خدمات سفر",
+        "description": "ویزا، بیمه و راهنمای سفر حرفه‌ای"
+      }
+    }
+  },
+  "support": {
+    "meta": {
+      "title": "پشتیبانی تورینو",
+      "description": "سیستم پشتیبانی آنلاین تورینو - پاسخ به سوالات و حل مشکلات"
+    },
+    "title": "پشتیبانی آنلاین",
+    "subtitle": "ما اینجاییم تا به شما کمک کنیم",
+    "tabs": {
+      "navigation": "تب‌های پشتیبانی",
+      "tickets": "🎫 تیکت‌های من",
+      "faq": "❓ سوالات متداول",
+      "contact": "📞 تماس با ما"
+    },
+    "status": {
+      "online": "پشتیبانی آنلاین",
+      "offline": "پشتیبانی آفلاین",
+      "responseTime": "پاسخگویی در کمتر از ۲ ساعت"
+    },
+    "contact": {
+      "title": "تماس با ما",
+      "channels": "راه‌های ارتباطی",
+      "companyInfo": "اطلاعات شرکت",
+      "quickReport": "ارسال سریع گزارش مشکل",
+      "quickReportTitle": "ارسال سریع گزارش مشکل",
+      "quickReportPlaceholder": "مشکل یا سوال خود را به طور خلاصه بنویسید...",
+      "quickReportSubmit": "ارسال گزارش",
+      "charCount": "کاراکتر",
+      "companyAddress": "آدرس",
+      "companyAddressValue": "تهران، خیابان ولیعصر، پلاک ۱۲۳۴",
+      "workingHours": "ساعات کاری",
+      "workingHoursValue": "۲۴ ساعته، ۷ روز هفته",
+      "responseTime": "زمان پاسخگویی",
+      "responseTimeValue": "کمتر از ۲ ساعت",
+      "validation": {
+        "minLength": "لطفاً پیام خود را کامل‌تر وارد کنید"
+      },
+      "quickReportSuccess": "پیام شما ثبت شد. به زودی با شما تماس می‌گیریم.",
+      "supportStatus": {
+        "online": "🟢 پشتیبانی آنلاین",
+        "offline": "🔴 پشتیبانی آفلاین",
+        "onlineMessage": "هم‌اکنون پاسخگو هستیم",
+        "offlineMessage": "در اولین فرصت پاسخگو خواهیم بود"
+      },
+      "channelsList": {
+        "phone": {
+          "label": "پشتیبانی تلفنی",
+          "value": "+982112345678"
+        },
+        "email": {
+          "label": "ایمیل پشتیبانی",
+          "value": "support@turino.com"
+        },
+        "telegram": {
+          "label": "تلگرام",
+          "value": "https://t.me/turino_support"
+        },
+        "whatsapp": {
+          "label": "واتساپ",
+          "value": "https://wa.me/989123456789"
+        },
+        "instagram": {
+          "label": "اینستاگرام",
+          "value": "https://instagram.com/turino.official"
+        }
+      }
+    },
+    "tickets": {
+      "title": "تیکت‌های پشتیبانی",
+      "yourTickets": "تیکت‌های شما",
+      "noTicketSelected": "تیکتی انتخاب نشده",
+      "noTicketSelectedMessage": "برای مشاهده مکالمات، یک تیکت را از لیست انتخاب کنید",
+      "newMessage": "پیام جدید",
+      "sendReply": "ارسال پاسخ",
+      "replyPlaceholder": "پاسخ خود را وارد کنید...",
+      "messageSent": "پاسخ شما ارسال شد",
+      "status": {
+        "open": "باز",
+        "in_progress": "در حال بررسی",
+        "resolved": "حل شده",
+        "closed": "بسته"
+      },
+      "priority": {
+        "low": "کم",
+        "medium": "متوسط",
+        "high": "بالا",
+        "urgent": "فوری"
+      },
+      "category": {
+        "technical": "فنی",
+        "payment": "پرداخت",
+        "reservation": "رزرو",
+        "general": "عمومی",
+        "suggestion": "پیشنهاد"
+      }
+    },
+    "installPrompt": {
+      "title": "اپلیکیشن تورینو را نصب کنید",
+      "description": "دسترسی سریع‌تر و تجربه بهتر",
+      "install": "نصب"
+    },
+    "faq": {
+      "title": "سوالات متداول",
+      "searchPlaceholder": "جستجو در سوالات...",
+      "categories": "دسته‌بندی‌ها",
+      "allCategories": "همه دسته‌ها",
+      "reservation": "رزرو",
+      "payment": "پرداخت",
+      "account": "حساب کاربری",
+      "technical": "فنی",
+      "general": "عمومی",
+      "resultsCount": "سوال یافت شد",
+      "noResults": "سوالی یافت نشد",
+      "noResultsMessage": "لطفاً عبارت جستجو یا دسته‌بندی را تغییر دهید",
+      "helpful": "آیا این پاسخ مفید بود؟",
+      "yes": "بله",
+      "no": "خیر",
+      "needMoreHelp": "پاسخ خود را پیدا نکردید؟",
+      "needMoreHelpMessage": "ما همیشه آماده پاسخگویی به سوالات شما هستیم",
+      "createTicket": "ایجاد تیکت پشتیبانی",
+      "callSupport": "تماس تلفنی"
+    }
+  },
+  "changePassword": {
+    "title": "تغییر رمز عبور",
+    "currentPassword": "رمز عبور فعلی",
+    "currentPasswordPlaceholder": "رمز عبور فعلی خود را وارد کنید",
+    "newPassword": "رمز عبور جدید",
+    "newPasswordPlaceholder": "رمز عبور جدید را وارد کنید",
+    "confirmPassword": "تکرار رمز عبور جدید",
+    "confirmPasswordPlaceholder": "رمز عبور جدید را تکرار کنید",
+    "changeButton": "تغییر رمز عبور",
+    "changing": "در حال تغییر...",
+    "success": "رمز عبور با موفقیت تغییر کرد",
+    "error": "خطا در تغییر رمز عبور",
+    "serverError": "خطا در ارتباط با سرور",
+    "allFieldsRequired": "تمام فیلدها الزامی هستند",
+    "passwordMinLength": "رمز عبور باید حداقل ۶ کاراکتر باشد",
+    "passwordsNotMatch": "رمزهای عبور مطابقت ندارند",
+    "sameAsOld": "رمز عبور جدید باید با رمز عبور فعلی متفاوت باشد"
+  }
+}
