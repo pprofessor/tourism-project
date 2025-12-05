@@ -384,5 +384,73 @@
     "confirmPasswordPlaceholder": "Yeni şifrenizi tekrar girin",
     "changeButton": "Şifreyi Değiştir",
     "sameAsOld": "Yeni şifre mevcut şifreden farklı olmalıdır"
+  },
+
+  "ambassador": {
+    "title": "Seyahat Elçileri",
+    "subtitle": "Seyahatinizi unutulmaz bir deneyime dönüştürmek için yerel elçilerle bağlantı kurun",
+    "services": {
+      "title": "Hizmetler",
+      "currencyExchange": "Döviz Bozdurma",
+      "localTickets": "Yerel Biletler",
+      "tourGuide": "Tur Rehberi",
+      "hotelBooking": "Otel Rezervasyonu",
+      "banking": "Banka Hizmetleri",
+      "translation": "Çeviri",
+      "transport": "Ulaşım"
+    },
+    "verified": "Doğrulanmış",
+    "available": "Müsait",
+    "busy": "Meşgul",
+    "hourlyRate": "Saatlik Ücret",
+    "responseTime": "Yanıt Süresi",
+    "languages": "Diller",
+    "completedTasks": "Tamamlanan Görev",
+    "requestService": "Hizmet Talep Et",
+    "filters": {
+      "city": "Şehir",
+      "cityPlaceholder": "Şehir adı...",
+      "minRating": "Minimum Puan",
+      "maxPrice": "Maksimum Fiyat",
+      "pricePlaceholder": "örn: 50000",
+      "apply": "Filtreleri Uygula"
+    },
+    "sortBy": "Sırala",
+    "sort": {
+      "rating": "Puan",
+      "priceLow": "Fiyat (Düşükten Yükseğe)",
+      "priceHigh": "Fiyat (Yüksekten Düşüğe)"
+    },
+    "noResults": {
+      "title": "Elçi Bulunamadı",
+      "description": "Maalesef bu şehirde elçi bulamadık. Başka bir şehir aramayı deneyin."
+    },
+    "resultsCount": "{{count}} elçi bulundu",
+    "errors": {
+      "loadFailed": "Elçiler yüklenemedi"
+    },
+    "about": "Elçi Hakkında",
+    "noBio": "Bu elçi henüz bir biyografi yazmamış.",
+    "stats": "İstatistikler",
+    "contact": "İletişim",
+    "certificates": "Sertifikalar",
+    "notFound": "Elçi bulunamadı",
+    "backToList": "Listeye Dön",
+    "request": {
+      "title": "Hizmet Talebi",
+      "serviceType": "Hizmet Türü",
+      "selectService": "Hizmet Türü Seçin",
+      "startDate": "Başlangıç Tarihi",
+      "endDate": "Bitiş Tarihi",
+      "startTime": "Başlangıç Saati",
+      "endTime": "Bitiş Saati",
+      "notes": "Ek Notlar",
+      "notesPlaceholder": "İsteğinizin detaylarını yazın...",
+      "estimatedCost": "Tahmini Maliyet",
+      "costNote": "2 saatlik hizmete dayalı hesaplama (elçi onayından sonra değişebilir)",
+      "submit": "Talebi Gönder",
+      "success": "Talebiniz başarıyla gönderildi",
+      "error": "Talep gönderilirken hata oluştu"
+    }
   }
 }

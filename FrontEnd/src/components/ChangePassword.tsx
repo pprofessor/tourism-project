@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { API_USERS_URL } from "../utils/constants";
 import { useTranslation } from "react-i18next";
 
 interface ChangePasswordProps {
@@ -57,7 +58,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ userId }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/api/users/${userId}/change-password`,
+        `${API_USERS_URL}/${userId}/change-password`,
         {
           method: "POST",
           headers: {

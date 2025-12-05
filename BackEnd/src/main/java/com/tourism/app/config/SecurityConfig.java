@@ -40,6 +40,7 @@ public class SecurityConfig {
                                 "/api/slider/**",
                                 "/api/media/**",
                                 "/api/placeholder/**",
+                                "/api/ambassadors/**",
                                 "/uploads/**",
                                 "/media/**",
                                 "/error",

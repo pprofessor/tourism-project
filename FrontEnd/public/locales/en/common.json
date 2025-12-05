@@ -385,5 +385,30 @@
     "confirmPasswordPlaceholder": "Repeat your new password",
     "changeButton": "Change Password",
     "sameAsOld": "New password must be different from current password"
+  },
+  "ambassador": {
+    "about": "About Ambassador",
+    "noBio": "This ambassador hasn't written a bio yet.",
+    "stats": "Statistics",
+    "contact": "Contact",
+    "certificates": "Certificates",
+    "notFound": "Ambassador not found",
+    "backToList": "Back to List",
+    "request": {
+      "title": "Request Service",
+      "serviceType": "Service Type",
+      "selectService": "Select Service Type",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "notes": "Additional Notes",
+      "notesPlaceholder": "Write details of your request...",
+      "estimatedCost": "Estimated Cost",
+      "costNote": "Calculation based on 2 hours of service (may change after ambassador confirmation)",
+      "submit": "Submit Request",
+      "success": "Your request has been submitted successfully",
+      "error": "Error submitting request"
+    }
   }
 }

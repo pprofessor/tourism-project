@@ -19,6 +19,7 @@ i18n
   .use(initReactI18next)
   .init({
     fallbackLng: "fa",
+    defaultNS: "common",
     supportedLngs: Object.keys(supportedLanguages),
     debug: false,
 

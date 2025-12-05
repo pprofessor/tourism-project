@@ -393,5 +393,73 @@
     "passwordMinLength": "رمز عبور باید حداقل ۶ کاراکتر باشد",
     "passwordsNotMatch": "رمزهای عبور مطابقت ندارند",
     "sameAsOld": "رمز عبور جدید باید با رمز عبور فعلی متفاوت باشد"
+  },
+
+  "ambassador": {
+    "title": "سفیران سفر",
+    "subtitle": "با سفیران محلی آشنا شوید تا سفر شما را به تجربه‌ای فراموش‌نشدنی تبدیل کنند",
+    "services": {
+      "title": "خدمات",
+      "currencyExchange": "صرافی و تبدیل ارز",
+      "localTickets": "خرید بلیط محلی",
+      "tourGuide": "راهنمای تور",
+      "hotelBooking": "رزرو هتل",
+      "banking": "خدمات بانکی",
+      "translation": "ترجمه",
+      "transport": "حمل و نقل"
+    },
+    "verified": "تایید شده",
+    "available": "در دسترس",
+    "busy": "مشغول",
+    "hourlyRate": "نرخ ساعتی",
+    "responseTime": "زمان پاسخگویی",
+    "languages": "زبان‌ها",
+    "completedTasks": "کار انجام شده",
+    "requestService": "درخواست خدمات",
+    "filters": {
+      "city": "شهر",
+      "cityPlaceholder": "نام شهر...",
+      "minRating": "حداقل امتیاز",
+      "maxPrice": "حداکثر قیمت",
+      "pricePlaceholder": "مثلاً 50000",
+      "apply": "اعمال فیلتر"
+    },
+    "sortBy": "مرتب‌سازی براساس",
+    "sort": {
+      "rating": "امتیاز",
+      "priceLow": "قیمت (کم به زیاد)",
+      "priceHigh": "قیمت (زیاد به کم)"
+    },
+    "noResults": {
+      "title": "سفیری یافت نشد",
+      "description": "متاسفانه در این شهر سفیری پیدا نکردیم. می‌توانید شهر دیگری را جستجو کنید."
+    },
+    "resultsCount": "{{count}} سفیر یافت شد",
+    "errors": {
+      "loadFailed": "خطا در بارگذاری سفیران"
+    },
+    "about": "درباره سفیر",
+    "noBio": "این سفیر هنوز توضیحی درباره خودش ننوشته است.",
+    "stats": "آمار",
+    "contact": "راه‌های ارتباطی",
+    "certificates": "مدارک و گواهینامه‌ها",
+    "notFound": "سفیر یافت نشد",
+    "backToList": "بازگشت به لیست سفیران",
+    "request": {
+      "title": "درخواست خدمات",
+      "serviceType": "نوع خدمات",
+      "selectService": "انتخاب نوع خدمات",
+      "startDate": "تاریخ شروع",
+      "endDate": "تاریخ پایان",
+      "startTime": "ساعت شروع",
+      "endTime": "ساعت پایان",
+      "notes": "توضیحات اضافی",
+      "notesPlaceholder": "جزئیات درخواست خود را بنویسید...",
+      "estimatedCost": "هزینه تخمینی",
+      "costNote": "محاسبه بر اساس ۲ ساعت خدمت (پس از تایید سفیر ممکن است تغییر کند)",
+      "submit": "ارسال درخواست",
+      "success": "درخواست شما با موفقیت ثبت شد",
+      "error": "خطا در ثبت درخواست"
+    }
   }
 }

@@ -384,5 +384,73 @@
     "confirmPasswordPlaceholder": "كرر كلمة المرور الجديدة",
     "changeButton": "تغيير كلمة المرور",
     "sameAsOld": "كلمة المرور الجديدة يجب أن تختلف عن كلمة المرور الحالية"
+  },
+
+  "ambassador": {
+    "title": "سفراء السفر",
+    "subtitle": "تواصل مع السفراء المحليين لتحويل رحلتك إلى تجربة لا تنسى",
+    "services": {
+      "title": "الخدمات",
+      "currencyExchange": "صرف العملات",
+      "localTickets": "تذاكر محلية",
+      "tourGuide": "مرشد سياحي",
+      "hotelBooking": "حجز فندق",
+      "banking": "خدمات بنكية",
+      "translation": "ترجمة",
+      "transport": "نقل"
+    },
+    "verified": "متحقق منه",
+    "available": "متاح",
+    "busy": "مشغول",
+    "hourlyRate": "السعر بالساعة",
+    "responseTime": "وقت الاستجابة",
+    "languages": "اللغات",
+    "completedTasks": "مهمة مكتملة",
+    "requestService": "طلب الخدمة",
+    "filters": {
+      "city": "المدينة",
+      "cityPlaceholder": "اسم المدينة...",
+      "minRating": "الحد الأدنى للتقييم",
+      "maxPrice": "أقصى سعر",
+      "pricePlaceholder": "مثال: 50000",
+      "apply": "تطبيق الفلاتر"
+    },
+    "sortBy": "ترتيب حسب",
+    "sort": {
+      "rating": "التقييم",
+      "priceLow": "السعر (منخفض إلى عالي)",
+      "priceHigh": "السعر (عالي إلى منخفض)"
+    },
+    "noResults": {
+      "title": "لم يتم العثور على سفراء",
+      "description": "للأسف لم نجد أي سفراء في هذه المدينة. جرب البحث في مدينة أخرى."
+    },
+    "resultsCount": "تم العثور على {{count}} سفير",
+    "errors": {
+      "loadFailed": "فشل تحميل السفراء"
+    },
+        "about": "حول السفير",
+    "noBio": "هذا السفير لم يكتب سيرة ذاتية بعد.",
+    "stats": "الإحصائيات",
+    "contact": "الاتصال",
+    "certificates": "الشهادات",
+    "notFound": "لم يتم العثور على السفير",
+    "backToList": "العودة إلى القائمة",
+    "request": {
+      "title": "طلب الخدمة",
+      "serviceType": "نوع الخدمة",
+      "selectService": "اختر نوع الخدمة",
+      "startDate": "تاريخ البدء",
+      "endDate": "تاريخ الانتهاء",
+      "startTime": "وقت البدء",
+      "endTime": "وقت الانتهاء",
+      "notes": "ملاحظات إضافية",
+      "notesPlaceholder": "اكتب تفاصيل طلبك...",
+      "estimatedCost": "التكلفة المقدرة",
+      "costNote": "الحساب على أساس ساعتين من الخدمة (قد يتغير بعد تأكيد السفير)",
+      "submit": "إرسال الطلب",
+      "success": "تم إرسال طلبك بنجاح",
+      "error": "خطأ في إرسال الطلب"
+    }
   }
-}
+  }

@@ -9,6 +9,8 @@ import "./App.css";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Support from "./pages/Support";
+import AmbassadorProfilePage from "./pages/Ambassadors/AmbassadorProfile";
+import AmbassadorsPage from "./pages/Ambassadors";
 
 function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -98,6 +100,11 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/support" element={<Support />} />
+              <Route path="/ambassadors" element={<AmbassadorsPage />} />
+              <Route
+                path="/ambassadors/:id"
+                element={<AmbassadorProfilePage />}
+              />
             </Routes>
 
             {/* مودال لاگین */}
