@@ -10,6 +10,7 @@ import UserServices from "../components/UserServices";
 import { useTheme } from "../context/ThemeContext";
 import ChangePassword from "../components/ChangePassword";
 import SetInitialPassword from "../components/SetInitialPassword";
+import AmbassadorButton from "../components/profile/AmbassadorButton";
 
 // انواع داده‌ها برای type safety
 interface UserData {
@@ -54,32 +55,36 @@ const Profile: React.FC = () => {
   // Hooks
   const location = useLocation();
 
-  // Configuration - خارج از کامپوننت برای جلوگیری از recreate
   const TAB_CONFIG: TabConfig[] = useMemo(
     () => [
       {
         id: "profile",
-        label: "👤 اطلاعات پروفایل",
+        label: "👤",
         icon: "👤",
         translationKey: "profile.tabs.profile",
       },
       {
         id: "payments",
-        label: "💳 تاریخچه پرداخت‌ها",
+        label: "💳",
         icon: "💳",
         translationKey: "profile.tabs.payments",
       },
       {
         id: "services",
-        label: "🛎️ سرویس‌های من",
+        label: "🛎️",
         icon: "🛎️",
         translationKey: "profile.tabs.services",
+      },
+      {
+        id: "ambassador",
+        label: "⭐", // آیکن ستاره
+        icon: "⭐",
+        translationKey: "profile.tabs.ambassador",
       },
     ],
     []
   );
 
-  // User stats - با قابلیت چندزبانه
   const userStats: UserStats = useMemo(
     () => ({
       bookings: 4,
@@ -152,7 +157,6 @@ const Profile: React.FC = () => {
 
   // Effects
   useEffect(() => {
-    // بارگذاری ایمن داده‌های کاربر از localStorage
     const loadUserData = async () => {
       try {
         const savedUserData = localStorage.getItem("userData");
@@ -173,7 +177,7 @@ const Profile: React.FC = () => {
     };
 
     loadUserData();
-  }, [t, sanitizeUserData]); // اضافه کردن sanitizeUserData به dependencies
+  }, [t, sanitizeUserData]);
 
   // Hash detection برای تب‌ها
   useEffect(() => {
@@ -405,7 +409,8 @@ const Profile: React.FC = () => {
                       : "text-gray-600 hover:bg-gray-100 hover:scale-105"
                   }`}
                 >
-                  {t(tab.translationKey)}
+                  <span>{tab.icon}</span>
+                  <span>{t(tab.translationKey)}</span>{" "}
                 </button>
               ))}
             </div>
@@ -558,6 +563,46 @@ const Profile: React.FC = () => {
                       {getUserTypeDescription(user.userType)}
                     </p>
                   </section>
+                  {/* تبلیغ تشویقی سفیر - فقط برای کاربران VERIFIED */}
+                  {user.userType === "VERIFIED" && (
+                    <section
+                      className={`rounded-2xl shadow-lg p-6 transition-colors duration-300 ${
+                        theme === "dark" ? "bg-gray-800" : "bg-white"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <div
+                            className={`p-3 rounded-full ${
+                              theme === "dark"
+                                ? "bg-yellow-900/30"
+                                : "bg-yellow-100"
+                            }`}
+                          >
+                            <span className="text-yellow-500 text-xl">⭐</span>
+                          </div>
+                          <div>
+                            <h4 className="font-semibold">
+                              سفیر شوید، درآمد کسب کنید!
+                            </h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              با ارائه خدمات گردشگری درآمدزایی کنید
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleTabChange("ambassador")}
+                          className={`px-4 py-2 rounded-lg ${
+                            theme === "dark"
+                              ? "bg-yellow-700 hover:bg-yellow-600"
+                              : "bg-yellow-500 hover:bg-yellow-400"
+                          } text-white font-semibold`}
+                        >
+                          مشاهده
+                        </button>
+                      </div>
+                    </section>
+                  )}
                 </div>
               </div>
             )}
@@ -571,6 +616,37 @@ const Profile: React.FC = () => {
             {activeTab === "services" && (
               <div className="grid grid-cols-1 gap-6" id="tab-services">
                 <UserServices userId={user.id} />
+              </div>
+            )}
+
+            {activeTab === "ambassador" && (
+              <div className="grid grid-cols-1 gap-6" id="tab-ambassador">
+                {/* اینجا صفحه سفیر را ایجاد می‌کنیم */}
+                {user.userType === "AMBASSADOR" ? (
+                  // کاربر قبلاً سفیر شده
+                  <div className="text-center py-12">
+                    <div className="text-6xl mb-4">🎉</div>
+                    <h3 className="text-2xl font-bold mb-2">
+                      شما یک سفیر هستید!
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300 mb-6">
+                      به پنل مدیریت سفیران خوش آمدید.
+                    </p>
+                    <button
+                      onClick={() =>
+                        (window.location.href = "/ambassador/dashboard")
+                      }
+                      className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-3 rounded-lg font-semibold text-lg hover:opacity-90 transition"
+                    >
+                      ورود به پنل سفیر
+                    </button>
+                  </div>
+                ) : (
+                  // کاربر هنوز سفیر نشده
+                  <div>
+                    <AmbassadorButton />
+                  </div>
+                )}
               </div>
             )}
           </div>

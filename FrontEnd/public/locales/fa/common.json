@@ -22,7 +22,12 @@
     "cancel": "انصراف",
     "close": "بستن",
     "seeYouSoon": "امیدوارم به زودی برگردی",
-    "later": "بعداً"
+    "later": "بعداً",
+    "previous": "قبلی",
+    "next": "بعدی",
+    "upload": "آپلود",
+    "remove": "حذف",
+    "submitting": "در حال ارسال..."
   },
   "hotel": {
     "bookNow": "رزرو کنید",
@@ -178,9 +183,10 @@
     "loading": "در حال بارگذاری پروفایل...",
     "tabs": {
       "navigation": "تب‌های پروفایل",
-      "profile": "👤 اطلاعات پروفایل",
-      "payments": "💳 تاریخچه پرداخت‌ها",
-      "services": "🛎️ سرویس‌های من"
+      "profile": " اطلاعات پروفایل",
+      "payments": " تاریخچه پرداخت‌ها",
+      "services": " سرویس‌های من",
+      "ambassador": "سفیر"
     },
     "stats": {
       "title": "آمار شما",
@@ -210,6 +216,19 @@
       "saveData": "خطا در ذخیره‌سازی داده‌ها:",
       "saveImage": "خطا در ذخیره‌سازی تصویر:",
       "invalidImageUrl": "آدرس تصویر نامعتبر است"
+    },
+    "ambassador": {
+      "title": "ثبت‌نام به عنوان سفیر",
+      "description": "همکاری با ما و کسب درآمد از خدمات گردشگری",
+      "earnUpTo": "درآمد تا ۵ میلیون",
+      "flexibleHours": "ساعات کاری انعطاف‌پذیر",
+      "benefit1": "درآمد از هر تراکنش",
+      "benefit2": "پشتیبانی ۲۴ ساعته",
+      "benefit3": "تخفیف‌های ویژه",
+      "verified": "سفیر تایید شده",
+      "verifiedDescription": "شما به عنوان سفیر تایید شده‌اید",
+      "goToDashboard": "ورود به پنل سفیر",
+      "registrationSuccess": "ثبت‌نام شما با موفقیت انجام شد!"
     }
   },
   "home": {
@@ -402,11 +421,15 @@
       "title": "خدمات",
       "currencyExchange": "صرافی و تبدیل ارز",
       "localTickets": "خرید بلیط محلی",
-      "tourGuide": "راهنمای تور",
+      "tourGuide": "راهنمای گردشگردی",
       "hotelBooking": "رزرو هتل",
       "banking": "خدمات بانکی",
       "translation": "ترجمه",
-      "transport": "حمل و نقل"
+      "transport": "حمل و نقل",
+      "eventTickets": "بلیط رویدادها",
+      "shoppingAssistant": "مشاور خرید",
+      "restaurantReservation": "رزرو رستوران",
+      "personaltranslator": " مترجمی همراه"
     },
     "verified": "تایید شده",
     "available": "در دسترس",
@@ -435,9 +458,7 @@
       "description": "متاسفانه در این شهر سفیری پیدا نکردیم. می‌توانید شهر دیگری را جستجو کنید."
     },
     "resultsCount": "{{count}} سفیر یافت شد",
-    "errors": {
-      "loadFailed": "خطا در بارگذاری سفیران"
-    },
+
     "about": "درباره سفیر",
     "noBio": "این سفیر هنوز توضیحی درباره خودش ننوشته است.",
     "stats": "آمار",
@@ -460,6 +481,101 @@
       "submit": "ارسال درخواست",
       "success": "درخواست شما با موفقیت ثبت شد",
       "error": "خطا در ثبت درخواست"
+    },
+    "registration": {
+      "title": "ثبت‌نام به عنوان سفیر",
+      "subtitle": "همکاری با ما و کسب درآمد از خدمات گردشگری",
+      "step1": {
+        "title": "اطلاعات پایه",
+        "short": "اطلاعات",
+        "subtitle": "مکان و زبان‌های خود را مشخص کنید"
+      },
+      "step2": {
+        "title": "خدمات",
+        "short": "خدمات",
+        "subtitle": " چه خدماتی رو میتونید ارئه بدید ؟"
+      },
+      "step3": {
+        "title": "تعرفه خدمات",
+        "short": "تعرفه",
+        "subtitle": "نرخ خدمات خود را مشخص کنید"
+      },
+      "step4": {
+        "title": "مدارک",
+        "short": "مدارک",
+        "subtitle": "مدارک شناسایی خود را آپلود کنید"
+      },
+      "step5": {
+        "title": "پروفایل حرفه‌ای",
+        "short": "پروفایل",
+        "subtitle": "توضیحات و تخصص‌های خود را بنویسید"
+      },
+      "step6": {
+        "title": "تأیید نهایی",
+        "short": "تأیید",
+        "subtitle": "اطلاعات را بررسی و تأیید کنید"
+      },
+      "city": "شهر",
+      "country": "کشور",
+      "languages": "زبان‌ها",
+      "services": "خدمات",
+      "pricing": "تعرفه",
+      "documents": "مدارک",
+      "bio": "بیوگرافی",
+      "experience": "سابقه کاری",
+      "specialties": "تخصص‌ها",
+      "cityPlaceholder": "مثال: تهران",
+      "cityHelp": "شهر اصلی فعالیت خود را وارد کنید",
+      "languagesHelp": "حداقل یک زبان را انتخاب کنید",
+      "servicesDescription": "خدماتی که می‌توانید ارائه دهید را انتخاب کنید",
+      "hourly": "ساعتی",
+      "commission": "کمیسیون",
+      "commissionRate": "درصد کمیسیون",
+      "hourlyServices": "خدمات ساعتی",
+      "commissionServices": "خدمات کمیسیونی",
+      "perHour": "در ساعت",
+      "ofTransaction": "از مبلغ تراکنش",
+      "noHourlyServices": "هیچ خدمت ساعتی انتخاب نکرده‌اید",
+      "noCommissionServices": "هیچ خدمت کمیسیونی انتخاب نکرده‌اید",
+      "selectHourlyServices": "خدمات ساعتی را از مرحله قبل انتخاب کنید",
+      "selectCommissionServices": "خدمات کمیسیونی را از مرحله قبل انتخاب کنید",
+      "hourlyHelp": "نرخ ساعتی برای خدمات راهنمایی و ترجمه",
+      "commissionHelp": "درصد کمیسیون از هر تراکنش",
+      "nationalCard": "کارت ملی",
+      "passport": "گذرنامه",
+      "nationalCardHelp": "تصویر واضح از کارت ملی (هر دو طرف)",
+      "passportHelp": "صفحه اصلی گذرنامه (اختیاری)",
+      "passportOptional": "اختیاری",
+      "uploadNationalCard": "آپلود کارت ملی",
+      "uploadPassport": "آپلود گذرنامه",
+      "privacyNote": "حریم خصوصی",
+      "privacyDescription": "مدارک شما تنها برای احراز هویت استفاده شده و در امنیت کامل نگهداری می‌شوند.",
+      "bioDescription": "درباره خود و خدماتتان بنویسید",
+      "experienceDescription": "سابقه کاری و تجربیات مرتبط",
+      "specialtiesHelp": "تخصص‌های اصلی خود را انتخاب کنید",
+      "bioPlaceholder": "من یک راهنمای تور با ۵ سال تجربه در زمینه گردشگری هستم...",
+      "experiencePlaceholder": "• ۳ سال راهنمای تور در شرکت الف\n• ۲ سال مدیریت تورهای خارجی\n• تسلط کامل به زبان انگلیسی و ترکی",
+      "bioHelp": "حداقل ۱۰۰ کاراکتر",
+      "experienceHelp": "تجربیات مرتبط خود را شرح دهید",
+      "noSpecialties": "هیچ تخصصی انتخاب نشده است",
+      "summary": "خلاصه اطلاعات",
+      "stepXofY": "مرحله {{current}} از {{total}}",
+      "terms1": "با",
+      "termsLink": "قوانین و شرایط همکاری",
+      "terms2": "موافقت می‌کنم",
+      "proficiency": "میزان تسلط",
+      "submit": "ثبت‌نام نهایی",
+      "previous": "مرحله قبلی",
+      "next": "مرحله بعدی",
+      "submitting": "در حال ثبت...",
+      "error": "خطا در ثبت‌نام"
+    },
+
+    "errors": {
+      "fileTooLarge": "حجم فایل نباید بیشتر از ۵ مگابایت باشد",
+      "invalidFileType": "فرمت فایل باید JPG, PNG یا PDF باشد",
+      "acceptTerms": "لطفاً قوانین و شرایط را بپذیرید",
+      "loadFailed": "خطا در بارگذاری سفیران"
     }
   }
 }

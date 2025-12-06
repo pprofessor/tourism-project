@@ -24,6 +24,8 @@ export interface Ambassador {
   responseTime: number | null;
   createdAt: string;
   updatedAt: string;
+  commissionRates?: Record<string, number>;
+  specialties?: string[];
 }
 
 export interface AmbassadorRequest {

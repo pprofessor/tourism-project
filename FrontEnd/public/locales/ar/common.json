@@ -181,9 +181,9 @@
     "loading": "جاري تحميل الملف...",
     "tabs": {
       "navigation": "تبوات الملف",
-      "profile": "👤 معلومات الملف",
-      "payments": "💳 سجل المدفوعات",
-      "services": "🛎️ خدماتي"
+      "profile": " معلومات الملف",
+      "payments": " سجل المدفوعات",
+      "services": " خدماتي"
     },
     "stats": {
       "title": "إحصائياتك",
@@ -426,10 +426,7 @@
       "description": "للأسف لم نجد أي سفراء في هذه المدينة. جرب البحث في مدينة أخرى."
     },
     "resultsCount": "تم العثور على {{count}} سفير",
-    "errors": {
-      "loadFailed": "فشل تحميل السفراء"
-    },
-        "about": "حول السفير",
+    "about": "حول السفير",
     "noBio": "هذا السفير لم يكتب سيرة ذاتية بعد.",
     "stats": "الإحصائيات",
     "contact": "الاتصال",
@@ -451,6 +448,101 @@
       "submit": "إرسال الطلب",
       "success": "تم إرسال طلبك بنجاح",
       "error": "خطأ في إرسال الطلب"
+    },
+    "registration": {
+      "title": "التسجيل كسفير",
+      "subtitle": "شارك معنا واربح من خدمات السياحة",
+      "step1": {
+        "title": "المعلومات الأساسية",
+        "short": "معلومات",
+        "subtitle": "حدد موقعك واللغات"
+      },
+      "step2": {
+        "title": "الخدمات",
+        "short": "خدمات",
+        "subtitle": "حدد الخدمات التي يمكنك تقديمها"
+      },
+      "step3": {
+        "title": "أسعار الخدمات",
+        "short": "الأسعار",
+        "subtitle": "حدد أسعار خدماتك"
+      },
+      "step4": {
+        "title": "المستندات",
+        "short": "مستندات",
+        "subtitle": "قم برفع وثائق الهوية الخاصة بك"
+      },
+      "step5": {
+        "title": "الملف الشخصي المهني",
+        "short": "ملف شخصي",
+        "subtitle": "اكتب عن خبرتك وتخصصاتك"
+      },
+      "step6": {
+        "title": "التأكيد النهائي",
+        "short": "تأكيد",
+        "subtitle": "راجع وثّق معلوماتك"
+      },
+      "city": "المدينة",
+      "country": "البلد",
+      "languages": "اللغات",
+      "services": "الخدمات",
+      "pricing": "التسعير",
+      "documents": "المستندات",
+      "bio": "السيرة الذاتية",
+      "experience": "الخبرة العملية",
+      "specialties": "التخصصات",
+      "cityPlaceholder": "مثال: طهران",
+      "cityHelp": "أدخل مدينتك الرئيسية للعمل",
+      "languagesHelp": "اختر لغة واحدة على الأقل",
+      "servicesDescription": "حدد الخدمات التي يمكنك تقديمها",
+      "hourly": "بالساعة",
+      "commission": "العمولة",
+      "commissionRate": "نسبة العمولة",
+      "hourlyServices": "الخدمات بالساعة",
+      "commissionServices": "الخدمات بالعمولة",
+      "perHour": "في الساعة",
+      "ofTransaction": "من مبلغ المعاملة",
+      "noHourlyServices": "لم يتم اختيار خدمات بالساعة",
+      "noCommissionServices": "لم يتم اختيار خدمات بالعمولة",
+      "selectHourlyServices": "اختر الخدمات بالساعة من الخطوة السابقة",
+      "selectCommissionServices": "اختر الخدمات بالعمولة من الخطوة السابقة",
+      "hourlyHelp": "السعر بالساعة لخدمات الإرشاد والترجمة",
+      "commissionHelp": "نسبة العمولة من كل معاملة",
+      "nationalCard": "بطاقة الهوية الوطنية",
+      "passport": "جواز السفر",
+      "nationalCardHelp": "صورة واضحة لبطاقة الهوية الوطنية (كلا الجانبين)",
+      "passportHelp": "الصفحة الرئيسية لجواز السفر (اختياري)",
+      "passportOptional": "اختياري",
+      "uploadNationalCard": "رفع بطاقة الهوية",
+      "uploadPassport": "رفع جواز السفر",
+      "privacyNote": "إشعار الخصوصية",
+      "privacyDescription": "يتم استخدام مستنداتك للتحقق فقط وتخزينها بأمان كامل.",
+      "bioDescription": "اكتب عن نفسك وخدماتك",
+      "experienceDescription": "الخبرة العملية والخلفية ذات الصلة",
+      "specialtiesHelp": "اختر تخصصاتك الرئيسية",
+      "bioPlaceholder": "أنا مرشد سياحي بخبرة 5 سنوات في مجال السياحة...",
+      "experiencePlaceholder": "• 3 سنوات كمرشد سياحي في الشركة أ\n• سنتان في إدارة الجولات الدولية\n• إجادة كاملة للغة الإنجليزية والتركية",
+      "bioHelp": "100 حرف على الأقل",
+      "experienceHelp": "صف خبراتك ذات الصلة",
+      "noSpecialties": "لم يتم اختيار تخصصات",
+      "summary": "ملخص المعلومات",
+      "stepXofY": "الخطوة {{current}} من {{total}}",
+      "terms1": "أوافق على",
+      "termsLink": "الشروط والأحكام",
+      "terms2": "",
+      "proficiency": "مستوى الإجادة",
+      "submit": "التسجيل النهائي",
+      "previous": "السابق",
+      "next": "التالي",
+      "submitting": "جاري التسجيل...",
+      "error": "خطأ في التسجيل"
+    },
+
+    "errors": {
+      "fileTooLarge": "يجب ألا يتجاوز حجم الملف 5 ميجابايت",
+      "invalidFileType": "يجب أن يكون تنسيق الملف JPG أو PNG أو PDF",
+      "acceptTerms": "يرجى قبول الشروط والأحكام",
+      "loadFailed": "فشل تحميل السفراء"
     }
   }
-  }
+}

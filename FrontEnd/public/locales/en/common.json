@@ -176,9 +176,9 @@
     "loading": "Loading profile...",
     "tabs": {
       "navigation": "Profile Tabs",
-      "profile": "👤 Profile Information",
-      "payments": "💳 Payment History",
-      "services": "🛎️ My Services"
+      "profile": " Profile Information",
+      "payments": " Payment History",
+      "services": " My Services"
     },
     "stats": {
       "title": "Your Statistics",
@@ -409,6 +409,100 @@
       "submit": "Submit Request",
       "success": "Your request has been submitted successfully",
       "error": "Error submitting request"
+    },
+    "registration": {
+      "title": "Become an Ambassador",
+      "subtitle": "Partner with us and earn from tourism services",
+      "step1": {
+        "title": "Basic Information",
+        "short": "Info",
+        "subtitle": "Specify your location and languages"
+      },
+      "step2": {
+        "title": "Services",
+        "short": "Services",
+        "subtitle": "Select services you can provide"
+      },
+      "step3": {
+        "title": "Service Rates",
+        "short": "Rates",
+        "subtitle": "Specify your service rates"
+      },
+      "step4": {
+        "title": "Documents",
+        "short": "Docs",
+        "subtitle": "Upload your identification documents"
+      },
+      "step5": {
+        "title": "Professional Profile",
+        "short": "Profile",
+        "subtitle": "Write about your experience and specialties"
+      },
+      "step6": {
+        "title": "Final Confirmation",
+        "short": "Confirm",
+        "subtitle": "Review and confirm your information"
+      },
+      "city": "City",
+      "country": "Country",
+      "languages": "Languages",
+      "services": "Services",
+      "pricing": "Pricing",
+      "documents": "Documents",
+      "bio": "Biography",
+      "experience": "Work Experience",
+      "specialties": "Specialties",
+      "cityPlaceholder": "Example: Tehran",
+      "cityHelp": "Enter your main city of operation",
+      "languagesHelp": "Select at least one language",
+      "servicesDescription": "Select services you can provide",
+      "hourly": "Hourly",
+      "commission": "Commission",
+      "commissionRate": "Commission Rate",
+      "hourlyServices": "Hourly Services",
+      "commissionServices": "Commission Services",
+      "perHour": "per hour",
+      "ofTransaction": "of transaction amount",
+      "noHourlyServices": "No hourly services selected",
+      "noCommissionServices": "No commission services selected",
+      "selectHourlyServices": "Select hourly services from previous step",
+      "selectCommissionServices": "Select commission services from previous step",
+      "hourlyHelp": "Hourly rate for guiding and translation services",
+      "commissionHelp": "Commission percentage from each transaction",
+      "nationalCard": "National ID Card",
+      "passport": "Passport",
+      "nationalCardHelp": "Clear image of national ID card (both sides)",
+      "passportHelp": "Main page of passport (optional)",
+      "passportOptional": "Optional",
+      "uploadNationalCard": "Upload National ID",
+      "uploadPassport": "Upload Passport",
+      "privacyNote": "Privacy Notice",
+      "privacyDescription": "Your documents are used only for verification and stored with complete security.",
+      "bioDescription": "Write about yourself and your services",
+      "experienceDescription": "Work experience and related background",
+      "specialtiesHelp": "Select your main specialties",
+      "bioPlaceholder": "I am a tour guide with 5 years of experience in tourism...",
+      "experiencePlaceholder": "• 3 years as tour guide at Company A\n• 2 years managing international tours\n• Fluent in English and Turkish",
+      "bioHelp": "Minimum 100 characters",
+      "experienceHelp": "Describe your relevant experiences",
+      "noSpecialties": "No specialties selected",
+      "summary": "Information Summary",
+      "stepXofY": "Step {{current}} of {{total}}",
+      "terms1": "I agree to the",
+      "termsLink": "Terms and Conditions",
+      "terms2": "",
+      "proficiency": "Proficiency Level",
+      "submit": "Final Registration",
+      "previous": "Previous",
+      "next": "Next",
+      "submitting": "Submitting...",
+      "error": "Registration error"
+    },
+
+    "errors": {
+      "fileTooLarge": "File size should not exceed 5MB",
+      "invalidFileType": "File format must be JPG, PNG or PDF",
+      "acceptTerms": "Please accept the terms and conditions"
     }
   }
 }

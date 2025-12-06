@@ -426,9 +426,6 @@
       "description": "Maalesef bu şehirde elçi bulamadık. Başka bir şehir aramayı deneyin."
     },
     "resultsCount": "{{count}} elçi bulundu",
-    "errors": {
-      "loadFailed": "Elçiler yüklenemedi"
-    },
     "about": "Elçi Hakkında",
     "noBio": "Bu elçi henüz bir biyografi yazmamış.",
     "stats": "İstatistikler",
@@ -451,6 +448,101 @@
       "submit": "Talebi Gönder",
       "success": "Talebiniz başarıyla gönderildi",
       "error": "Talep gönderilirken hata oluştu"
+    },
+    "registration": {
+      "title": "Elçi Olarak Kaydol",
+      "subtitle": "Bizimle ortak olun ve turizm hizmetlerinden kazanın",
+      "step1": {
+        "title": "Temel Bilgiler",
+        "short": "Bilgi",
+        "subtitle": "Konumunuzu ve dillerinizi belirtin"
+      },
+      "step2": {
+        "title": "Hizmetler",
+        "short": "Hizmetler",
+        "subtitle": "Sağlayabileceğiniz hizmetleri seçin"
+      },
+      "step3": {
+        "title": "Hizmet Ücretleri",
+        "short": "Ücretler",
+        "subtitle": "Hizmet ücretlerinizi belirtin"
+      },
+      "step4": {
+        "title": "Belgeler",
+        "short": "Belgeler",
+        "subtitle": "Kimlik belgelerinizi yükleyin"
+      },
+      "step5": {
+        "title": "Profesyonel Profil",
+        "short": "Profil",
+        "subtitle": "Deneyiminiz ve uzmanlıklarınız hakkında yazın"
+      },
+      "step6": {
+        "title": "Son Onay",
+        "short": "Onay",
+        "subtitle": "Bilgilerinizi gözden geçirin ve onaylayın"
+      },
+      "city": "Şehir",
+      "country": "Ülke",
+      "languages": "Diller",
+      "services": "Hizmetler",
+      "pricing": "Fiyatlandırma",
+      "documents": "Belgeler",
+      "bio": "Biyografi",
+      "experience": "İş Deneyimi",
+      "specialties": "Uzmanlıklar",
+      "cityPlaceholder": "Örnek: Tahran",
+      "cityHelp": "Ana çalışma şehrinizi girin",
+      "languagesHelp": "En az bir dil seçin",
+      "servicesDescription": "Sağlayabileceğiniz hizmetleri seçin",
+      "hourly": "Saatlik",
+      "commission": "Komisyon",
+      "commissionRate": "Komisyon Oranı",
+      "hourlyServices": "Saatlik Hizmetler",
+      "commissionServices": "Komisyonlu Hizmetler",
+      "perHour": "saat başına",
+      "ofTransaction": "işlem tutarından",
+      "noHourlyServices": "Saatlik hizmet seçilmedi",
+      "noCommissionServices": "Komisyonlu hizmet seçilmedi",
+      "selectHourlyServices": "Önceki adımdan saatlik hizmetleri seçin",
+      "selectCommissionServices": "Önceki adımdan komisyonlu hizmetleri seçin",
+      "hourlyHelp": "Rehberlik ve çeviri hizmetleri için saatlik ücret",
+      "commissionHelp": "Her işlemden komisyon yüzdesi",
+      "nationalCard": "Kimlik Kartı",
+      "passport": "Pasaport",
+      "nationalCardHelp": "Kimlik kartının net görüntüsü (her iki taraf)",
+      "passportHelp": "Pasaportun ana sayfası (isteğe bağlı)",
+      "passportOptional": "İsteğe bağlı",
+      "uploadNationalCard": "Kimlik Kartını Yükle",
+      "uploadPassport": "Pasaportu Yükle",
+      "privacyNote": "Gizlilik Bildirimi",
+      "privacyDescription": "Belgeleriniz yalnızca doğrulama için kullanılır ve tam güvenlikle saklanır.",
+      "bioDescription": "Kendiniz ve hizmetleriniz hakkında yazın",
+      "experienceDescription": "İş deneyimi ve ilgili geçmiş",
+      "specialtiesHelp": "Ana uzmanlıklarınızı seçin",
+      "bioPlaceholder": "5 yıllık turizm deneyimine sahip bir tur rehberiyim...",
+      "experiencePlaceholder": "• A Şirketinde 3 yıl tur rehberi olarak\n• 2 yıl uluslararası turların yönetimi\n• İngilizce ve Türkçe'ye tam hakimiyet",
+      "bioHelp": "En az 100 karakter",
+      "experienceHelp": "İlgili deneyimlerinizi anlatın",
+      "noSpecialties": "Uzmanlık seçilmedi",
+      "summary": "Bilgi Özeti",
+      "stepXofY": "{{current}} / {{total}} Adım",
+      "terms1": "Kabul ediyorum",
+      "termsLink": "Şartlar ve Koşullar",
+      "terms2": "",
+      "proficiency": "Yeterlilik Seviyesi",
+      "submit": "Son Kayıt",
+      "previous": "Önceki",
+      "next": "Sonraki",
+      "submitting": "Kaydediliyor...",
+      "error": "Kayıt hatası"
+    },
+
+    "errors": {
+      "fileTooLarge": "Dosya boyutu 5MB'ı geçmemelidir",
+      "invalidFileType": "Dosya formatı JPG, PNG veya PDF olmalıdır",
+      "acceptTerms": "Lütfen şartlar ve koşulları kabul edin",
+      "loadFailed": "Elçiler yüklenemedi"
     }
   }
 }
