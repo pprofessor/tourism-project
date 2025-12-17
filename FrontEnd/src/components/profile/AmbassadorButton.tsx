@@ -91,21 +91,6 @@ const AmbassadorButton: React.FC = () => {
               </p>
             </div>
           </div>
-          <div className="text-right">
-            <div
-              className={`px-3 py-1 rounded-full text-sm font-medium ${
-                isDark
-                  ? "bg-blue-900 text-blue-300"
-                  : "bg-blue-100 text-blue-800"
-              }`}
-            >
-              {t("profile.ambassador.earnUpTo") || "درآمد تا ۵ میلیون"}
-            </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-              {t("profile.ambassador.flexibleHours") ||
-                "ساعات کاری انعطاف‌پذیر"}
-            </p>
-          </div>
         </div>
 
         <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -113,30 +98,30 @@ const AmbassadorButton: React.FC = () => {
             <span
               className={`w-2 h-2 rounded-full ${
                 isDark ? "bg-green-500" : "bg-green-400"
-              }`}
+              } ` }
             ></span>
             <span className="text-sm">
-              {t("profile.ambassador.benefit1") || "درآمد از هر تراکنش"}
+              { t("profile.ambassador.benefit1") || "درآمد از هر تراکنش"}
             </span>
           </div>
           <div className="flex items-center space-x-2">
             <span
               className={`w-2 h-2 rounded-full ${
                 isDark ? "bg-green-500" : "bg-green-400"
-              }`}
+              } ` }
             ></span>
             <span className="text-sm">
-              {t("profile.ambassador.benefit2") || "پشتیبانی ۲۴ ساعته"}
+              { t("profile.ambassador.benefit2") || "پشتیبانی ۲۴ ساعته"}
             </span>
           </div>
           <div className="flex items-center space-x-2">
             <span
               className={`w-2 h-2 rounded-full ${
                 isDark ? "bg-green-500" : "bg-green-400"
-              }`}
+              } ` }
             ></span>
             <span className="text-sm">
-              {t("profile.ambassador.benefit3") || "تخفیف‌های ویژه"}
+              { t("profile.ambassador.benefit3") || "تخفیف‌های ویژه"}
             </span>
           </div>
         </div>
