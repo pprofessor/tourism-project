@@ -1,103 +1,233 @@
-/* Leaflet map customization */
-.custom-marker {
-  background: transparent !important;
-  border: none !important;
+/* AmbassadorRegisterForm.css */
+
+/* Scroll container */
+.max-h-\[80vh\] {
+  max-height: 80vh;
 }
 
-.leaflet-container {
-  font-family: inherit !important;
+/* Custom scrollbar */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
 }
 
-.leaflet-popup-content {
-  font-family: inherit !important;
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
 }
 
-/* Step container animations */
+.dark .overflow-y-auto::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.dark .overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+.dark .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Language card improvements - پرچم واضح */
+.language-card {
+  min-height: 140px;
+  position: relative;
+}
+
+.language-card .native-name {
+  font-weight: bold;
+  font-size: 1.125rem;
+  line-height: 1.2;
+  position: relative;
+  z-index: 2;
+}
+
+.language-card .translated-name {
+  font-size: 0.875rem;
+  color: #6b7280;
+  position: relative;
+  z-index: 2;
+}
+
+.dark .language-card .translated-name {
+  color: #9ca3af;
+}
+
+/* Flag background improvements - کاملاً واضح */
+.flag-background {
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Overlay برای واضح‌تر کردن متن روی پرچم */
+.language-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.95));
+  z-index: 1;
+  border-radius: 0.75rem;
+}
+
+.dark .language-card::before {
+  background: linear-gradient(rgba(30, 41, 59, 0.9), rgba(30, 41, 59, 0.95));
+}
+
+/* وقتی زبان انتخاب شده است */
+.language-card.border-blue-500::before,
+.language-card.border-blue-400::before {
+  background: linear-gradient(rgba(239, 246, 255, 0.95), rgba(219, 234, 254, 0.95));
+}
+
+.dark .language-card.border-blue-500::before,
+.dark .language-card.border-blue-400::before {
+  background: linear-gradient(rgba(30, 58, 138, 0.9), rgba(30, 64, 175, 0.95));
+}
+
+/* Responsive improvements */
+@media (max-width: 640px) {
+  .language-card {
+    min-height: 120px;
+  }
+
+  .language-card .native-name {
+    font-size: 1rem;
+  }
+}
+
+/* Smooth transitions */
 .step-container {
-  animation: fadeIn 0.5s ease-in-out;
+  animation: fadeIn 0.3s ease-out;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-/* Language card hover effects */
-.language-card {
-  transition: all 0.3s ease;
-}
-
-.language-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-}
-
-/* Range slider customization */
-input[type="range"] {
+/* Range slider styling */
+.range-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  height: 6px;
-  border-radius: 3px;
-  background: #e5e7eb;
-  outline: none;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
+  appearance: none;
   width: 20px;
   height: 20px;
   border-radius: 50%;
   background: #3b82f6;
   cursor: pointer;
-  border: 3px solid white;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-input[type="range"]::-moz-range-thumb {
+.dark .range-slider::-webkit-slider-thumb {
+  background: #60a5fa;
+  border-color: #1f2937;
+}
+
+.range-slider::-moz-range-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
   background: #3b82f6;
   cursor: pointer;
-  border: 3px solid white;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dark .range-slider::-moz-range-thumb {
+  background: #60a5fa;
+  border-color: #1f2937;
+}
+
+/* Loading animation */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: .5;
+  }
 }
 
 /* RTL support */
-[dir="rtl"] .leaflet-control-container .leaflet-left {
-  left: auto;
-  right: 10px;
+[dir="rtl"] .flex-row-reverse {
+  flex-direction: row-reverse;
 }
 
-[dir="rtl"] .leaflet-control-container .leaflet-right {
-  right: auto;
-  left: 10px;
+[dir="rtl"] .text-left {
+  text-align: right;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .step-container {
-    padding: 1rem;
+[dir="rtl"] .mr-2 {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+[dir="rtl"] .pr-6 {
+  padding-right: 0;
+  padding-left: 1.5rem;
+}
+
+/* Form validation styles */
+.text-red-500 {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
   }
 
-  .language-card {
-    padding: 1rem;
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
   }
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .language-card {
-    background-color: #1f2937;
-    border-color: #374151;
-  }
+/* Map container improvements */
+.w-full.h-64.rounded-lg {
+  z-index: 1;
+}
 
-  input[type="range"] {
-    background: #4b5563;
-  }
+/* Ensure text is readable on flag background */
+.language-card>div {
+  position: relative;
+  z-index: 2;
 }

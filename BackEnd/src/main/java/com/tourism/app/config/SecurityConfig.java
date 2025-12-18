@@ -40,8 +40,11 @@ public class SecurityConfig {
                                 "/api/slider/**",
                                 "/api/media/**",
                                 "/api/placeholder/**",
-                                "/api/locations/**", // <-- اضافه شده
-                                "/api/ambassadors/register", // <-- فقط ثبت‌نام عمومی
+                                "/api/locations/**",
+                                "/api/ambassadors/my-registration",
+                                "/api/ambassadors/save-draft", 
+                                "/api/ambassadors/submit-registration",
+                                "/api/ambassadors/register",
                                 "/uploads/**",
                                 "/media/**",
                                 "/error",

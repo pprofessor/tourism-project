@@ -35,6 +35,27 @@ export interface Ambassador {
   updatedAt: string;
 }
 
+export interface AmbassadorRequest {
+  id: number;
+  ambassadorId: number;
+  serviceType: string;
+  startTime: string;
+  endTime: string;
+  notes?: string;
+  status: string;
+  // سایر فیلدها...
+}
+
+export interface SearchParams {
+  city?: string;
+  country?: string;
+  minRate?: number;
+  maxRate?: number;
+  minRating?: number;
+  services?: string[];
+  languages?: string[];
+}
+
 export interface AmbassadorRegistrationData {
   // Step 1
   country: string;
