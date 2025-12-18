@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import "./i18n/config";
 import "./index.css";
@@ -11,7 +10,6 @@ const registerServiceWorker = async (): Promise<void> => {
       const registration = await navigator.serviceWorker.register("/sw.js", {
         scope: "/",
       });
-
     } catch (error) {
       console.error("❌ خطا در ثبت Service Worker:", error);
     }

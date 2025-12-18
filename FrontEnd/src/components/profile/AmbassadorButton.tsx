@@ -1,8 +1,15 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../../context/ThemeContext";
-import BecomeAmbassadorForm from "../Ambassador/BecomeAmbassadorForm";
-const AmbassadorButton: React.FC = () => {
+import AmbassadorRegisterForm from "../Ambassador/";
+
+interface AmbassadorButtonProps {
+  onRegistrationSuccess?: () => void;
+}
+
+const AmbassadorButton: React.FC<AmbassadorButtonProps> = ({
+  onRegistrationSuccess,
+}) => {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -13,9 +20,15 @@ const AmbassadorButton: React.FC = () => {
   const handleSuccess = () => {
     setIsAmbassador(true);
     setShowForm(false);
+
+    // فراخوانی callback اگر وجود داشت
+    if (onRegistrationSuccess) {
+      onRegistrationSuccess();
+    }
+
     alert(
       t("profile.ambassador.registrationSuccess") ||
-        "ثبت‌نام شما با موفقیت انجام شد!"
+        "درخواست شما با موفقیت ثبت شد و در حال بررسی است!"
     );
   };
 
@@ -98,30 +111,30 @@ const AmbassadorButton: React.FC = () => {
             <span
               className={`w-2 h-2 rounded-full ${
                 isDark ? "bg-green-500" : "bg-green-400"
-              } ` }
+              }`}
             ></span>
             <span className="text-sm">
-              { t("profile.ambassador.benefit1") || "درآمد از هر تراکنش"}
+              {t("profile.ambassador.benefit1") || "درآمد از هر تراکنش"}
             </span>
           </div>
           <div className="flex items-center space-x-2">
             <span
               className={`w-2 h-2 rounded-full ${
                 isDark ? "bg-green-500" : "bg-green-400"
-              } ` }
+              }`}
             ></span>
             <span className="text-sm">
-              { t("profile.ambassador.benefit2") || "پشتیبانی ۲۴ ساعته"}
+              {t("profile.ambassador.benefit2") || "پشتیبانی ۲۴ ساعته"}
             </span>
           </div>
           <div className="flex items-center space-x-2">
             <span
               className={`w-2 h-2 rounded-full ${
                 isDark ? "bg-green-500" : "bg-green-400"
-              } ` }
+              }`}
             ></span>
             <span className="text-sm">
-              { t("profile.ambassador.benefit3") || "تخفیف‌های ویژه"}
+              {t("profile.ambassador.benefit3") || "تخفیف‌های ویژه"}
             </span>
           </div>
         </div>
@@ -136,7 +149,7 @@ const AmbassadorButton: React.FC = () => {
             className="w-full max-w-6xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <BecomeAmbassadorForm
+            <AmbassadorRegisterForm
               onSuccess={handleSuccess}
               onCancel={() => setShowForm(false)}
             />

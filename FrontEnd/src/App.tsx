@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import InstallPrompt from "./components/InstallPrompt";
 import LoginModal from "./components/LoginModal";
-import SetInitialPassword from "./components/SetInitialPassword";
 import "./App.css";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";

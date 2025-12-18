@@ -73,6 +73,11 @@ public class AmbassadorService {
                 .orElseThrow(() -> new RuntimeException("Ambassador not found for this user"));
     }
 
+    // در AmbassadorService
+    public Optional<Ambassador> findByUser(User user) {
+        return ambassadorRepository.findByUser(user);
+    }
+
     // جستجوی سفیران
     public List<Ambassador> searchAmbassadors(
             String city,

@@ -11,6 +11,7 @@ import { useTheme } from "../context/ThemeContext";
 import ChangePassword from "../components/ChangePassword";
 import SetInitialPassword from "../components/SetInitialPassword";
 import AmbassadorButton from "../components/profile/AmbassadorButton";
+import { ambassadorService } from "../services/ambassadorService";
 
 // انواع داده‌ها برای type safety
 interface UserData {
@@ -51,6 +52,11 @@ const Profile: React.FC = () => {
   const { theme } = useTheme();
   const { t } = useTranslation();
   const [showPasswordSetup, setShowPasswordSetup] = useState(false);
+  const [ambassadorStatus, setAmbassadorStatus] = useState<
+    "NOT_REGISTERED" | "PENDING" | "APPROVED" | "REJECTED" | null
+  >(null);
+  const [isLoadingAmbassadorStatus, setIsLoadingAmbassadorStatus] =
+    useState(false);
 
   // Hooks
   const location = useLocation();
@@ -155,7 +161,8 @@ const Profile: React.FC = () => {
     [user.firstName, user.lastName, t]
   );
 
-  // Effects
+  //   Use Effects
+
   useEffect(() => {
     const loadUserData = async () => {
       try {
@@ -178,6 +185,29 @@ const Profile: React.FC = () => {
 
     loadUserData();
   }, [t, sanitizeUserData]);
+
+  // دریافت وضعیت سفیر کاربر
+  useEffect(() => {
+    const fetchAmbassadorStatus = async () => {
+      if (!user.id) return;
+
+      setIsLoadingAmbassadorStatus(true);
+      try {
+        const statusData =
+          await ambassadorService.getCurrentUserAmbassadorStatus();
+        setAmbassadorStatus(statusData.status);
+      } catch (error) {
+        console.error("Failed to fetch ambassador status:", error);
+        setAmbassadorStatus("NOT_REGISTERED");
+      } finally {
+        setIsLoadingAmbassadorStatus(false);
+      }
+    };
+
+    if (user.id && !isLoading) {
+      fetchAmbassadorStatus();
+    }
+  }, [user.id, isLoading]);
 
   // Hash detection برای تب‌ها
   useEffect(() => {
@@ -621,13 +651,20 @@ const Profile: React.FC = () => {
 
             {activeTab === "ambassador" && (
               <div className="grid grid-cols-1 gap-6" id="tab-ambassador">
-                {/* اینجا صفحه سفیر را ایجاد می‌کنیم */}
-                {user.userType === "AMBASSADOR" ? (
-                  // کاربر قبلاً سفیر شده
+                {isLoadingAmbassadorStatus ? (
+                  // حالت لودینگ
+                  <div className="text-center py-12">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <p className="mt-2 text-gray-600 dark:text-gray-300">
+                      در حال دریافت وضعیت سفیر...
+                    </p>
+                  </div>
+                ) : ambassadorStatus === "APPROVED" ? (
+                  // سفیر تایید شده
                   <div className="text-center py-12">
                     <div className="text-6xl mb-4">🎉</div>
                     <h3 className="text-2xl font-bold mb-2">
-                      شما یک سفیر هستید!
+                      شما یک سفیر تایید شده هستید!
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300 mb-6">
                       به پنل مدیریت سفیران خوش آمدید.
@@ -641,10 +678,79 @@ const Profile: React.FC = () => {
                       ورود به پنل سفیر
                     </button>
                   </div>
+                ) : ambassadorStatus === "PENDING" ? (
+                  // در انتظار تایید
+                  <div
+                    className={`p-6 rounded-2xl border ${
+                      theme === "dark"
+                        ? "bg-yellow-900/20 border-yellow-700"
+                        : "bg-yellow-50 border-yellow-200"
+                    }`}
+                  >
+                    <div className="flex items-center justify-center mb-4">
+                      <div
+                        className={`p-3 rounded-full ${
+                          theme === "dark" ? "bg-yellow-800" : "bg-yellow-100"
+                        }`}
+                      >
+                        <span className="text-yellow-500 text-2xl">⏳</span>
+                      </div>
+                    </div>
+                    <h3 className="text-xl font-bold text-center mb-2">
+                      درخواست شما در حال بررسی است
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-center mb-4">
+                      اطلاعات شما برای تایید ارسال شده است. معمولاً این فرآیند
+                      ۲۴ تا ۴۸ ساعت کاری طول می‌کشد. نتیجه از طریق ایمیل و پنل
+                      کاربری به شما اطلاع داده خواهد شد.
+                    </p>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 text-center">
+                      وضعیت: در انتظار تایید ادمین
+                    </div>
+                  </div>
+                ) : ambassadorStatus === "REJECTED" ? (
+                  // رد شده
+                  <div
+                    className={`p-6 rounded-2xl border ${
+                      theme === "dark"
+                        ? "bg-red-900/20 border-red-700"
+                        : "bg-red-50 border-red-200"
+                    }`}
+                  >
+                    <div className="flex items-center justify-center mb-4">
+                      <div
+                        className={`p-3 rounded-full ${
+                          theme === "dark" ? "bg-red-800" : "bg-red-100"
+                        }`}
+                      >
+                        <span className="text-red-500 text-2xl">✗</span>
+                      </div>
+                    </div>
+                    <h3 className="text-xl font-bold text-center mb-2 text-red-600 dark:text-red-400">
+                      درخواست شما رد شد
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-center mb-4">
+                      متأسفانه درخواست شما به عنوان سفیر پذیرفته نشد. برای
+                      اطلاعات بیشتر لطفاً با پشتیبانی تماس بگیرید.
+                    </p>
+                    <div className="text-center">
+                      <button
+                        onClick={() => (window.location.href = "/support")}
+                        className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition"
+                      >
+                        تماس با پشتیبانی
+                      </button>
+                    </div>
+                  </div>
                 ) : (
-                  // کاربر هنوز سفیر نشده
+                  // هنوز ثبت‌نام نکرده (NOT_REGISTERED یا null)
                   <div>
-                    <AmbassadorButton />
+                    <AmbassadorButton
+                      onRegistrationSuccess={() => {
+                        // بعد از ثبت‌نام موفق، وضعیت را به PENDING تغییر بده
+                        setAmbassadorStatus("PENDING");
+                      }}
+                    />
                   </div>
                 )}
               </div>

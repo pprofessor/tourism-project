@@ -40,7 +40,8 @@ public class SecurityConfig {
                                 "/api/slider/**",
                                 "/api/media/**",
                                 "/api/placeholder/**",
-                                "/api/ambassadors/**",
+                                "/api/locations/**", // <-- اضافه شده
+                                "/api/ambassadors/register", // <-- فقط ثبت‌نام عمومی
                                 "/uploads/**",
                                 "/media/**",
                                 "/error",
@@ -51,6 +52,9 @@ public class SecurityConfig {
 
                         // endpointهای مدیریتی - نیاز به احراز هویت
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // سایر endpointهای سفیران نیاز به احراز هویت دارند
+                        .requestMatchers("/api/ambassadors/**").authenticated()
 
                         // سایر درخواست‌ها نیاز به احراز هویت دارند
                         .anyRequest().authenticated())

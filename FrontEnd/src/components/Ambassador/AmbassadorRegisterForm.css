@@ -1,0 +1,103 @@
+/* Leaflet map customization */
+.custom-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.leaflet-container {
+  font-family: inherit !important;
+}
+
+.leaflet-popup-content {
+  font-family: inherit !important;
+}
+
+/* Step container animations */
+.step-container {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Language card hover effects */
+.language-card {
+  transition: all 0.3s ease;
+}
+
+.language-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Range slider customization */
+input[type="range"] {
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: #e5e7eb;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: 3px solid white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: 3px solid white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* RTL support */
+[dir="rtl"] .leaflet-control-container .leaflet-left {
+  left: auto;
+  right: 10px;
+}
+
+[dir="rtl"] .leaflet-control-container .leaflet-right {
+  right: auto;
+  left: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .step-container {
+    padding: 1rem;
+  }
+
+  .language-card {
+    padding: 1rem;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .language-card {
+    background-color: #1f2937;
+    border-color: #374151;
+  }
+
+  input[type="range"] {
+    background: #4b5563;
+  }
+}
