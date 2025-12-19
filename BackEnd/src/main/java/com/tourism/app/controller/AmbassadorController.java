@@ -4,6 +4,7 @@ import com.tourism.app.dto.AmbassadorRegistrationDTO;
 import com.tourism.app.entity.Ambassador;
 import com.tourism.app.entity.AmbassadorRequest;
 import com.tourism.app.model.User;
+import com.tourism.app.repository.UserRepository;
 import com.tourism.app.service.AmbassadorRegistrationService;
 import com.tourism.app.service.AmbassadorRequestService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/ambassadors")
@@ -23,6 +25,7 @@ public class AmbassadorController {
 
     private final AmbassadorRegistrationService ambassadorService;
     private final AmbassadorRequestService requestService;
+    private final UserRepository userRepository;
     private final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     // ============ NEW REGISTRATION ENDPOINTS ============
@@ -38,12 +41,25 @@ public class AmbassadorController {
 
     @PostMapping("/save-draft")
     public ResponseEntity<?> saveRegistrationDraft(
-            @AuthenticationPrincipal User currentUser,
+            Principal principal,
             @RequestBody AmbassadorRegistrationDTO dto) {
+
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "User not authenticated"));
+        }
+
         try {
+            // 🔥 user واقعی را از دیتابیس بگیر
+            String username = principal.getName();
+            Optional<User> userOpt = userRepository.findByUsername(username);
+            if (userOpt.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("error", "User not found"));
+            }
+
+            User currentUser = userOpt.get();
             return ResponseEntity.ok(ambassadorService.saveDraft(currentUser, dto));
-        } catch (IllegalArgumentException e) {
-            return errorResponse("Validation error", e);
         } catch (Exception e) {
             return errorResponse("Failed to save draft", e);
         }
@@ -51,12 +67,25 @@ public class AmbassadorController {
 
     @PostMapping("/submit-registration")
     public ResponseEntity<?> submitRegistration(
-            @AuthenticationPrincipal User currentUser,
+            Principal principal,
             @RequestBody AmbassadorRegistrationDTO dto) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "User not authenticated"));
+        }
+
         try {
+            // user واقعی را از دیتابیس بگیر
+            String username = principal.getName();
+            Optional<User> userOpt = userRepository.findByUsername(username);
+            if (userOpt.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("error", "User not found"));
+            }
+
+            User currentUser = userOpt.get();
+
             return ResponseEntity.ok(ambassadorService.submitRegistration(currentUser, dto));
-        } catch (IllegalArgumentException e) {
-            return errorResponse("Validation error", e);
         } catch (Exception e) {
             return errorResponse("Failed to submit registration", e);
         }

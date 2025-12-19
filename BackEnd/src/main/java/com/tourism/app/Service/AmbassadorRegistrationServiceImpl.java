@@ -4,10 +4,11 @@ import com.tourism.app.dto.AmbassadorRegistrationDTO;
 import com.tourism.app.dto.AmbassadorResponseDTO;
 import com.tourism.app.entity.Ambassador;
 import com.tourism.app.entity.AmbassadorRequest;
-import com.tourism.app.entity.AmbassadorRequest.Status;
 import com.tourism.app.model.User;
 import com.tourism.app.repository.AmbassadorRepository;
 import com.tourism.app.repository.AmbassadorRequestRepository;
+import com.tourism.app.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ public class AmbassadorRegistrationServiceImpl implements AmbassadorRegistration
 
     private final AmbassadorRepository ambassadorRepository;
     private final AmbassadorRequestRepository requestRepository;
+    private final UserRepository userRepository;
 
     // ============ NEW REGISTRATION METHODS ============
 
@@ -47,6 +49,7 @@ public class AmbassadorRegistrationServiceImpl implements AmbassadorRegistration
 
     @Override
     public Map<String, Object> saveDraft(User user, AmbassadorRegistrationDTO dto) {
+        System.out.println("=== SAVE DRAFT DEBUG START ===");
         // اعتبارسنجی
         if (dto.getCurrentStep() == null || dto.getCurrentStep() < 1 || dto.getCurrentStep() > 5) {
             throw new IllegalArgumentException("currentStep must be between 1 and 5");
@@ -54,15 +57,23 @@ public class AmbassadorRegistrationServiceImpl implements AmbassadorRegistration
 
         // پیدا کردن یا ایجاد سفیر
         Ambassador ambassador = ambassadorRepository.findByUser(user)
-                .orElseGet(() -> Ambassador.builder()
-                        .user(user)
-                        .status(Ambassador.AmbassadorStatus.DRAFT)
-                        .registrationStep(1)
-                        .isAvailable(false)
-                        .isVerified(false)
-                        .rating(0.0)
-                        .completedTasks(0)
-                        .build());
+                .orElseGet(() -> {
+                    User managedUser = userRepository.findById(user.getId())
+                            .orElseThrow(() -> new RuntimeException("User not found in database"));
+
+                    Ambassador newAmb = Ambassador.builder()
+                            .user(managedUser) // ✅ استفاده از managed user
+                            .status(Ambassador.AmbassadorStatus.DRAFT)
+                            .registrationStep(1)
+                            .isAvailable(false)
+                            .isVerified(false)
+                            .rating(0.0)
+                            .completedTasks(0)
+                            .build();
+
+                    System.out.println("New ambassador user ID: " + newAmb.getUser().getId());
+                    return newAmb;
+                });
 
         // به‌روزرسانی داده‌ها بر اساس مرحله
         updateAmbassadorFromDTO(ambassador, dto);
@@ -75,8 +86,10 @@ public class AmbassadorRegistrationServiceImpl implements AmbassadorRegistration
             ambassador.setStatus(Ambassador.AmbassadorStatus.PENDING_REVIEW);
         }
 
-        ambassadorRepository.save(ambassador);
+        System.out.println("Ambassador status: " + ambassador.getStatus());
 
+        // ذخیره
+        ambassadorRepository.save(ambassador);
         return Map.of(
                 "success", true,
                 "message", "Draft saved successfully",
@@ -87,19 +100,35 @@ public class AmbassadorRegistrationServiceImpl implements AmbassadorRegistration
 
     @Override
     public Map<String, Object> submitRegistration(User user, AmbassadorRegistrationDTO dto) {
+        System.out.println("=== VALIDATION CHECK ===");
+        System.out.println("Step 1 complete: " + dto.isStep1Complete());
+        System.out.println("Step 2 complete: " + dto.isStep2Complete());
+        System.out.println("Step 3 complete: " + dto.isStep3Complete());
+        System.out.println("Step 4 complete: " + dto.isStep4Complete());
+        System.out.println("Step 5 complete: " + dto.isStep5Complete());
+        System.out.println("All complete: " + dto.isComplete());
+
         // بررسی کامل بودن تمام مراحل
         if (!dto.isComplete()) {
             throw new IllegalArgumentException("Please complete all steps before submission");
         }
 
+        // 🔥 همیشه ambassador موجود را بگیر، جدید نساز
         Optional<Ambassador> ambassadorOpt = ambassadorRepository.findByUser(user);
+        System.out.println("Found existing ambassador: " + ambassadorOpt.isPresent());
+
         Ambassador ambassador;
 
         if (ambassadorOpt.isPresent()) {
             ambassador = ambassadorOpt.get();
+            System.out.println("Updating existing ambassador ID: " + ambassador.getId());
             updateAmbassadorFromDTO(ambassador, dto);
         } else {
-            // ایجاد سفیر جدید
+            // فقط اگر واقعاً وجود نداشت، جدید بساز
+            System.out.println("Creating NEW ambassador (should not happen!)");
+            System.out.println("User object in submitRegistration: " + user);
+            System.out.println("User ID in submitRegistration: " + user.getId());
+
             ambassador = createAmbassadorFromDTO(user, dto);
         }
 
@@ -120,7 +149,6 @@ public class AmbassadorRegistrationServiceImpl implements AmbassadorRegistration
     // ============ HELPER METHODS ============
 
     private void updateAmbassadorFromDTO(Ambassador ambassador, AmbassadorRegistrationDTO dto) {
-        // Step 1: Location
         if (dto.getCountry() != null)
             ambassador.setCountry(dto.getCountry());
         if (dto.getCity() != null)
@@ -146,8 +174,6 @@ public class AmbassadorRegistrationServiceImpl implements AmbassadorRegistration
             ambassador.setServices(dto.getServices());
         if (dto.getBio() != null)
             ambassador.setBio(dto.getBio());
-        if (dto.getWorkExperience() != null)
-            ambassador.setWorkExperience(dto.getWorkExperience());
 
         // Step 4: Documents
         if (dto.getVideoSelfieUrl() != null)
@@ -160,6 +186,13 @@ public class AmbassadorRegistrationServiceImpl implements AmbassadorRegistration
     }
 
     private Ambassador createAmbassadorFromDTO(User user, AmbassadorRegistrationDTO dto) {
+        System.out.println("=== CREATE AMBASSADOR FROM DTO ===");
+        System.out.println("Parameter user: " + user);
+        System.out.println("Parameter user ID: " + (user != null ? user.getId() : "NULL"));
+
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null when creating ambassador");
+        }
         Ambassador ambassador = Ambassador.builder()
                 .user(user)
                 .country(dto.getCountry())
@@ -167,7 +200,6 @@ public class AmbassadorRegistrationServiceImpl implements AmbassadorRegistration
                 .address(dto.getAddress())
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())
-                .workExperience(dto.getWorkExperience())
                 .bio(dto.getBio())
                 .videoSelfieUrl(dto.getVideoSelfieUrl())
                 .agreementAccepted(dto.getAgreementAccepted())

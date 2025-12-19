@@ -1,11 +1,33 @@
 /* AmbassadorRegisterForm.css */
 
-/* Scroll container */
+/* ============ VARIABLES & BASE ============ */
+:root {
+  --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+  --primary-gradient-dark: linear-gradient(135deg, #1d4ed8 0%, #4f46e5 100%);
+  --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --error-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-medium: 0 6px 30px rgba(0, 0, 0, 0.12);
+  --shadow-hard: 0 10px 40px rgba(0, 0, 0, 0.15);
+  --transition-fast: 0.2s ease;
+  --transition-medium: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
+.dark {
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.25);
+  --shadow-medium: 0 6px 30px rgba(0, 0, 0, 0.35);
+  --shadow-hard: 0 10px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* ============ SCROLLBAR STYLING ============ */
+
+/* Scroll container height */
 .max-h-\[80vh\] {
   max-height: 80vh;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar for WebKit browsers */
 .overflow-y-auto::-webkit-scrollbar {
   width: 8px;
 }
@@ -22,6 +44,7 @@
 .overflow-y-auto::-webkit-scrollbar-thumb {
   background: #c1c1c1;
   border-radius: 4px;
+  transition: background var(--transition-medium);
 }
 
 .dark .overflow-y-auto::-webkit-scrollbar-thumb {
@@ -36,39 +59,61 @@
   background: #6b7280;
 }
 
-/* Language card improvements - پرچم واضح */
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+.dark * {
+  scrollbar-color: #4b5563 #374151;
+}
+
+/* ============ LANGUAGE CARDS ============ */
+
+/* Base language card styling - بدون چک‌باکس و ارتفاع ثابت */
 .language-card {
   min-height: 140px;
   position: relative;
+  cursor: pointer;
+  transition: all var(--transition-medium);
+  border-radius: 16px;
+  /* گوشه‌های گرد */
+  overflow: hidden;
 }
 
+/* متن اصلی زبان - فقط یک عبارت نمایش داده شود */
 .language-card .native-name {
-  font-weight: bold;
+  font-weight: 700;
   font-size: 1.125rem;
   line-height: 1.2;
   position: relative;
-  z-index: 2;
+  z-index: 10;
+  margin-bottom: 0.5rem;
+  color: #1f2937;
 }
 
-.language-card .translated-name {
-  font-size: 0.875rem;
-  color: #6b7280;
-  position: relative;
-  z-index: 2;
+.dark .language-card .native-name {
+  color: #f9fafb;
 }
 
-.dark .language-card .translated-name {
-  color: #9ca3af;
+/* Remove checkbox styling - چک‌باکس حذف شده */
+.language-card input[type="checkbox"] {
+  display: none;
 }
 
-/* Flag background improvements - کاملاً واضح */
-.flag-background {
-  background-size: cover !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
+/* حالت انتخاب شده */
+.language-card.selected {
+  border-color: #3b82f6;
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-2px);
 }
 
-/* Overlay برای واضح‌تر کردن متن روی پرچم */
+.dark .language-card.selected {
+  border-color: #60a5fa;
+}
+
+/* Overlay برای خوانایی بهتر متن روی پرچم */
 .language-card::before {
   content: '';
   position: absolute;
@@ -76,38 +121,99 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.95));
+  background: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.9));
   z-index: 1;
-  border-radius: 0.75rem;
+  border-radius: 16px;
+  transition: background var(--transition-medium);
 }
 
 .dark .language-card::before {
-  background: linear-gradient(rgba(30, 41, 59, 0.9), rgba(30, 41, 59, 0.95));
+  background: linear-gradient(rgba(30, 41, 59, 0.85), rgba(30, 41, 59, 0.9));
 }
 
-/* وقتی زبان انتخاب شده است */
-.language-card.border-blue-500::before,
-.language-card.border-blue-400::before {
-  background: linear-gradient(rgba(239, 246, 255, 0.95), rgba(219, 234, 254, 0.95));
+/* حالت انتخاب شده - زمینه متفاوت */
+.language-card.selected::before {
+  background: linear-gradient(rgba(219, 234, 254, 0.85), rgba(191, 219, 254, 0.9));
 }
 
-.dark .language-card.border-blue-500::before,
-.dark .language-card.border-blue-400::before {
-  background: linear-gradient(rgba(30, 58, 138, 0.9), rgba(30, 64, 175, 0.95));
+.dark .language-card.selected::before {
+  background: linear-gradient(rgba(30, 58, 138, 0.85), rgba(30, 64, 175, 0.9));
 }
 
-/* Responsive improvements */
-@media (max-width: 640px) {
-  .language-card {
-    min-height: 120px;
-  }
-
-  .language-card .native-name {
-    font-size: 1rem;
-  }
+/* محتوای کارت */
+.language-card>div {
+  position: relative;
+  z-index: 10;
 }
 
-/* Smooth transitions */
+/* ============ SLIDER PROFICIENCY ============ */
+
+/* Range slider container - ارتفاع ثابت برای جلوگیری از جابجایی */
+.proficiency-slider-container {
+  height: 72px;
+  transition: height var(--transition-medium);
+}
+
+/* Range slider styling - بهبود یافته */
+.range-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #e5e7eb;
+  outline: none;
+  cursor: pointer;
+}
+
+.dark .range-slider {
+  background: #4b5563;
+}
+
+/* Thumb styling */
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--primary-gradient);
+  cursor: pointer;
+  border: 3px solid white;
+  box-shadow: var(--shadow-soft);
+  transition: transform var(--transition-fast);
+}
+
+.range-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.dark .range-slider::-webkit-slider-thumb {
+  border-color: #1f2937;
+}
+
+.range-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--primary-gradient);
+  cursor: pointer;
+  border: 3px solid white;
+  box-shadow: var(--shadow-soft);
+  transition: transform var(--transition-fast);
+}
+
+.range-slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+}
+
+.dark .range-slider::-moz-range-thumb {
+  border-color: #1f2937;
+}
+
+/* ============ ANIMATIONS ============ */
+
+/* Fade in animation for step transitions */
 .step-container {
   animation: fadeIn 0.3s ease-out;
 }
@@ -124,40 +230,7 @@
   }
 }
 
-/* Range slider styling */
-.range-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #3b82f6;
-  cursor: pointer;
-  border: 2px solid white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.dark .range-slider::-webkit-slider-thumb {
-  background: #60a5fa;
-  border-color: #1f2937;
-}
-
-.range-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #3b82f6;
-  cursor: pointer;
-  border: 2px solid white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.dark .range-slider::-moz-range-thumb {
-  background: #60a5fa;
-  border-color: #1f2937;
-}
-
-/* Loading animation */
+/* Loading pulse animation */
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
@@ -170,30 +243,11 @@
   }
 
   50% {
-    opacity: .5;
+    opacity: 0.5;
   }
 }
 
-/* RTL support */
-[dir="rtl"] .flex-row-reverse {
-  flex-direction: row-reverse;
-}
-
-[dir="rtl"] .text-left {
-  text-align: right;
-}
-
-[dir="rtl"] .mr-2 {
-  margin-right: 0;
-  margin-left: 0.5rem;
-}
-
-[dir="rtl"] .pr-6 {
-  padding-right: 0;
-  padding-left: 1.5rem;
-}
-
-/* Form validation styles */
+/* Shake animation for form errors */
 .text-red-500 {
   animation: shake 0.5s ease-in-out;
 }
@@ -221,13 +275,585 @@
   }
 }
 
-/* Map container improvements */
-.w-full.h-64.rounded-lg {
+/* Success tick animation */
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 0.5s ease-in-out 2;
+}
+
+/* ============ FORM ELEMENTS ============ */
+
+/* بهبود استایل چک‌باکس توافق‌نامه - زیباتر و مدرن‌تر */
+input[type="checkbox"].agreement-checkbox {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 2px solid #d1d5db;
+  appearance: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.dark input[type="checkbox"].agreement-checkbox {
+  border-color: #4b5563;
+  background-color: #374151;
+}
+
+input[type="checkbox"].agreement-checkbox:checked {
+  background: var(--primary-gradient);
+  border-color: #3b82f6;
+}
+
+.dark input[type="checkbox"].agreement-checkbox:checked {
+  border-color: #60a5fa;
+}
+
+input[type="checkbox"].agreement-checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+/* Toggle switch برای چک‌باکس زیباتر */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+  transition: var(--transition-medium);
+  border-radius: 34px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: var(--transition-medium);
+  border-radius: 50%;
+}
+
+input:checked+.toggle-slider {
+  background: var(--primary-gradient);
+}
+
+input:checked+.toggle-slider:before {
+  transform: translateX(30px);
+}
+
+/* ============ MAP STYLING ============ */
+
+.map-container {
+  position: relative;
+  min-height: 288px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dark .map-container {
+  background: #1f2937;
+}
+
+/* حالت عدم نمایش نقشه
+.map-container.hidden {
+  display: none;
+} */
+
+/* Fallback UI برای وقتی نقشه نمایش داده نمی‌شود */
+.map-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.dark .map-fallback {
+  color: #9ca3af;
+}
+
+/* Leaflet map overrides */
+.leaflet-container {
+  font-family: inherit;
+  direction: ltr;
+  border-radius: 16px;
   z-index: 1;
 }
 
-/* Ensure text is readable on flag background */
-.language-card>div {
+.leaflet-control-attribution {
+  font-size: 10px;
+  padding: 2px 5px;
+}
+
+.leaflet-control-zoom {
+  margin: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+
+/* Dark mode for map */
+.dark .leaflet-container {
+  background-color: #1f2937;
+  color: #f9fafb;
+}
+
+.dark .leaflet-tile {
+  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+}
+
+.dark .leaflet-control-attribution {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #ccc;
+}
+
+/* ============ RESPONSIVE DESIGN ============ */
+
+/* Mobile screens */
+@media (max-width: 640px) {
+  .language-card {
+    min-height: 120px;
+  }
+
+  .language-card .native-name {
+    font-size: 1rem;
+  }
+
+  .proficiency-slider-container {
+    height: 68px;
+  }
+
+  /* تنظیمات شبکه برای موبایل */
+  .grid-cols-1-sm {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  .grid-cols-2-sm {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* کاهش padding در موبایل */
+  .mobile-padding {
+    padding: 1rem;
+  }
+}
+
+/* Tablet screens */
+@media (max-width: 768px) {
+  .grid-cols-2-md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid-cols-3-md {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Small mobile screens */
+@media (max-width: 480px) {
+
+  .grid-cols-4,
+  .grid-cols-3,
+  .grid-cols-2 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  .language-card {
+    min-height: 110px;
+  }
+}
+
+/* ============ RTL SUPPORT ============ */
+
+/* RTL layout adjustments */
+[dir="rtl"] .flex-row-reverse {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .text-left {
+  text-align: right;
+}
+
+[dir="rtl"] .mr-2 {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+[dir="rtl"] .ml-2 {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+
+[dir="rtl"] .pr-6 {
+  padding-right: 0;
+  padding-left: 1.5rem;
+}
+
+[dir="rtl"] .pl-6 {
+  padding-left: 0;
+  padding-right: 1.5rem;
+}
+
+/* RTL برای progress bar */
+[dir="rtl"] .progress-bar-line {
+  transform: scaleX(-1);
+}
+
+/* RTL برای دکمه‌ها */
+[dir="rtl"] .button-icon-left {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+[dir="rtl"] .button-icon-right {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+
+/* ============ UTILITY CLASSES ============ */
+
+/* Border radius utilities */
+.rounded-xl {
+  border-radius: 12px;
+}
+
+.rounded-2xl {
+  border-radius: 16px;
+}
+
+.rounded-3xl {
+  border-radius: 20px;
+}
+
+/* Shadow utilities */
+.shadow-soft {
+  box-shadow: var(--shadow-soft);
+}
+
+.shadow-medium {
+  box-shadow: var(--shadow-medium);
+}
+
+.shadow-hard {
+  box-shadow: var(--shadow-hard);
+}
+
+/* Gradient backgrounds */
+.bg-gradient-primary {
+  background: var(--primary-gradient);
+}
+
+.dark .bg-gradient-primary {
+  background: var(--primary-gradient-dark);
+}
+
+.bg-gradient-success {
+  background: var(--success-gradient);
+}
+
+.bg-gradient-error {
+  background: var(--error-gradient);
+}
+
+/* Transition utilities */
+.transition-fast {
+  transition: all var(--transition-fast);
+}
+
+.transition-medium {
+  transition: all var(--transition-medium);
+}
+
+.transition-slow {
+  transition: all var(--transition-slow);
+}
+
+/* Hover effects */
+.hover-lift {
+  transition: transform var(--transition-medium);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+.hover-scale {
+  transition: transform var(--transition-medium);
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* ============ VIDEO UPLOAD STYLING ============ */
+
+/* Success tick for video upload */
+.video-success-tick {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  background: var(--success-gradient);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bounce 0.5s ease-in-out 2;
+  box-shadow: var(--shadow-medium);
+  z-index: 20;
+}
+
+.video-success-tick svg {
+  width: 20px;
+  height: 20px;
+  color: white;
+}
+
+/* Video preview container */
+.video-preview-container {
+  position: relative;
+  max-width: 100%;
+  margin: 0 auto;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* Video upload zone */
+.video-upload-zone {
+  border: 2px dashed #d1d5db;
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-medium);
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+}
+
+.dark .video-upload-zone {
+  border-color: #4b5563;
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+}
+
+.video-upload-zone:hover {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+}
+
+.dark .video-upload-zone:hover {
+  border-color: #60a5fa;
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+}
+
+/* ============ FORM VALIDATION ============ */
+
+/* Error message styling */
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #dc2626;
+  font-size: 0.875rem;
+  animation: shake 0.5s ease-in-out;
+}
+
+.dark .form-error {
+  background: linear-gradient(135deg, rgba(127, 29, 29, 0.2) 0%, rgba(127, 29, 29, 0.3) 100%);
+  color: #f87171;
+}
+
+/* Success message styling */
+.form-success {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #059669;
+  font-size: 0.875rem;
+}
+
+.dark .form-success {
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.2) 0%, rgba(6, 95, 70, 0.3) 100%);
+  color: #34d399;
+}
+
+/* ============ STEP PROGRESS BAR ============ */
+
+.progress-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 5;
+}
+
+.progress-step-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all var(--transition-medium);
+}
+
+.progress-step.completed .progress-step-circle {
+  background: var(--success-gradient);
+  color: white;
+  box-shadow: var(--shadow-medium);
+}
+
+.progress-step.active .progress-step-circle {
+  background: var(--primary-gradient);
+  color: white;
+  box-shadow: var(--shadow-hard);
+  transform: scale(1.1);
+}
+
+.progress-step.pending .progress-step-circle {
+  background: #e5e7eb;
+  color: #6b7280;
+}
+
+.dark .progress-step.pending .progress-step-circle {
+  background: #374151;
+  color: #9ca3af;
+}
+
+/* ============ ACCESSIBILITY ============ */
+
+/* Focus styles for better accessibility */
+.focus-visible:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+.dark .focus-visible:focus {
+  outline-color: #60a5fa;
+  box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.3);
+}
+
+/* Screen reader only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .language-card {
+    border-width: 2px;
+  }
+
+  .range-slider {
+    height: 8px;
+  }
+
+  .form-error {
+    border: 2px solid #dc2626;
+  }
+
+  .form-success {
+    border: 2px solid #059669;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* حذف overlay ثابت و استفاده از inline styles به جای آن */
+.language-card-background {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.language-card-content {
   position: relative;
   z-index: 2;
+  height: 100%;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.25rem;
+}
+
+/* برای حالت انتخاب شده، متن باید خوانا باشه */
+.language-card-content.selected {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(2px);
+}
+
+.dark .language-card-content.selected {
+  background: rgba(15, 23, 42, 0.15);
+  backdrop-filter: blur(2px);
 }

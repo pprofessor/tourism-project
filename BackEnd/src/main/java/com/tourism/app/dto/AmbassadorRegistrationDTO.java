@@ -19,7 +19,6 @@ public class AmbassadorRegistrationDTO {
     // Step 3
     private List<String> services;
     private String bio;
-    private String workExperience;
 
     // Step 4
     private String videoSelfieUrl;
@@ -52,8 +51,7 @@ public class AmbassadorRegistrationDTO {
     }
 
     public boolean isStep3Complete() {
-        return services != null && !services.isEmpty() &&
-                workExperience != null && !workExperience.trim().isEmpty();
+        return services != null && !services.isEmpty();
     }
 
     public boolean isStep4Complete() {

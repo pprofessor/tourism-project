@@ -57,6 +57,9 @@ export interface SearchParams {
 }
 
 export interface AmbassadorRegistrationData {
+
+  userId?: number;
+
   // Step 1
   country: string;
   city: string;
@@ -70,7 +73,6 @@ export interface AmbassadorRegistrationData {
   // Step 3
   services: string[];
   bio: string;
-  workExperience: string;
 
   // Step 4
   videoSelfieUrl?: string;
@@ -131,23 +133,37 @@ class AmbassadorService {
   }
 
   /**
-   * ذخیره موقت اطلاعات ثبت‌نام
-   */
+ * ذخیره موقت اطلاعات ثبت‌نام
+ */
   async saveDraft(
     data: AmbassadorRegistrationData
   ): Promise<RegistrationResponse> {
+
+    // 🔍 بررسی توکن
+    const token = localStorage.getItem("token");
+
+    // حذف userId از request
+    const { userId, ...requestData } = data;
     const response = await fetch(`${this.baseUrl}/save-draft`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`, // استفاده مستقیم از token
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(requestData),
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to save draft");
+      // خطا را با جزئیات کامل بگیر
+      const errorText = await response.text();
+      console.error('Submit registration error:', errorText);
+
+      try {
+        const error = JSON.parse(errorText);
+        throw new Error(error.message || error.error || "Failed to submit registration");
+      } catch (e) {
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
     }
 
     return await response.json();
@@ -156,24 +172,49 @@ class AmbassadorService {
   /**
    * ارسال نهایی فرم ثبت‌نام
    */
-  async submitRegistration(
-    data: AmbassadorRegistrationData
-  ): Promise<RegistrationResponse> {
-    const response = await fetch(`${this.baseUrl}/submit-registration`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+  async submitRegistration(data: AmbassadorRegistrationData): Promise<RegistrationResponse> {
+    const token = localStorage.getItem("token");
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || "Failed to submit registration");
+    // حذف userId از request
+    const { userId, ...requestData } = data;
+    try {
+      const response = await fetch(`${this.baseUrl}/submit-registration`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      if (!response.ok) {
+        // خطا را با جزئیات کامل بگیر
+        const errorText = await response.text();
+        console.error('Submit registration - Full error:', {
+          status: response.status,
+          statusText: response.statusText,
+          errorText: errorText,
+          url: `${this.baseUrl}/submit-registration`,
+          requestBody: requestData
+        });
+
+        let errorMessage = `HTTP ${response.status}: Failed to submit registration`;
+        try {
+          const error = JSON.parse(errorText);
+          errorMessage = error.message || error.error || errorMessage;
+        } catch (e) {
+          // اگر JSON نبود، خود متن خطا را نشان بده
+          errorMessage = `HTTP ${response.status}: ${errorText}`;
+        }
+
+        throw new Error(errorMessage);
+      }
+
+      return await response.json();
+    } catch (error: any) {
+      console.error('Submit registration - Network or other error:', error);
+      throw error;
     }
-
-    return await response.json();
   }
 
   // ============ LOCATION API ============

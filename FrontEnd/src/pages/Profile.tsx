@@ -309,9 +309,8 @@ const Profile: React.FC = () => {
   if (isLoading) {
     return (
       <div
-        className={`min-h-screen transition-colors duration-300 ${
-          theme === "dark" ? "bg-gray-900" : "bg-gray-50"
-        }`}
+        className={`min-h-screen transition-colors duration-300 ${theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+          }`}
         aria-live="polite"
         aria-label={t("profile.loading")}
       >
@@ -319,18 +318,16 @@ const Profile: React.FC = () => {
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-6xl mx-auto">
             <div
-              className={`rounded-2xl shadow-lg p-8 text-center transition-colors duration-300 ${
-                theme === "dark" ? "bg-gray-800" : "bg-white"
-              }`}
+              className={`rounded-2xl shadow-lg p-8 text-center transition-colors duration-300 ${theme === "dark" ? "bg-gray-800" : "bg-white"
+                }`}
             >
               <div
                 className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"
                 aria-hidden="true"
               ></div>
               <p
-                className={`mt-4 transition-colors duration-300 ${
-                  theme === "dark" ? "text-gray-300" : "text-gray-600"
-                }`}
+                className={`mt-4 transition-colors duration-300 ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                  }`}
               >
                 {t("profile.loading")}
               </p>
@@ -344,9 +341,8 @@ const Profile: React.FC = () => {
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-300 ${
-        theme === "dark" ? "bg-gray-900" : "bg-gray-50"
-      }`}
+      className={`min-h-screen transition-colors duration-300 ${theme === "dark" ? "bg-gray-900" : "bg-gray-50"
+        }`}
       itemScope
       itemType="https://schema.org/Person"
     >
@@ -359,9 +355,8 @@ const Profile: React.FC = () => {
         <div className="max-w-6xl mx-auto">
           {/* هدر صفحه پروفایل */}
           <section
-            className={`rounded-2xl shadow-lg p-6 mb-6 transition-colors duration-300 ${
-              theme === "dark" ? "bg-gray-800" : "bg-white"
-            }`}
+            className={`rounded-2xl shadow-lg p-6 mb-6 transition-colors duration-300 ${theme === "dark" ? "bg-gray-800" : "bg-white"
+              }`}
             aria-labelledby="profile-header"
             itemScope
             itemType="https://schema.org/ProfilePage"
@@ -375,17 +370,15 @@ const Profile: React.FC = () => {
                 <div>
                   <h1
                     id="profile-header"
-                    className={`text-xl font-semibold transition-colors duration-300 ${
-                      theme === "dark" ? "text-white" : "text-gray-800"
-                    }`}
+                    className={`text-xl font-semibold transition-colors duration-300 ${theme === "dark" ? "text-white" : "text-gray-800"
+                      }`}
                     itemProp="name"
                   >
                     {userFullName}
                   </h1>
                   <p
-                    className={`transition-colors duration-300 ${
-                      theme === "dark" ? "text-gray-300" : "text-gray-600"
-                    }`}
+                    className={`transition-colors duration-300 ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                      }`}
                     itemProp="description"
                   >
                     {getUserTypeLabel(user.userType)}
@@ -395,22 +388,20 @@ const Profile: React.FC = () => {
 
               <div className="text-center md:text-right">
                 <p
-                  className={`transition-colors duration-300 ${
-                    theme === "dark" ? "text-gray-300" : "text-gray-600"
-                  }`}
+                  className={`transition-colors duration-300 ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                    }`}
                 >
                   {t("profile.mobileNumber")}
                 </p>
                 <p
-                  className={`font-semibold transition-colors duration-300 ${
-                    theme === "dark" ? "text-white" : "text-gray-800"
-                  }`}
+                  className={`font-semibold transition-colors duration-300 ${theme === "dark" ? "text-white" : "text-gray-800"
+                    }`}
                 >
                   {user.countryCode && user.mobileNumber
                     ? `+${user.countryCode} ${user.mobileNumber}`
                     : user.mobile
-                    ? `${user.mobile.slice(2)} ${user.mobile.slice(0, 2)}+`
-                    : " "}
+                      ? `${user.mobile.slice(2)} ${user.mobile.slice(0, 2)}+`
+                      : " "}
                 </p>
               </div>
             </div>
@@ -418,9 +409,8 @@ const Profile: React.FC = () => {
 
           {/* تب‌های navigation */}
           <nav
-            className={`rounded-2xl shadow-lg p-2 mb-6 transition-colors duration-300 ${
-              theme === "dark" ? "bg-gray-800" : "bg-white"
-            }`}
+            className={`rounded-2xl shadow-lg p-2 mb-6 transition-colors duration-300 ${theme === "dark" ? "bg-gray-800" : "bg-white"
+              }`}
             aria-label={t("profile.tabs.navigation")}
           >
             <div className="flex space-x-2" role="tablist">
@@ -431,13 +421,12 @@ const Profile: React.FC = () => {
                   role="tab"
                   aria-selected={activeTab === tab.id}
                   aria-controls={`tab-${tab.id}`}
-                  className={`flex-1 py-3 px-4 rounded-lg text-center transition-all duration-200 ${
-                    activeTab === tab.id
-                      ? "bg-blue-600 text-white shadow-md transform scale-105"
-                      : theme === "dark"
+                  className={`flex-1 py-3 px-4 rounded-lg text-center transition-all duration-200 ${activeTab === tab.id
+                    ? "bg-blue-600 text-white shadow-md transform scale-105"
+                    : theme === "dark"
                       ? "text-gray-300 hover:bg-gray-700 hover:scale-105"
                       : "text-gray-600 hover:bg-gray-100 hover:scale-105"
-                  }`}
+                    }`}
                 >
                   <span>{tab.icon}</span>
                   <span>{t(tab.translationKey)}</span>{" "}
@@ -490,64 +479,56 @@ const Profile: React.FC = () => {
                 <div className="space-y-6">
                   {/* آمار کاربر */}
                   <section
-                    className={`rounded-2xl shadow-lg p-6 transition-colors duration-300 ${
-                      theme === "dark" ? "bg-gray-800" : "bg-white"
-                    }`}
+                    className={`rounded-2xl shadow-lg p-6 transition-colors duration-300 ${theme === "dark" ? "bg-gray-800" : "bg-white"
+                      }`}
                     aria-labelledby="user-stats"
                   >
                     <h3
                       id="user-stats"
-                      className={`text-lg font-semibold mb-4 transition-colors duration-300 ${
-                        theme === "dark" ? "text-white" : "text-gray-800"
-                      }`}
+                      className={`text-lg font-semibold mb-4 transition-colors duration-300 ${theme === "dark" ? "text-white" : "text-gray-800"
+                        }`}
                     >
                       {t("profile.stats.title")}
                     </h3>
                     <div className="space-y-3">
                       <div className="flex justify-between items-center">
                         <span
-                          className={`text-sm transition-colors duration-300 ${
-                            theme === "dark" ? "text-gray-300" : "text-gray-600"
-                          }`}
+                          className={`text-sm transition-colors duration-300 ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                            }`}
                         >
                           {t("profile.stats.bookings")}
                         </span>
                         <span
-                          className={`font-semibold transition-colors duration-300 ${
-                            theme === "dark" ? "text-white" : "text-gray-800"
-                          }`}
+                          className={`font-semibold transition-colors duration-300 ${theme === "dark" ? "text-white" : "text-gray-800"
+                            }`}
                         >
                           {userStats.bookings}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span
-                          className={`text-sm transition-colors duration-300 ${
-                            theme === "dark" ? "text-gray-300" : "text-gray-600"
-                          }`}
+                          className={`text-sm transition-colors duration-300 ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                            }`}
                         >
                           {t("profile.stats.referrals")}
                         </span>
                         <span
-                          className={`font-semibold transition-colors duration-300 ${
-                            theme === "dark" ? "text-white" : "text-gray-800"
-                          }`}
+                          className={`font-semibold transition-colors duration-300 ${theme === "dark" ? "text-white" : "text-gray-800"
+                            }`}
                         >
                           {userStats.referrals}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span
-                          className={`text-sm transition-colors duration-300 ${
-                            theme === "dark" ? "text-gray-300" : "text-gray-600"
-                          }`}
+                          className={`text-sm transition-colors duration-300 ${theme === "dark" ? "text-gray-300" : "text-gray-600"
+                            }`}
                         >
                           {t("profile.stats.points")}
                         </span>
                         <span
-                          className={`font-semibold transition-colors duration-300 ${
-                            theme === "dark" ? "text-white" : "text-gray-800"
-                          }`}
+                          className={`font-semibold transition-colors duration-300 ${theme === "dark" ? "text-white" : "text-gray-800"
+                            }`}
                         >
                           {userStats.points.toLocaleString()}
                         </span>
@@ -557,16 +538,14 @@ const Profile: React.FC = () => {
 
                   {/* سطح کاربری */}
                   <section
-                    className={`rounded-2xl shadow-lg p-6 transition-colors duration-300 ${
-                      theme === "dark" ? "bg-gray-800" : "bg-white"
-                    }`}
+                    className={`rounded-2xl shadow-lg p-6 transition-colors duration-300 ${theme === "dark" ? "bg-gray-800" : "bg-white"
+                      }`}
                     aria-labelledby="user-level"
                   >
                     <h3
                       id="user-level"
-                      className={`text-lg font-semibold mb-4 transition-colors duration-300 ${
-                        theme === "dark" ? "text-white" : "text-gray-800"
-                      }`}
+                      className={`text-lg font-semibold mb-4 transition-colors duration-300 ${theme === "dark" ? "text-white" : "text-gray-800"
+                        }`}
                     >
                       {t("profile.userLevel.title")}
                     </h3>
@@ -578,17 +557,15 @@ const Profile: React.FC = () => {
                         aria-hidden="true"
                       ></div>
                       <span
-                        className={`transition-colors duration-300 ${
-                          theme === "dark" ? "text-gray-300" : "text-gray-700"
-                        }`}
+                        className={`transition-colors duration-300 ${theme === "dark" ? "text-gray-300" : "text-gray-700"
+                          }`}
                       >
                         {getUserTypeLabel(user.userType)}
                       </span>
                     </div>
                     <p
-                      className={`text-sm mt-2 transition-colors duration-300 ${
-                        theme === "dark" ? "text-gray-400" : "text-gray-500"
-                      }`}
+                      className={`text-sm mt-2 transition-colors duration-300 ${theme === "dark" ? "text-gray-400" : "text-gray-500"
+                        }`}
                     >
                       {getUserTypeDescription(user.userType)}
                     </p>
@@ -596,18 +573,16 @@ const Profile: React.FC = () => {
                   {/* تبلیغ تشویقی سفیر - فقط برای کاربران VERIFIED */}
                   {user.userType === "VERIFIED" && (
                     <section
-                      className={`rounded-2xl shadow-lg p-6 transition-colors duration-300 ${
-                        theme === "dark" ? "bg-gray-800" : "bg-white"
-                      }`}
+                      className={`rounded-2xl shadow-lg p-6 transition-colors duration-300 ${theme === "dark" ? "bg-gray-800" : "bg-white"
+                        }`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
                           <div
-                            className={`p-3 rounded-full ${
-                              theme === "dark"
-                                ? "bg-yellow-900/30"
-                                : "bg-yellow-100"
-                            }`}
+                            className={`p-3 rounded-full ${theme === "dark"
+                              ? "bg-yellow-900/30"
+                              : "bg-yellow-100"
+                              }`}
                           >
                             <span className="text-yellow-500 text-xl">⭐</span>
                           </div>
@@ -622,11 +597,10 @@ const Profile: React.FC = () => {
                         </div>
                         <button
                           onClick={() => handleTabChange("ambassador")}
-                          className={`px-4 py-2 rounded-lg ${
-                            theme === "dark"
-                              ? "bg-yellow-700 hover:bg-yellow-600"
-                              : "bg-yellow-500 hover:bg-yellow-400"
-                          } text-white font-semibold`}
+                          className={`px-4 py-2 rounded-lg ${theme === "dark"
+                            ? "bg-yellow-700 hover:bg-yellow-600"
+                            : "bg-yellow-500 hover:bg-yellow-400"
+                            } text-white font-semibold`}
                         >
                           مشاهده
                         </button>
@@ -681,17 +655,15 @@ const Profile: React.FC = () => {
                 ) : ambassadorStatus === "PENDING" ? (
                   // در انتظار تایید
                   <div
-                    className={`p-6 rounded-2xl border ${
-                      theme === "dark"
-                        ? "bg-yellow-900/20 border-yellow-700"
-                        : "bg-yellow-50 border-yellow-200"
-                    }`}
+                    className={`p-6 rounded-2xl border ${theme === "dark"
+                      ? "bg-yellow-900/20 border-yellow-700"
+                      : "bg-yellow-50 border-yellow-200"
+                      }`}
                   >
                     <div className="flex items-center justify-center mb-4">
                       <div
-                        className={`p-3 rounded-full ${
-                          theme === "dark" ? "bg-yellow-800" : "bg-yellow-100"
-                        }`}
+                        className={`p-3 rounded-full ${theme === "dark" ? "bg-yellow-800" : "bg-yellow-100"
+                          }`}
                       >
                         <span className="text-yellow-500 text-2xl">⏳</span>
                       </div>
@@ -711,17 +683,15 @@ const Profile: React.FC = () => {
                 ) : ambassadorStatus === "REJECTED" ? (
                   // رد شده
                   <div
-                    className={`p-6 rounded-2xl border ${
-                      theme === "dark"
-                        ? "bg-red-900/20 border-red-700"
-                        : "bg-red-50 border-red-200"
-                    }`}
+                    className={`p-6 rounded-2xl border ${theme === "dark"
+                      ? "bg-red-900/20 border-red-700"
+                      : "bg-red-50 border-red-200"
+                      }`}
                   >
                     <div className="flex items-center justify-center mb-4">
                       <div
-                        className={`p-3 rounded-full ${
-                          theme === "dark" ? "bg-red-800" : "bg-red-100"
-                        }`}
+                        className={`p-3 rounded-full ${theme === "dark" ? "bg-red-800" : "bg-red-100"
+                          }`}
                       >
                         <span className="text-red-500 text-2xl">✗</span>
                       </div>
@@ -750,6 +720,7 @@ const Profile: React.FC = () => {
                         // بعد از ثبت‌نام موفق، وضعیت را به PENDING تغییر بده
                         setAmbassadorStatus("PENDING");
                       }}
+                      userId={user.id}
                     />
                   </div>
                 )}
