@@ -676,9 +676,6 @@ const Profile: React.FC = () => {
                       ۲۴ تا ۴۸ ساعت کاری طول می‌کشد. نتیجه از طریق ایمیل و پنل
                       کاربری به شما اطلاع داده خواهد شد.
                     </p>
-                    <div className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                      وضعیت: در انتظار تایید ادمین
-                    </div>
                   </div>
                 ) : ambassadorStatus === "REJECTED" ? (
                   // رد شده

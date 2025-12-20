@@ -228,7 +228,10 @@
       "verified": "سفیر تایید شده",
       "verifiedDescription": "شما به عنوان سفیر تایید شده‌اید",
       "goToDashboard": "ورود به پنل سفیر",
-      "registrationSuccess": "ثبت‌نام شما با موفقیت انجام شد!"
+      "registrationSuccess": "ثبت‌نام شما با موفقیت انجام شد!",
+      "pending": "لطفا منتظر بمونید",
+      "pendingDescription": "ما در حال بازبینی اطلاعات ارسال شما هستیم",
+      "estimatedTime": "این فرآیند ممکنه حداکثر 24 ساعت زمان ببره"
     }
   },
   "home": {
