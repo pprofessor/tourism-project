@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Paper,
@@ -14,7 +14,6 @@ import {
   IconButton,
   Chip,
   Avatar,
-  Tooltip,
   Alert,
   CircularProgress,
   Menu,
@@ -22,25 +21,19 @@ import {
   FormControl,
   InputLabel,
   Select,
-  OutlinedInput,
   SelectChangeEvent,
-  Grid,
   Card,
   CardContent,
   Typography,
   Divider,
-  Badge,
   Stack,
   Snackbar
 } from '@mui/material';
 import {
   Search as SearchIcon,
-  FilterList as FilterIcon,
   Visibility as ViewIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-  CheckCircle as CheckCircleIcon,
-  Cancel as CancelIcon,
   MoreVert as MoreVertIcon,
   Download as DownloadIcon,
   LocationOn as LocationIcon,
@@ -112,7 +105,7 @@ const AmbassadorList: React.FC<AmbassadorListProps> = ({ onSelectAmbassador }) =
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('APPROVED');
   const [countryFilter, setCountryFilter] = useState<string>('');
-  const [cityFilter, setCityFilter] = useState<string>('');
+  // cityFilter حذف شد
 
   // Pagination
   const [page, setPage] = useState<number>(0);
@@ -123,9 +116,6 @@ const AmbassadorList: React.FC<AmbassadorListProps> = ({ onSelectAmbassador }) =
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedAmbassadorId, setSelectedAmbassadorId] = useState<number | null>(null);
 
-  // Filters menu
-  const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null);
-
   // Stats
   const [stats, setStats] = useState({
     total: 0,
@@ -134,13 +124,8 @@ const AmbassadorList: React.FC<AmbassadorListProps> = ({ onSelectAmbassador }) =
     suspended: 0
   });
 
-  // Fetch ambassadors on mount and when filters change
-  useEffect(() => {
-    fetchAmbassadors();
-    fetchStats();
-  }, [page, rowsPerPage, statusFilter, searchTerm]);
-
-  const fetchAmbassadors = async () => {
+  // Fetch ambassadors function with useCallback
+  const fetchAmbassadors = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -151,7 +136,6 @@ const AmbassadorList: React.FC<AmbassadorListProps> = ({ onSelectAmbassador }) =
         search: searchTerm || undefined,
         status: statusFilter,
         country: countryFilter || undefined,
-        city: cityFilter || undefined,
         sortBy: 'createdAt',
         sortOrder: 'desc' as const
       };
@@ -165,8 +149,9 @@ const AmbassadorList: React.FC<AmbassadorListProps> = ({ onSelectAmbassador }) =
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, rowsPerPage, searchTerm, statusFilter, countryFilter]);
 
+  // Fetch stats function
   const fetchStats = async () => {
     try {
       const statsData = await ambassadorService.getStats();
@@ -180,6 +165,12 @@ const AmbassadorList: React.FC<AmbassadorListProps> = ({ onSelectAmbassador }) =
       console.error('Error fetching stats:', err);
     }
   };
+
+  // Fetch ambassadors on mount and when filters change
+  useEffect(() => {
+    fetchAmbassadors();
+    fetchStats();
+  }, [fetchAmbassadors]);
 
   // Handle search
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {

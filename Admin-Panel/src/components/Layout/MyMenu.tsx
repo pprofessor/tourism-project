@@ -12,6 +12,8 @@ import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import MessageIcon from '@mui/icons-material/Message';
 import Badge from '@mui/material/Badge';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 // ============ CONSTANTS & TYPES ============
 interface MenuItemProps {
@@ -34,8 +36,27 @@ const CustomMenuItemLink: React.FC<MenuItemProps> = ({
     <MenuItemLink
       to={to}
       primaryText={
-        <div className="flex items-center justify-between w-full pr-2">
-          <span className="py-1">{primaryText}</span>
+        <Box
+          component="span"
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            pr: 1,
+            boxSizing: 'border-box'
+          }}
+        >
+          <Typography
+            component="span"
+            variant="inherit"
+            sx={{
+              display: 'inline-block',
+              flex: 1
+            }}
+          >
+            {primaryText}
+          </Typography>
           {badgeCount && badgeCount > 0 && (
             <Badge
               badgeContent={badgeCount}
@@ -49,7 +70,7 @@ const CustomMenuItemLink: React.FC<MenuItemProps> = ({
               }}
             />
           )}
-        </div>
+        </Box>
       }
       leftIcon={leftIcon}
       sidebarIsOpen={open}
@@ -141,23 +162,31 @@ const MyMenu = () => {
       }}
     >
       {/* ============ DASHBOARD ============ */}
-      <div className="mb-2 px-3">
-        <CustomMenuItemLink
-          to="/"
-          primaryText="داشبورد"
-          leftIcon={<DashboardIcon />}
-        />
-      </div>
+      <CustomMenuItemLink
+        to="/"
+        primaryText="داشبورد"
+        leftIcon={<DashboardIcon />}
+      />
 
       {/* ============ AMBASSADOR MANAGEMENT SECTION ============ */}
-      <div className="mt-6 mb-3">
-        <div className="px-5 py-3">
-          <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+      <Box sx={{ mt: 3, mb: 2 }}>
+        <Box sx={{ px: 3, py: 2 }}>
+          <Typography
+            component="span"
+            sx={{
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              color: 'text.secondary',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              display: 'block'
+            }}
+          >
             مدیریت سفیران
-          </div>
-        </div>
+          </Typography>
+        </Box>
 
-        <div className="space-y-1 px-3">
+        <Box sx={{ px: 2 }}>
           {/* سفیران تایید شده */}
           <CustomMenuItemLink
             to="/ambassadors"
@@ -186,35 +215,55 @@ const MyMenu = () => {
             primaryText="ارسال پیام"
             leftIcon={<MessageIcon />}
           />
-        </div>
-      </div>
+        </Box>
+      </Box>
 
       {/* ============ USER MANAGEMENT ============ */}
-      <div className="mt-6 mb-3">
-        <div className="px-5 py-3">
-          <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+      <Box sx={{ mt: 3, mb: 2 }}>
+        <Box sx={{ px: 3, py: 2 }}>
+          <Typography
+            component="span"
+            sx={{
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              color: 'text.secondary',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              display: 'block'
+            }}
+          >
             مدیریت کاربران
-          </div>
-        </div>
+          </Typography>
+        </Box>
 
-        <div className="px-3">
+        <Box sx={{ px: 2 }}>
           <CustomMenuItemLink
             to="/users"
             primaryText="کاربران عادی"
             leftIcon={<PeopleIcon />}
           />
-        </div>
-      </div>
+        </Box>
+      </Box>
 
       {/* ============ CONTENT MANAGEMENT SECTION ============ */}
-      <div className="mt-6 mb-3">
-        <div className="px-5 py-3">
-          <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+      <Box sx={{ mt: 3, mb: 2 }}>
+        <Box sx={{ px: 3, py: 2 }}>
+          <Typography
+            component="span"
+            sx={{
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              color: 'text.secondary',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              display: 'block'
+            }}
+          >
             مدیریت محتوا
-          </div>
-        </div>
+          </Typography>
+        </Box>
 
-        <div className="space-y-1 px-3">
+        <Box sx={{ px: 2 }}>
           <CustomMenuItemLink
             to="/hotels"
             primaryText="هتل‌ها"
@@ -232,18 +281,28 @@ const MyMenu = () => {
             primaryText="مدیریت رسانه"
             leftIcon={<FolderIcon />}
           />
-        </div>
-      </div>
+        </Box>
+      </Box>
 
       {/* ============ SYSTEM MANAGEMENT SECTION ============ */}
-      <div className="mt-6 mb-3">
-        <div className="px-5 py-3">
-          <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+      <Box sx={{ mt: 3, mb: 2 }}>
+        <Box sx={{ px: 3, py: 2 }}>
+          <Typography
+            component="span"
+            sx={{
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              color: 'text.secondary',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              display: 'block'
+            }}
+          >
             مدیریت سیستم
-          </div>
-        </div>
+          </Typography>
+        </Box>
 
-        <div className="space-y-1 px-3">
+        <Box sx={{ px: 2 }}>
           <CustomMenuItemLink
             to="/database-manager"
             primaryText="مدیریت دیتابیس"
@@ -255,8 +314,8 @@ const MyMenu = () => {
             primaryText="درگاه‌های پرداخت"
             leftIcon={<PaymentIcon />}
           />
-        </div>
-      </div>
+        </Box>
+      </Box>
     </Menu>
   );
 };

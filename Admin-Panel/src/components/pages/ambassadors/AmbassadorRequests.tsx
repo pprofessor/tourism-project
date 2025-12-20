@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
     Box,
     Paper,
@@ -29,8 +29,7 @@ import {
     Accordion,
     AccordionSummary,
     AccordionDetails,
-    Rating,
-    LinearProgress
+
 } from '@mui/material';
 import {
     CheckCircle as CheckIcon,
@@ -45,13 +44,9 @@ import {
     Email as EmailIcon,
     Phone as PhoneIcon,
     Assignment as AssignmentIcon,
-    VideoLibrary as VideoIcon,
     Description as DocumentIcon,
     ExpandMore as ExpandMoreIcon,
-    Send as SendIcon,
-    NoteAdd as NoteIcon,
     AccessTime as TimeIcon,
-    Warning as WarningIcon,
     Info as InfoIcon
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
@@ -161,13 +156,7 @@ const AmbassadorRequests: React.FC<AmbassadorRequestsProps> = ({ onRequestReview
     const [reviewDialogData, setReviewDialogData] = useState<ReviewDialogData | null>(null);
     const [reviewNotes, setReviewNotes] = useState<string>('');
 
-    const [selectedRequest, setSelectedRequest] = useState<AmbassadorRequest | null>(null);
-
-    useEffect(() => {
-        fetchRequests();
-    }, [tabValue]);
-
-    const fetchRequests = async () => {
+    const fetchRequests = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
@@ -234,7 +223,11 @@ const AmbassadorRequests: React.FC<AmbassadorRequestsProps> = ({ onRequestReview
         } finally {
             setLoading(false);
         }
-    };
+    }, [tabValue]);
+
+    useEffect(() => {
+        fetchRequests();
+    }, [fetchRequests]);
 
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
         setTabValue(newValue);
@@ -278,9 +271,6 @@ const AmbassadorRequests: React.FC<AmbassadorRequestsProps> = ({ onRequestReview
         }
     };
 
-    const handleOpenDetailView = (request: AmbassadorRequest) => {
-        setSelectedRequest(request);
-    };
 
     const formatDate = (dateString: string) => {
         try {
@@ -467,7 +457,6 @@ const AmbassadorRequests: React.FC<AmbassadorRequestsProps> = ({ onRequestReview
                                             <Tooltip title="مشاهده جزئیات">
                                                 <IconButton
                                                     size="small"
-                                                    onClick={() => handleOpenDetailView(request)}
                                                     color="info"
                                                 >
                                                     <ViewIcon />
@@ -681,7 +670,6 @@ const AmbassadorRequests: React.FC<AmbassadorRequestsProps> = ({ onRequestReview
                                     <Button
                                         variant="outlined"
                                         startIcon={<ViewIcon />}
-                                        onClick={() => handleOpenDetailView(request)}
                                     >
                                         مشاهده کامل
                                     </Button>

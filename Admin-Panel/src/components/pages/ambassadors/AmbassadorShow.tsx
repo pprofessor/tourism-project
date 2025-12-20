@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
     Box,
     Paper,
-    Grid,
     Card,
     CardContent,
     Typography,
@@ -40,17 +39,13 @@ import {
     ListItemText,
     ListItemIcon,
     Stack,
-    Badge,
     Stepper,
     Step,
     StepLabel,
-    Fab
 } from '@mui/material';
 import {
     ArrowBack as BackIcon,
     Edit as EditIcon,
-    Save as SaveIcon,
-    Cancel as CancelIcon,
     Delete as DeleteIcon,
     LocationOn as LocationIcon,
     Language as LanguageIcon,
@@ -70,17 +65,13 @@ import {
     Block as BlockIcon,
     CheckCircle as CheckIcon,
     Person as PersonIcon,
-    Business as BusinessIcon,
     School as SchoolIcon,
     Badge as BadgeIcon,
     Security as SecurityIcon,
     History as HistoryIcon,
     Assessment as AssessmentIcon,
     Chat as ChatIcon,
-    Receipt as ReceiptIcon,
     Map as MapIcon,
-    PhotoCamera as CameraIcon,
-    VideoLibrary as VideoIcon,
     Description as DocumentIcon,
     PlayArrow as PlayIcon
 } from '@mui/icons-material';
